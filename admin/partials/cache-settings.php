@@ -12,6 +12,36 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Helper function to format duration for display.
+ */
+if ( ! function_exists( 'gcal_format_duration' ) ) {
+    /**
+     * Format duration in seconds to human-readable string.
+     *
+     * @param int $seconds Duration in seconds.
+     * @return string Formatted duration.
+     */
+    function gcal_format_duration( $seconds ) {
+        if ( $seconds === 0 ) {
+            return __( 'No caching', 'gcal-tag-filter' );
+        }
+        if ( $seconds < 60 ) {
+            return sprintf(
+                /* translators: %d: number of seconds */
+                _n( '%d second', '%d seconds', $seconds, 'gcal-tag-filter' ),
+                $seconds
+            );
+        }
+        $minutes = floor( $seconds / 60 );
+        return sprintf(
+            /* translators: %d: number of minutes */
+            _n( '%d minute', '%d minutes', $minutes, 'gcal-tag-filter' ),
+            $minutes
+        );
+    }
+}
+
 $cache = new GCal_Cache();
 $cache_stats = $cache->get_cache_stats();
 $current_duration = $cache->get_cache_duration();
@@ -97,36 +127,3 @@ jQuery(document).ready(function($) {
     }
 });
 </script>
-
-<?php
-/**
- * Helper function to format duration for display.
- * Added as a method in the template context.
- */
-if ( ! function_exists( 'gcal_format_duration' ) ) {
-    /**
-     * Format duration in seconds to human-readable string.
-     *
-     * @param int $seconds Duration in seconds.
-     * @return string Formatted duration.
-     */
-    function gcal_format_duration( $seconds ) {
-        if ( $seconds === 0 ) {
-            return __( 'No caching', 'gcal-tag-filter' );
-        }
-        if ( $seconds < 60 ) {
-            return sprintf(
-                /* translators: %d: number of seconds */
-                _n( '%d second', '%d seconds', $seconds, 'gcal-tag-filter' ),
-                $seconds
-            );
-        }
-        $minutes = floor( $seconds / 60 );
-        return sprintf(
-            /* translators: %d: number of minutes */
-            _n( '%d minute', '%d minutes', $minutes, 'gcal-tag-filter' ),
-            $minutes
-        );
-    }
-}
-?>

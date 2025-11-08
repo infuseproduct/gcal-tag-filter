@@ -12,9 +12,8 @@ wp-content/uploads/
 wp-content/cache/
 
 # Dependencies
-vendor/
+# Note: vendor/ is included for WordPress plugin distribution
 node_modules/
-composer.lock
 package-lock.json
 
 # IDE
