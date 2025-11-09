@@ -144,14 +144,9 @@
                 window.GCalTimezone.formatEvent(event) :
                 event;
 
-            // Find or create modal element
-            let modal = document.querySelector('.gcal-modal[data-event-id="' + eventId + '"]');
-
-            if (!modal) {
-                // Find modal template (there should be one per calendar instance)
-                const wrapper = document.querySelector('[data-period]');
-                modal = wrapper ? wrapper.querySelector('.gcal-modal') : document.querySelector('.gcal-modal');
-            }
+            // Find modal element - look for any .gcal-modal on the page
+            // (All instances share the same modal structure)
+            let modal = document.querySelector('.gcal-modal');
 
             if (!modal) {
                 console.warn('Modal element not found');
