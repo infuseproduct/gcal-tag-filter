@@ -16,6 +16,7 @@
          */
         init: function() {
             this.attachEventListeners();
+            this.applyInitialFilter();
         },
 
         /**
@@ -67,6 +68,31 @@
 
             // Reload page with new display style
             window.location.href = url.toString();
+        },
+
+        /**
+         * Apply initial filter based on URL parameter
+         */
+        applyInitialFilter: function() {
+            // Read category from URL
+            const url = new URL(window.location);
+            const category = url.searchParams.get('gcal_category');
+
+            if (!category) {
+                return; // No filter to apply
+            }
+
+            // Find all calendar/list instances and apply filter
+            const wrappers = document.querySelectorAll('[data-events]');
+            wrappers.forEach(wrapper => {
+                const instanceId = wrapper.id;
+                if (instanceId) {
+                    // Update active button state
+                    this.updateActiveButton(category, instanceId);
+                    // Apply filter
+                    this.filterEvents(category, instanceId);
+                }
+            });
         },
 
         /**
@@ -142,6 +168,12 @@
                 events = JSON.parse(eventsJson);
             } catch (e) {
                 console.error('Failed to parse events JSON:', e);
+                return;
+            }
+
+            // Ensure events is an array
+            if (!Array.isArray(events)) {
+                console.error('Events data is not an array:', events);
                 return;
             }
 
