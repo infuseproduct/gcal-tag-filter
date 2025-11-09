@@ -69,12 +69,22 @@ class GCal_Calendar {
 
         if ( is_wp_error( $events ) ) {
             error_log( 'API fetch error: ' . $events->get_error_message() );
+            // Output to browser console for debugging
+            add_action( 'wp_footer', function() use ( $events ) {
+                echo '<script>console.error("GCal API Error: ' . esc_js( $events->get_error_message() ) . '");</script>';
+            } );
             return $events;
         }
 
         // Parse and process events
         $processed_events = $this->process_events( $events );
         error_log( 'Processed events: ' . count( $processed_events ) );
+
+        // Output event count to browser console for debugging
+        $count = count( $processed_events );
+        add_action( 'wp_footer', function() use ( $count, $period ) {
+            echo '<script>console.log("GCal: Fetched ' . $count . ' events for period: ' . esc_js( $period ) . '");</script>';
+        } );
 
         // Filter by tags if specified
         if ( ! empty( $tags ) ) {
