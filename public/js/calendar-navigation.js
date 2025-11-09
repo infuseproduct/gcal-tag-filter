@@ -190,29 +190,32 @@
                 url.searchParams.delete('gcal_week');
             } else if (period === 'week') {
                 // For week, we need to find which week of the month this date belongs to
-                // Use the date itself (not the Monday) to determine year/month
+                // This MUST match the PHP logic exactly:
+                // - Week 1 starts on the Monday BEFORE or ON the 1st of the month
+                // - Subsequent weeks are calculated from that Monday
                 const year = date.getFullYear();
                 const month = date.getMonth(); // 0-indexed
 
-                // Calculate which week of the month this date is in
-                // Week 1 starts on the first Monday of the month
+                // Get the first day of the month
                 const firstDayOfMonth = new Date(year, month, 1);
-                const firstMonday = new Date(year, month, 1);
                 const firstDayWeekday = firstDayOfMonth.getDay(); // 0=Sunday, 1=Monday, etc.
-                const daysToFirstMonday = firstDayWeekday === 0 ? 1 : (firstDayWeekday === 1 ? 0 : 8 - firstDayWeekday);
-                firstMonday.setDate(1 + daysToFirstMonday);
 
-                // Calculate week number based on the date
-                const dayOfMonth = date.getDate();
-                let weekNumber;
-                if (dayOfMonth < firstMonday.getDate()) {
-                    // Before first Monday, it's "week 0" but we'll call it week 1
-                    weekNumber = 1;
-                } else {
-                    // Calculate how many weeks since first Monday
-                    const daysSinceFirstMonday = dayOfMonth - firstMonday.getDate();
-                    weekNumber = Math.floor(daysSinceFirstMonday / 7) + 1;
+                // Convert to ISO weekday (1=Monday, 7=Sunday)
+                const firstDayWeekdayISO = firstDayWeekday === 0 ? 7 : firstDayWeekday;
+
+                // Calculate the Monday that starts week 1
+                // If the 1st is Monday, week 1 starts on the 1st
+                // Otherwise, week 1 starts on the Monday BEFORE the 1st
+                const mondayOfWeek1 = new Date(year, month, 1);
+                if (firstDayWeekdayISO !== 1) {
+                    // Go back to the previous Monday
+                    const daysBack = firstDayWeekdayISO - 1;
+                    mondayOfWeek1.setDate(1 - daysBack);
                 }
+
+                // Calculate week number based on how many weeks from the Monday of week 1
+                const daysDiff = Math.floor((date - mondayOfWeek1) / (1000 * 60 * 60 * 24));
+                const weekNumber = Math.floor(daysDiff / 7) + 1;
 
                 url.searchParams.set('gcal_year', year);
                 url.searchParams.set('gcal_month', month + 1); // 1-indexed for URL
