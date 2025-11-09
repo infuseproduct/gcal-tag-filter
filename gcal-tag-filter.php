@@ -197,13 +197,21 @@ function gcal_tag_filter_enqueue_scripts() {
             true
         );
 
+        // Get category colors for JavaScript
+        $categories = GCal_Categories::get_categories();
+        $category_colors = array();
+        foreach ( $categories as $category ) {
+            $category_colors[ $category['id'] ] = $category['color'];
+        }
+
         // Localize script with necessary data
         wp_localize_script(
             'gcal-calendar-navigation',
             'gcalData',
             array(
-                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-                'nonce'   => wp_create_nonce( 'gcal-ajax-nonce' ),
+                'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+                'nonce'     => wp_create_nonce( 'gcal-ajax-nonce' ),
+                'categories' => $category_colors,
             )
         );
     }

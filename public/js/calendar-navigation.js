@@ -437,8 +437,20 @@
          */
         renderEventHTML: function(event) {
             let categoryColor = '#2271b1';
-            if (event.tags && event.tags.length > 0) {
-                // You might need to fetch category colors - for now use default
+            let titlePrefix = '';
+
+            // Check for invalid tags (unknown tags)
+            if (event.invalidTags && event.invalidTags.length > 0 && (!event.tags || event.tags.length === 0)) {
+                categoryColor = '#8B0000'; // Dark red for unknown tags
+                titlePrefix = '⚠️ ';
+            }
+            // Check for untagged events
+            else if ((!event.tags || event.tags.length === 0) && (!event.invalidTags || event.invalidTags.length === 0)) {
+                categoryColor = '#000000'; // Black for untagged
+                titlePrefix = '⚠️ ';
+            }
+            // Normal events with valid tags
+            else if (event.tags && event.tags.length > 0) {
                 categoryColor = this.getCategoryColor(event.tags[0]);
             }
 
@@ -464,21 +476,20 @@
 
             return `<div class="gcal-event-item" data-event-id="${event.id}" style="background-color: ${categoryColor};" role="button" tabindex="0">
                 ${timeDisplay ? `<span class="gcal-event-time">${timeDisplay}</span>` : ''}
-                <span class="gcal-event-title">${this.escapeHtml(event.title)}</span>
+                <span class="gcal-event-title">${titlePrefix}${this.escapeHtml(event.title)}</span>
             </div>`;
         },
 
         /**
-         * Get category color (simplified - would need actual category data)
+         * Get category color from global data
          */
         getCategoryColor: function(tagId) {
-            // Default colors - in a full implementation, fetch from server
-            const colors = {
-                'MESSE-DALTON-SCHOOL': '#81D742',
-                'MESSE-MUI-WO': '#DD9933',
-                'EDC-GROUPE-1': '#4285F4'
-            };
-            return colors[tagId] || '#2271b1';
+            // Use colors from localized script data
+            if (typeof gcalData !== 'undefined' && gcalData.categories && gcalData.categories[tagId]) {
+                return gcalData.categories[tagId];
+            }
+            // Fallback to default blue
+            return '#2271b1';
         },
 
         /**
