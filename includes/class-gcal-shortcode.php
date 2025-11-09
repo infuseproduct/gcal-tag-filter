@@ -49,6 +49,7 @@ class GCal_Shortcode {
                 'tags'               => '',         // Optional tags filter
                 'show_categories'    => 'false',    // Show category sidebar
                 'show_display_style' => 'false',    // Show display style toggle
+                'hide_past'          => 'false',    // Hide past events in list view
             ),
             $atts,
             'gcal_embed'
@@ -60,6 +61,7 @@ class GCal_Shortcode {
         $tags               = $this->parse_tags( $atts['tags'] );
         $show_categories    = filter_var( $atts['show_categories'], FILTER_VALIDATE_BOOLEAN );
         $show_display_style = filter_var( $atts['show_display_style'], FILTER_VALIDATE_BOOLEAN );
+        $hide_past          = filter_var( $atts['hide_past'], FILTER_VALIDATE_BOOLEAN );
 
         // Check for URL parameter override (from view toggle)
         if ( isset( $_GET['gcal_view'] ) ) {
@@ -157,7 +159,7 @@ class GCal_Shortcode {
         if ( $view === 'calendar' ) {
             return $debug_output . $this->display->render_calendar_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week );
         } else {
-            return $debug_output . $this->display->render_list_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week );
+            return $debug_output . $this->display->render_list_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week, $hide_past );
         }
     }
 
