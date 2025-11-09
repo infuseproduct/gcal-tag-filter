@@ -572,6 +572,7 @@ class GCal_Display {
                     'end'            => $event['end'],
                     'isAllDay'       => $event['is_all_day'],
                     'tags'           => $event['tags'],
+                    'invalidTags'    => isset( $event['invalid_tags'] ) ? $event['invalid_tags'] : array(),
                     'categoryNames'  => $category_names,
                     'mapLink'        => $event['map_link'],
                     'htmlLink'       => $event['html_link'],
