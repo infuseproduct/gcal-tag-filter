@@ -13,6 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $categories = GCal_Categories::get_categories();
+
+// Sort categories by display name (A-Z)
+if ( ! empty( $categories ) ) {
+    usort( $categories, function( $a, $b ) {
+        return strcasecmp( $a['display_name'], $b['display_name'] );
+    } );
+}
 ?>
 
 <div class="gcal-category-manager">
