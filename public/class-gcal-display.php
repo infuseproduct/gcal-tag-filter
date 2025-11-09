@@ -647,7 +647,23 @@ class GCal_Display {
 
                 <?php if ( ! empty( $event['description'] ) ) : ?>
                     <div class="gcal-event-description">
-                        <?php echo $this->make_links_clickable( wp_trim_words( $event['description'], 30 ) ); ?>
+                        <?php
+                        // Check if description has HTML
+                        $has_html = strip_tags( $event['description'] ) !== $event['description'];
+
+                        if ( $has_html ) {
+                            // Preserve HTML and trim by characters instead
+                            $description = mb_substr( $event['description'], 0, 200 );
+                            if ( mb_strlen( $event['description'] ) > 200 ) {
+                                $description .= '...';
+                            }
+                        } else {
+                            // Plain text - use word trimming
+                            $description = wp_trim_words( $event['description'], 30, '...' );
+                        }
+
+                        echo $this->make_links_clickable( $description );
+                        ?>
                     </div>
                 <?php endif; ?>
 

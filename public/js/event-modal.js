@@ -75,6 +75,11 @@
 
             // Delegate click events for event items
             document.addEventListener('click', function(e) {
+                // Don't open modal if clicking on a link
+                if (e.target.tagName === 'A' || e.target.closest('a')) {
+                    return; // Let the link work normally
+                }
+
                 const eventItem = e.target.closest('.gcal-event-item, .gcal-list-event-card, .gcal-event-read-more');
 
                 if (eventItem) {
