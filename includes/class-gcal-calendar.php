@@ -237,15 +237,18 @@ class GCal_Calendar {
             default:
                 // Get start of current year
                 $start_of_year = clone $now;
+                error_log( 'Year view - $now before modify: ' . $now->format( 'Y-m-d H:i:s' ) );
                 $start_of_year->modify( 'first day of January this year' );
                 $start_of_year->setTime( 0, 0, 0 );
                 $time_min = $start_of_year->format( DateTime::RFC3339 );
+                error_log( 'Year view - time_min: ' . $time_min );
 
                 // Get end of current year
                 $end_of_year = clone $start_of_year;
                 $end_of_year->modify( 'last day of December this year' );
                 $end_of_year->setTime( 23, 59, 59 );
                 $time_max = $end_of_year->format( DateTime::RFC3339 );
+                error_log( 'Year view - time_max: ' . $time_max );
                 break;
         }
 
