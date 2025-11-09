@@ -644,7 +644,7 @@ class GCal_Display {
 
                 <?php if ( ! empty( $event['description'] ) ) : ?>
                     <div class="gcal-event-description">
-                        <?php echo esc_html( wp_trim_words( $event['description'], 30 ) ); ?>
+                        <?php echo $this->make_links_clickable( wp_trim_words( $event['description'], 30 ) ); ?>
                     </div>
                 <?php endif; ?>
 
@@ -710,10 +710,19 @@ class GCal_Display {
                     }
                 }
 
+                // Format description with clickable links and line breaks
+                $formatted_description = '';
+                if ( ! empty( $event['description'] ) ) {
+                    // Make links clickable
+                    $formatted_description = $this->make_links_clickable( $event['description'] );
+                    // Convert newlines to <br> tags
+                    $formatted_description = nl2br( $formatted_description, false );
+                }
+
                 return array(
                     'id'             => $event['id'],
                     'title'          => $event['title'],
-                    'description'    => $event['description'],
+                    'description'    => $formatted_description,
                     'location'       => $event['location'],
                     'start'          => $event['start'],
                     'end'            => $event['end'],
@@ -892,5 +901,39 @@ class GCal_Display {
             return $datetime->format( 'G' ) . 'h';
         }
         return $datetime->format( 'G' ) . 'h' . $minutes;
+    }
+
+    /**
+     * Make URLs in text clickable.
+     *
+     * @param string $text Text to process.
+     * @return string Text with URLs converted to clickable links.
+     */
+    private function make_links_clickable( $text ) {
+        // Escape HTML first to prevent XSS
+        $text = esc_html( $text );
+
+        // Pattern to match URLs (http, https, www)
+        $pattern = '#\b((https?://|www\.)[^\s<]+)#i';
+
+        // Replace URLs with clickable links
+        $text = preg_replace_callback(
+            $pattern,
+            function( $matches ) {
+                $url = $matches[1];
+
+                // Add http:// if URL starts with www.
+                $href = ( strpos( $url, 'www.' ) === 0 ) ? 'http://' . $url : $url;
+
+                return sprintf(
+                    '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+                    esc_url( $href ),
+                    esc_html( $url )
+                );
+            },
+            $text
+        );
+
+        return $text;
     }
 }
