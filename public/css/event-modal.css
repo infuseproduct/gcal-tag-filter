@@ -243,6 +243,7 @@
     padding: 20px 30px;
     background: #f8f9fa;
     border-top: 1px solid #e9ecef;
+    gap: 12px;
 }
 
 .gcal-modal-footer-link {
@@ -257,6 +258,65 @@
 
 .gcal-modal-footer-link:hover {
     color: #135e96;
+}
+
+/* Share Button */
+.gcal-share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.gcal-share-button:hover {
+    background: #135e96;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.3);
+}
+
+.gcal-share-button:active {
+    transform: translateY(0);
+}
+
+.gcal-share-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.gcal-share-text {
+    font-size: 0.875rem;
+}
+
+/* Share Button Success State */
+.gcal-share-button.gcal-share-success {
+    background: #28a745;
+    pointer-events: none;
+}
+
+.gcal-share-button.gcal-share-success:hover {
+    background: #28a745;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Share Button Error State */
+.gcal-share-button.gcal-share-error {
+    background: #dc3545;
+    pointer-events: none;
+}
+
+.gcal-share-button.gcal-share-error:hover {
+    background: #dc3545;
+    transform: none;
+    box-shadow: none;
 }
 
 /* All Day Event Badge */
@@ -356,6 +416,11 @@
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
+    }
+
+    .gcal-share-button {
+        width: 100%;
+        justify-content: center;
     }
 }
 

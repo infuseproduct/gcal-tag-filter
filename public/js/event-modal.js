@@ -27,6 +27,7 @@
         init: function() {
             this.loadEventsFromDOM();
             this.attachEventListeners();
+            this.checkURLForEvent();
         },
 
         /**
@@ -106,6 +107,20 @@
                     self.closeModal();
                 }
             });
+
+            // Share button - copy link to clipboard
+            document.addEventListener('click', function(e) {
+                const shareButton = e.target.closest('.gcal-share-button');
+
+                if (shareButton) {
+                    e.preventDefault();
+                    const eventId = shareButton.dataset.eventId;
+
+                    if (eventId) {
+                        self.shareEvent(eventId, shareButton);
+                    }
+                }
+            });
         },
 
         /**
@@ -175,6 +190,9 @@
 
             // Focus trap
             this.trapFocus(modal);
+
+            // Update URL with event ID for sharing
+            this.updateURLWithEvent(eventId);
         },
 
         /**
@@ -247,12 +265,16 @@
                 html += '</div>';
             }
 
-            // Footer with link to Google Calendar
+            // Footer with link to Google Calendar and share button
             if (event.htmlLink) {
                 html += '<div class="gcal-modal-footer">';
                 html += '<a href="' + this.escapeHtml(event.htmlLink) + '" target="_blank" rel="noopener" class="gcal-modal-footer-link">';
                 html += 'Voir dans Google Calendar →';
                 html += '</a>';
+                html += '<button type="button" class="gcal-share-button" data-event-id="' + this.escapeHtml(event.id) + '" title="Partager cet événement">';
+                html += '<span class="gcal-share-icon">🔗</span>';
+                html += '<span class="gcal-share-text">Partager</span>';
+                html += '</button>';
                 html += '</div>';
             }
 
@@ -269,6 +291,9 @@
 
                 // Restore body scroll
                 document.body.style.overflow = '';
+
+                // Remove event ID from URL
+                this.removeEventFromURL();
             }
         },
 
@@ -400,6 +425,160 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        },
+
+        /**
+         * Check URL for event ID parameter and auto-open modal
+         */
+        checkURLForEvent: function() {
+            const url = new URL(window.location);
+            const eventId = url.searchParams.get('gcal_event');
+
+            if (eventId) {
+                // Small delay to ensure events are loaded
+                setTimeout(() => {
+                    const event = this.findEvent(eventId);
+                    if (event) {
+                        this.openModal(eventId);
+                    } else {
+                        console.warn('Event not found in URL:', eventId);
+                        // Remove invalid event ID from URL
+                        this.removeEventFromURL();
+                    }
+                }, 100);
+            }
+        },
+
+        /**
+         * Update URL with event ID for sharing
+         *
+         * @param {string} eventId - Event ID to add to URL
+         */
+        updateURLWithEvent: function(eventId) {
+            const url = new URL(window.location);
+            url.searchParams.set('gcal_event', eventId);
+            window.history.pushState({}, '', url);
+        },
+
+        /**
+         * Remove event ID from URL
+         */
+        removeEventFromURL: function() {
+            const url = new URL(window.location);
+            url.searchParams.delete('gcal_event');
+            window.history.pushState({}, '', url);
+        },
+
+        /**
+         * Share event - copy link to clipboard or use Web Share API
+         *
+         * @param {string} eventId - Event ID
+         * @param {HTMLElement} button - Share button element
+         */
+        shareEvent: function(eventId, button) {
+            const event = this.findEvent(eventId);
+
+            if (!event) {
+                console.warn('Event not found for sharing:', eventId);
+                return;
+            }
+
+            // Build shareable URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('gcal_event', eventId);
+            const shareUrl = url.toString();
+
+            // Try Web Share API first (mobile devices)
+            if (navigator.share) {
+                navigator.share({
+                    title: event.title,
+                    text: event.description ? event.description.substring(0, 100) + '...' : event.title,
+                    url: shareUrl
+                }).then(function() {
+                    console.log('Event shared successfully');
+                }).catch(function(error) {
+                    console.log('Error sharing event:', error);
+                    // Fallback to clipboard
+                    this.copyToClipboard(shareUrl, button);
+                }.bind(this));
+            } else {
+                // Fallback to clipboard copy
+                this.copyToClipboard(shareUrl, button);
+            }
+        },
+
+        /**
+         * Copy text to clipboard and show feedback
+         *
+         * @param {string} text - Text to copy
+         * @param {HTMLElement} button - Button element for feedback
+         */
+        copyToClipboard: function(text, button) {
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    this.showCopyFeedback(button, true);
+                }.bind(this)).catch(function(err) {
+                    console.error('Failed to copy to clipboard:', err);
+                    // Fallback to execCommand
+                    this.copyToClipboardFallback(text, button);
+                }.bind(this));
+            } else {
+                // Fallback for older browsers
+                this.copyToClipboardFallback(text, button);
+            }
+        },
+
+        /**
+         * Fallback clipboard copy using execCommand
+         *
+         * @param {string} text - Text to copy
+         * @param {HTMLElement} button - Button element for feedback
+         */
+        copyToClipboardFallback: function(text, button) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                this.showCopyFeedback(button, successful);
+            } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+                this.showCopyFeedback(button, false);
+            }
+
+            document.body.removeChild(textarea);
+        },
+
+        /**
+         * Show visual feedback when URL is copied
+         *
+         * @param {HTMLElement} button - Button element
+         * @param {boolean} success - Whether copy was successful
+         */
+        showCopyFeedback: function(button, success) {
+            const originalText = button.querySelector('.gcal-share-text').textContent;
+
+            if (success) {
+                button.classList.add('gcal-share-success');
+                button.querySelector('.gcal-share-text').textContent = 'Copié!';
+                button.querySelector('.gcal-share-icon').textContent = '✓';
+            } else {
+                button.classList.add('gcal-share-error');
+                button.querySelector('.gcal-share-text').textContent = 'Erreur';
+                button.querySelector('.gcal-share-icon').textContent = '✗';
+            }
+
+            // Reset after 2 seconds
+            setTimeout(function() {
+                button.classList.remove('gcal-share-success', 'gcal-share-error');
+                button.querySelector('.gcal-share-text').textContent = originalText;
+                button.querySelector('.gcal-share-icon').textContent = '🔗';
+            }, 2000);
         }
     };
 
