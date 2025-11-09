@@ -62,6 +62,15 @@
 
             // Set initial title
             this.updateTitle(wrapper);
+
+            // Set up view toggle buttons
+            const viewButtons = wrapper.querySelectorAll('.gcal-view-btn');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const newView = button.dataset.view;
+                    this.switchView(wrapper, newView);
+                });
+            });
         },
 
         /**
@@ -94,6 +103,45 @@
 
             // Update calendar display
             this.updateCalendar(wrapper, newDate);
+        },
+
+        /**
+         * Switch calendar view (week/month/future)
+         *
+         * @param {HTMLElement} wrapper - Calendar wrapper
+         * @param {string} newView - New view type (week/month/future)
+         */
+        switchView: function(wrapper, newView) {
+            const currentView = wrapper.dataset.period;
+
+            if (currentView === newView) return;
+
+            // Update dataset
+            wrapper.dataset.period = newView;
+
+            // Update active button
+            const viewButtons = wrapper.querySelectorAll('.gcal-view-btn');
+            viewButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === newView);
+            });
+
+            // Update grid data attribute
+            const grid = wrapper.querySelector('.gcal-calendar-grid');
+            if (grid) {
+                grid.dataset.currentView = newView;
+            }
+
+            // Update title
+            this.updateTitle(wrapper);
+
+            // Show loading and reload page to get correct view
+            wrapper.classList.add('loading');
+
+            // Reload the page to render the correct view
+            // We could implement AJAX loading later
+            setTimeout(() => {
+                location.reload();
+            }, 200);
         },
 
         /**
@@ -154,7 +202,7 @@
                 const weekEnd = new Date(currentDate);
                 weekEnd.setDate(weekEnd.getDate() + 6);
 
-                const formatter = new Intl.DateTimeFormat(navigator.language, {
+                const formatter = new Intl.DateTimeFormat('fr-FR', {
                     month: 'short',
                     day: 'numeric'
                 });
@@ -162,15 +210,18 @@
                 title = formatter.format(weekStart) + ' - ' + formatter.format(weekEnd);
             } else if (period === 'month') {
                 // Show month and year
-                const formatter = new Intl.DateTimeFormat(navigator.language, {
+                const formatter = new Intl.DateTimeFormat('fr-FR', {
                     month: 'long',
                     year: 'numeric'
                 });
 
                 title = formatter.format(currentDate);
             } else {
-                // Future events
-                title = 'Upcoming Events';
+                // Future/year view
+                const formatter = new Intl.DateTimeFormat('fr-FR', {
+                    year: 'numeric'
+                });
+                title = formatter.format(currentDate);
             }
 
             titleElement.textContent = title;

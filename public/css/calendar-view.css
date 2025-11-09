@@ -373,6 +373,144 @@
     }
 }
 
+/* View Toggle Buttons */
+.gcal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.gcal-view-toggle {
+    display: flex;
+    gap: 5px;
+    background: #fff;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.gcal-view-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.gcal-view-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.gcal-view-btn.active {
+    background: #2271b1;
+    color: #fff;
+}
+
+.gcal-view-btn.active:hover {
+    background: #135e96;
+}
+
+/* Year View */
+.gcal-year-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.gcal-year-month {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gcal-year-month:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.gcal-year-month-header {
+    background: #f8f9fa;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gcal-year-month-header h4 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #333;
+    text-transform: capitalize;
+}
+
+.gcal-year-month-count {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.gcal-year-month-events {
+    padding: 15px;
+    min-height: 120px;
+}
+
+.gcal-year-event {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.gcal-year-event:hover {
+    background: #e7f3ff;
+    transform: translateX(4px);
+}
+
+.gcal-year-event:last-of-type {
+    margin-bottom: 0;
+}
+
+.gcal-year-event-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.gcal-year-event-title {
+    font-size: 0.875rem;
+    color: #333;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gcal-year-more {
+    text-align: center;
+    padding: 10px;
+    color: #2271b1;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
 /* Print Styles */
 @media print {
     .gcal-calendar-header {
@@ -380,11 +518,41 @@
     }
 
     .gcal-nav-prev,
-    .gcal-nav-next {
+    .gcal-nav-next,
+    .gcal-view-toggle {
         display: none;
     }
 
     .gcal-event-item {
         page-break-inside: avoid;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 640px) {
+    .gcal-calendar-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .gcal-header-left {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .gcal-view-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .gcal-view-btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 0.8125rem;
+    }
+
+    .gcal-year-view {
+        grid-template-columns: 1fr;
     }
 }
