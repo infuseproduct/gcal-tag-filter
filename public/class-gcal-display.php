@@ -240,6 +240,9 @@ class GCal_Display {
         // Group events by date
         $events_by_date = $this->group_events_by_date( $events );
 
+        // Initialize $now for "is today" checks later
+        $now = new DateTime();
+
         // Use URL date if provided, otherwise current week
         if ( $url_year && $url_month && $url_week ) {
             // Calculate the Monday of the specified week
@@ -289,7 +292,6 @@ class GCal_Display {
             }
         } else {
             // Get current week starting from Monday
-            $now = new DateTime();
             $day_of_week = $now->format( 'N' ); // 1 (Monday) through 7 (Sunday)
             $monday = clone $now;
             $monday->modify( '-' . ( $day_of_week - 1 ) . ' days' ); // Go back to Monday
