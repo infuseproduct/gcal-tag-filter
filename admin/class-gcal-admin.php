@@ -179,9 +179,45 @@ class GCal_Admin {
         $cache_stats = $this->cache->get_cache_stats();
         $categories = GCal_Categories::get_categories();
 
+        // Debug info
+        $client_id = get_option( GCal_OAuth::OPTION_CLIENT_ID );
+        $client_secret = get_option( GCal_OAuth::OPTION_CLIENT_SECRET );
+        $access_token = get_option( GCal_OAuth::OPTION_ACCESS_TOKEN );
+        $calendars = false;
+        if ( $is_authenticated ) {
+            $calendars = $this->oauth->get_calendar_list();
+        }
+
         ?>
+        <script>
+        console.log('=== GCal Admin Debug ===');
+        console.log('Is Authenticated:', <?php echo $is_authenticated ? 'true' : 'false'; ?>);
+        console.log('Client ID exists:', <?php echo ! empty( $client_id ) ? 'true' : 'false'; ?>);
+        console.log('Client Secret exists:', <?php echo ! empty( $client_secret ) ? 'true' : 'false'; ?>);
+        console.log('Access Token exists:', <?php echo ! empty( $access_token ) ? 'true' : 'false'; ?>);
+        console.log('Selected Calendar:', <?php echo wp_json_encode( $selected_calendar ); ?>);
+        console.log('Calendars retrieved:', <?php echo $calendars !== false ? 'true' : 'false'; ?>);
+        <?php if ( $calendars !== false ) : ?>
+        console.log('Calendar count:', <?php echo count( $calendars ); ?>);
+        <?php endif; ?>
+        </script>
+
         <div class="wrap">
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+
+            <?php if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) : ?>
+            <div class="notice notice-info">
+                <p><strong>Debug Info:</strong></p>
+                <ul style="font-family: monospace; font-size: 11px;">
+                    <li>Authenticated: <?php echo $is_authenticated ? 'YES' : 'NO'; ?></li>
+                    <li>Client ID: <?php echo ! empty( $client_id ) ? 'EXISTS' : 'MISSING'; ?></li>
+                    <li>Client Secret: <?php echo ! empty( $client_secret ) ? 'EXISTS' : 'MISSING'; ?></li>
+                    <li>Access Token: <?php echo ! empty( $access_token ) ? 'EXISTS' : 'MISSING'; ?></li>
+                    <li>Calendar ID: <?php echo $selected_calendar ? esc_html( $selected_calendar ) : 'NONE'; ?></li>
+                    <li>Calendars Retrieved: <?php echo $calendars !== false ? 'YES (' . count( $calendars ) . ')' : 'NO'; ?></li>
+                </ul>
+            </div>
+            <?php endif; ?>
 
             <div class="gcal-admin-container">
                 <!-- OAuth Connection Section -->
