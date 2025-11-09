@@ -429,29 +429,6 @@ class GCal_Display {
         // Generate unique ID for this list instance
         $instance_id = 'gcal-list-' . uniqid();
 
-        // Filter out past events in list view (only if there are events)
-        if ( ! empty( $events ) ) {
-            $now = new DateTime( 'now', new DateTimeZone( 'Asia/Hong_Kong' ) );
-            $events = array_filter( $events, function( $event ) use ( $now ) {
-                // For all-day events, compare dates only (end date is exclusive from Google)
-                if ( $event['is_all_day'] ) {
-                    // End date is exclusive, so event on 2025-10-25 has end = 2025-10-26
-                    // We want to show it until the end of 2025-10-25
-                    $event_end = new DateTime( $event['end'], new DateTimeZone( 'Asia/Hong_Kong' ) );
-                    $event_end->modify( '-1 day' ); // Make it inclusive
-                    $event_end->setTime( 23, 59, 59 ); // End of day
-                    $now_date = clone $now;
-                    $now_date->setTime( 0, 0, 0 ); // Start of current day
-                    return $event_end >= $now_date;
-                } else {
-                    // For timed events, compare exact timestamps
-                    // DateTime string from Google includes timezone, e.g., "2025-10-25T14:00:00+08:00"
-                    $event_end = new DateTime( $event['end'] );
-                    return $event_end >= $now;
-                }
-            } );
-        }
-
         // Prepare events data for JavaScript
         $prepared_events = $this->prepare_events_for_js( $events );
         $events_json = wp_json_encode( $prepared_events );
