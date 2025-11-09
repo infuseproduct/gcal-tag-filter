@@ -226,15 +226,37 @@ class GCal_Calendar {
 
         switch ( $period ) {
             case 'week':
-                // Get start of current week (Monday)
-                $start_of_week = clone $now;
-                $day_of_week = (int) $start_of_week->format( 'N' ); // 1 (Monday) to 7 (Sunday)
-                $start_of_week->modify( '-' . ( $day_of_week - 1 ) . ' days' );
+                // Calculate the Monday of the specified week
+                if ( $year && $month && $week ) {
+                    // Same logic as render_week_view()
+                    $first_of_month = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
+                    $first_of_month->setDate( $target_year, $target_month, 1 );
+                    $first_day_weekday = (int) $first_of_month->format( 'N' );
+
+                    if ( $week === 1 && $first_day_weekday > 1 ) {
+                        // Week 1 includes days before the first Monday
+                        $start_of_week = clone $first_of_month;
+                        $days_back = $first_day_weekday - 1;
+                        $start_of_week->modify( '-' . $days_back . ' days' );
+                    } else {
+                        // Calculate from first of month
+                        $start_of_week = clone $first_of_month;
+                        $start_of_week->modify( '-' . ( $first_day_weekday - 1 ) . ' days' );
+                        $start_of_week->modify( '+' . ( ( $week - 1 ) * 7 ) . ' days' );
+                    }
+                } else {
+                    // Get current week (Monday)
+                    $start_of_week = clone $now;
+                    $day_of_week = (int) $start_of_week->format( 'N' );
+                    $start_of_week->modify( '-' . ( $day_of_week - 1 ) . ' days' );
+                }
+
                 $start_of_week->setTime( 0, 0, 0 );
                 $time_min = $start_of_week->format( DateTime::RFC3339 );
 
                 $end_of_week = clone $start_of_week;
-                $end_of_week->modify( '+7 days' );
+                $end_of_week->modify( '+6 days' ); // Changed from +7 to +6 to get Sun 23:59:59
+                $end_of_week->setTime( 23, 59, 59 );
                 $time_max = $end_of_week->format( DateTime::RFC3339 );
                 break;
 
