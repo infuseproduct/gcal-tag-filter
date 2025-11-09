@@ -310,38 +310,32 @@
          * @returns {string} Sanitized HTML
          */
         sanitizeDescription: function(description) {
-            // The description comes from the server already processed
-            // It has newlines converted to <br> and may contain safe HTML like <a> tags
-            // We just need to ensure no dangerous attributes or scripts
+            // Escape HTML to prevent XSS
+            const escaped = this.escapeHtml(description);
 
-            const temp = document.createElement('div');
-            temp.innerHTML = description;
+            // Convert URLs to clickable links
+            const withLinks = this.makeLinksClickable(escaped);
 
-            // Remove any script tags or event handlers
-            const scripts = temp.querySelectorAll('script');
-            scripts.forEach(function(script) {
-                script.remove();
+            // Convert newlines to <br> tags
+            return withLinks.replace(/\n/g, '<br>');
+        },
+
+        /**
+         * Convert URLs in text to clickable links
+         *
+         * @param {string} text - Text with escaped HTML
+         * @returns {string} Text with URLs as links
+         */
+        makeLinksClickable: function(text) {
+            // Pattern to match URLs (http, https, www)
+            const pattern = /\b((https?:\/\/|www\.)[^\s<]+)/gi;
+
+            return text.replace(pattern, function(match, url) {
+                // Add http:// if URL starts with www.
+                const href = url.startsWith('www.') ? 'http://' + url : url;
+
+                return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
             });
-
-            // Remove dangerous attributes from all elements
-            const allElements = temp.querySelectorAll('*');
-            allElements.forEach(function(elem) {
-                // Remove event handler attributes
-                for (let i = elem.attributes.length - 1; i >= 0; i--) {
-                    const attr = elem.attributes[i];
-                    if (attr.name.startsWith('on')) {
-                        elem.removeAttribute(attr.name);
-                    }
-                }
-
-                // Ensure links have safe attributes
-                if (elem.tagName === 'A') {
-                    elem.setAttribute('target', '_blank');
-                    elem.setAttribute('rel', 'noopener noreferrer');
-                }
-            });
-
-            return temp.innerHTML;
         },
 
         /**

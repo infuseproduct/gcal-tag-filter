@@ -710,19 +710,10 @@ class GCal_Display {
                     }
                 }
 
-                // Format description with clickable links and line breaks
-                $formatted_description = '';
-                if ( ! empty( $event['description'] ) ) {
-                    // Make links clickable
-                    $formatted_description = $this->make_links_clickable( $event['description'] );
-                    // Convert newlines to <br> tags
-                    $formatted_description = nl2br( $formatted_description, false );
-                }
-
                 return array(
                     'id'             => $event['id'],
                     'title'          => $event['title'],
-                    'description'    => $formatted_description,
+                    'description'    => $event['description'], // Keep as plain text - JavaScript will format it
                     'location'       => $event['location'],
                     'start'          => $event['start'],
                     'end'            => $event['end'],
