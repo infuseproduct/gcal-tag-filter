@@ -83,6 +83,7 @@ class GCal_Display {
                  data-period="<?php echo esc_attr( $period ); ?>"
                  data-tags="<?php echo esc_attr( implode( ',', $tags ) ); ?>"
                  data-events="<?php echo esc_attr( $events_json ); ?>">
+            <?php if ( $period !== 'future' ) : ?>
             <div class="gcal-calendar-header">
                 <div class="gcal-header-left">
                     <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Précédent', 'gcal-tag-filter' ); ?>">
@@ -105,6 +106,7 @@ class GCal_Display {
                     </button>
                 </div>
             </div>
+            <?php endif; ?>
 
             <div class="gcal-calendar-loading">
                 <div class="gcal-spinner"></div>
@@ -477,6 +479,7 @@ class GCal_Display {
                  data-period="<?php echo esc_attr( $period ); ?>"
                  data-tags="<?php echo esc_attr( implode( ',', $tags ) ); ?>"
                  data-events="<?php echo esc_attr( $events_json ); ?>">
+            <?php if ( $period !== 'future' ) : ?>
             <div class="gcal-list-header">
                 <div class="gcal-header-left">
                     <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Précédent', 'gcal-tag-filter' ); ?>">
@@ -499,6 +502,7 @@ class GCal_Display {
                     </button>
                 </div>
             </div>
+            <?php endif; ?>
 
             <div class="gcal-list-loading">
                 <div class="gcal-spinner"></div>
