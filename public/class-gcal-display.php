@@ -571,7 +571,7 @@ class GCal_Display {
      * @return array Events prepared for JSON encoding.
      */
     private function prepare_events_for_js( $events ) {
-        return array_map(
+        $prepared = array_map(
             function( $event ) {
                 // Get category display names
                 $category_names = array();
@@ -598,6 +598,9 @@ class GCal_Display {
             },
             $events
         );
+
+        // Reindex array to ensure sequential keys for proper JSON array encoding
+        return array_values( $prepared );
     }
 
     /**
