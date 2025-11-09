@@ -271,9 +271,9 @@
                 html += '<a href="' + this.escapeHtml(event.htmlLink) + '" target="_blank" rel="noopener" class="gcal-modal-footer-link">';
                 html += 'Voir dans Google Calendar →';
                 html += '</a>';
-                html += '<button type="button" class="gcal-share-button" data-event-id="' + this.escapeHtml(event.id) + '" title="Partager cet événement">';
+                html += '<button type="button" class="gcal-share-button" data-event-id="' + this.escapeHtml(event.id) + '" title="Copier le lien">';
                 html += '<span class="gcal-share-icon">🔗</span>';
-                html += '<span class="gcal-share-text">Partager</span>';
+                html += '<span class="gcal-share-text">Copier le lien</span>';
                 html += '</button>';
                 html += '</div>';
             }
@@ -435,18 +435,81 @@
             const eventId = url.searchParams.get('gcal_event');
 
             if (eventId) {
+                console.log('GCal: Checking for event ID from URL:', eventId);
+                console.log('GCal: Available events:', this.eventsData);
+
                 // Small delay to ensure events are loaded
                 setTimeout(() => {
                     const event = this.findEvent(eventId);
+                    console.log('GCal: Found event:', event);
+
                     if (event) {
                         this.openModal(eventId);
                     } else {
                         console.warn('Event not found in URL:', eventId);
+                        // Show user-friendly message
+                        this.showEventNotFoundMessage(eventId);
                         // Remove invalid event ID from URL
                         this.removeEventFromURL();
                     }
                 }, 100);
             }
+        },
+
+        /**
+         * Show message when shared event is not in current view
+         *
+         * @param {string} eventId - Event ID that wasn't found
+         */
+        showEventNotFoundMessage: function(eventId) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'gcal-event-not-found-notification';
+            notification.innerHTML = `
+                <div class="gcal-notification-content">
+                    <span class="gcal-notification-icon">ℹ️</span>
+                    <div class="gcal-notification-message">
+                        <strong>Événement non trouvé</strong>
+                        <p>L'événement partagé n'est pas visible dans la période actuelle. Essayez de changer la vue ou la période.</p>
+                    </div>
+                    <button class="gcal-notification-close" aria-label="Fermer">&times;</button>
+                </div>
+            `;
+
+            // Add styles inline for immediate display
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #fff3cd;
+                border: 1px solid #ffc107;
+                border-radius: 8px;
+                padding: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 999998;
+                max-width: 500px;
+                width: 90%;
+                animation: slideDown 0.3s ease-out;
+            `;
+
+            // Append to body
+            document.body.appendChild(notification);
+
+            // Close button handler
+            const closeBtn = notification.querySelector('.gcal-notification-close');
+            closeBtn.addEventListener('click', function() {
+                notification.style.animation = 'slideUp 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            });
+
+            // Auto-remove after 8 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideUp 0.3s ease-out';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 8000);
         },
 
         /**
@@ -470,7 +533,7 @@
         },
 
         /**
-         * Share event - copy link to clipboard or use Web Share API
+         * Share event - copy link to clipboard
          *
          * @param {string} eventId - Event ID
          * @param {HTMLElement} button - Share button element
@@ -488,23 +551,8 @@
             url.searchParams.set('gcal_event', eventId);
             const shareUrl = url.toString();
 
-            // Try Web Share API first (mobile devices)
-            if (navigator.share) {
-                navigator.share({
-                    title: event.title,
-                    text: event.description ? event.description.substring(0, 100) + '...' : event.title,
-                    url: shareUrl
-                }).then(function() {
-                    console.log('Event shared successfully');
-                }).catch(function(error) {
-                    console.log('Error sharing event:', error);
-                    // Fallback to clipboard
-                    this.copyToClipboard(shareUrl, button);
-                }.bind(this));
-            } else {
-                // Fallback to clipboard copy
-                this.copyToClipboard(shareUrl, button);
-            }
+            // Copy to clipboard
+            this.copyToClipboard(shareUrl, button);
         },
 
         /**

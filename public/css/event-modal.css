@@ -464,4 +464,99 @@
     }
 }
 
+/* Event Not Found Notification */
+.gcal-notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.gcal-notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.gcal-notification-message {
+    flex: 1;
+}
+
+.gcal-notification-message strong {
+    display: block;
+    color: #856404;
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.gcal-notification-message p {
+    margin: 0;
+    color: #856404;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.gcal-notification-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #856404;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.gcal-notification-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Notification Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+}
+
+/* Mobile responsive notification */
+@media (max-width: 640px) {
+    .gcal-event-not-found-notification {
+        top: 10px !important;
+        width: calc(100% - 20px) !important;
+        max-width: none !important;
+    }
+
+    .gcal-notification-icon {
+        font-size: 1.25rem;
+    }
+
+    .gcal-notification-message strong {
+        font-size: 0.875rem;
+    }
+
+    .gcal-notification-message p {
+        font-size: 0.8125rem;
+    }
+}
+
 /* Dark Mode Disabled - Plugin uses light mode only */
