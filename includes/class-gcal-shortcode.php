@@ -57,16 +57,11 @@ class GCal_Shortcode {
         $period = $this->validate_period( $atts['period'] );
         $tags   = $this->parse_tags( $atts['tags'] );
 
-        error_log( '=== GCal Shortcode Render ===' );
-        error_log( 'View: ' . $view . ', Period: ' . $period . ', Tags: ' . implode( ',', $tags ) );
-
         // Check if OAuth is configured
         $oauth = new GCal_OAuth();
         $is_auth = $oauth->is_authenticated();
-        error_log( 'OAuth authenticated: ' . ( $is_auth ? 'YES' : 'NO' ) );
 
         if ( ! $is_auth ) {
-            error_log( 'Rendering error: Not authenticated' );
             return $this->display->render_error(
                 __( 'Google Calendar not connected. Please contact the site administrator.', 'gcal-tag-filter' )
             );
@@ -74,17 +69,14 @@ class GCal_Shortcode {
 
         // Check if calendar is selected
         $calendar_id = $oauth->get_selected_calendar_id();
-        error_log( 'Calendar ID: ' . ( $calendar_id ? $calendar_id : 'NONE' ) );
 
         if ( ! $calendar_id ) {
-            error_log( 'Rendering error: No calendar selected' );
             return $this->display->render_error(
                 __( 'No calendar selected. Please contact the site administrator.', 'gcal-tag-filter' )
             );
         }
 
         // Fetch events
-        error_log( 'Fetching events...' );
         $events = $this->calendar->get_events( $period, $tags );
 
         // Handle errors

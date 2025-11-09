@@ -44,12 +44,7 @@ class GCal_OAuth {
         $client_id     = get_option( self::OPTION_CLIENT_ID );
         $client_secret = get_option( self::OPTION_CLIENT_SECRET );
 
-        error_log( '=== GCal OAuth Init ===' );
-        error_log( 'Client ID exists: ' . ( ! empty( $client_id ) ? 'YES' : 'NO' ) );
-        error_log( 'Client Secret exists: ' . ( ! empty( $client_secret ) ? 'YES' : 'NO' ) );
-
         if ( empty( $client_id ) || empty( $client_secret ) ) {
-            error_log( 'Missing credentials, client not initialized' );
             return;
         }
 
@@ -61,7 +56,6 @@ class GCal_OAuth {
             $this->client->addScope( self::OAUTH_SCOPE );
             $this->client->setAccessType( 'offline' );
             $this->client->setPrompt( 'consent' );
-            error_log( 'Client initialized successfully' );
         } catch ( Exception $e ) {
             error_log( 'GCal OAuth Init Error: ' . $e->getMessage() );
             $this->client = null;
@@ -132,8 +126,6 @@ class GCal_OAuth {
      */
     public function is_authenticated() {
         $access_token = get_option( self::OPTION_ACCESS_TOKEN );
-        error_log( '=== GCal is_authenticated ===' );
-        error_log( 'Access token exists: ' . ( ! empty( $access_token ) ? 'YES' : 'NO' ) );
         return ! empty( $access_token );
     }
 
@@ -143,12 +135,7 @@ class GCal_OAuth {
      * @return Google_Client|null
      */
     public function get_authenticated_client() {
-        error_log( '=== GCal get_authenticated_client ===' );
-        error_log( 'Client exists: ' . ( $this->client ? 'YES' : 'NO' ) );
-        error_log( 'Is authenticated: ' . ( $this->is_authenticated() ? 'YES' : 'NO' ) );
-
         if ( ! $this->client || ! $this->is_authenticated() ) {
-            error_log( 'Returning null - client or auth check failed' );
             return null;
         }
 
@@ -156,10 +143,7 @@ class GCal_OAuth {
             // Get decrypted access token
             $access_token = $this->decrypt_token( get_option( self::OPTION_ACCESS_TOKEN ) );
 
-            error_log( 'Decrypted access token exists: ' . ( ! empty( $access_token ) ? 'YES' : 'NO' ) );
-
             if ( empty( $access_token ) ) {
-                error_log( 'Access token empty after decryption' );
                 return null;
             }
 
@@ -167,16 +151,12 @@ class GCal_OAuth {
 
             // Check if token is expired
             if ( $this->client->isAccessTokenExpired() ) {
-                error_log( 'Token expired, attempting refresh' );
                 // Try to refresh
                 if ( ! $this->refresh_token() ) {
-                    error_log( 'Token refresh failed' );
                     return null;
                 }
-                error_log( 'Token refreshed successfully' );
             }
 
-            error_log( 'Returning authenticated client' );
             return $this->client;
         } catch ( Exception $e ) {
             error_log( 'GCal OAuth Error: ' . $e->getMessage() );
@@ -242,21 +222,8 @@ class GCal_OAuth {
         $sanitized_id = sanitize_text_field( $client_id );
         $sanitized_secret = sanitize_text_field( $client_secret );
 
-        error_log( '=== GCal Saving Credentials ===' );
-        error_log( 'Client ID length: ' . strlen( $sanitized_id ) );
-        error_log( 'Client Secret length: ' . strlen( $sanitized_secret ) );
-
-        $id_saved = update_option( self::OPTION_CLIENT_ID, $sanitized_id );
-        $secret_saved = update_option( self::OPTION_CLIENT_SECRET, $sanitized_secret );
-
-        error_log( 'Client ID saved: ' . ( $id_saved ? 'YES' : 'NO' ) );
-        error_log( 'Client Secret saved: ' . ( $secret_saved ? 'YES' : 'NO' ) );
-
-        // Verify they were actually saved
-        $verify_id = get_option( self::OPTION_CLIENT_ID );
-        $verify_secret = get_option( self::OPTION_CLIENT_SECRET );
-        error_log( 'Client ID verified: ' . ( ! empty( $verify_id ) ? 'YES' : 'NO' ) );
-        error_log( 'Client Secret verified: ' . ( ! empty( $verify_secret ) ? 'YES' : 'NO' ) );
+        update_option( self::OPTION_CLIENT_ID, $sanitized_id );
+        update_option( self::OPTION_CLIENT_SECRET, $sanitized_secret );
 
         $this->init_client();
 

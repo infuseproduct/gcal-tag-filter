@@ -47,27 +47,36 @@ class GCal_Calendar {
      * @return array|WP_Error Array of events or WP_Error on failure.
      */
     public function get_events( $period, $tags = array() ) {
+        error_log( '=== GCal Get Events ===' );
+        error_log( 'Period: ' . $period . ', Tags: ' . ( empty( $tags ) ? 'NONE' : implode( ',', $tags ) ) );
+
         // Check cache first
         $cache_key = $this->cache->generate_key( $period, $tags );
         $cached_events = $this->cache->get( $cache_key );
 
         if ( $cached_events !== false ) {
+            error_log( 'Returning cached events: ' . count( $cached_events ) );
             return $cached_events;
         }
+
+        error_log( 'Cache miss, fetching from API' );
 
         // Fetch from API
         $events = $this->fetch_events_from_api( $period );
 
         if ( is_wp_error( $events ) ) {
+            error_log( 'API fetch error: ' . $events->get_error_message() );
             return $events;
         }
 
         // Parse and process events
         $processed_events = $this->process_events( $events );
+        error_log( 'Processed events: ' . count( $processed_events ) );
 
         // Filter by tags if specified
         if ( ! empty( $tags ) ) {
             $processed_events = $this->filter_events_by_tags( $processed_events, $tags );
+            error_log( 'After tag filter: ' . count( $processed_events ) . ' events' );
         }
 
         // Cache the results
@@ -83,9 +92,12 @@ class GCal_Calendar {
      * @return array|WP_Error Array of events or WP_Error on failure.
      */
     private function fetch_events_from_api( $period ) {
+        error_log( '=== GCal Fetch Events ===' );
+
         $client = $this->oauth->get_authenticated_client();
 
         if ( ! $client ) {
+            error_log( 'Client authentication failed' );
             return new WP_Error(
                 'auth_failed',
                 __( 'Not authenticated with Google Calendar. Please connect your account in plugin settings.', 'gcal-tag-filter' )
@@ -93,8 +105,10 @@ class GCal_Calendar {
         }
 
         $calendar_id = $this->oauth->get_selected_calendar_id();
+        error_log( 'Calendar ID: ' . ( $calendar_id ? $calendar_id : 'NONE' ) );
 
         if ( ! $calendar_id ) {
+            error_log( 'No calendar selected' );
             return new WP_Error(
                 'no_calendar',
                 __( 'No calendar selected. Please select a calendar in plugin settings.', 'gcal-tag-filter' )
@@ -106,6 +120,7 @@ class GCal_Calendar {
 
             // Calculate time range based on period
             list( $time_min, $time_max ) = $this->get_time_range( $period );
+            error_log( 'Time range: ' . $time_min . ' to ' . ( $time_max ? $time_max : 'FUTURE' ) );
 
             $params = array(
                 'timeMin'      => $time_min,
@@ -118,9 +133,12 @@ class GCal_Calendar {
                 $params['timeMax'] = $time_max;
             }
 
+            error_log( 'Calling Google Calendar API...' );
             $events = $service->events->listEvents( $calendar_id, $params );
+            $items = $events->getItems();
+            error_log( 'API returned ' . count( $items ) . ' events' );
 
-            return $events->getItems();
+            return $items;
         } catch ( Exception $e ) {
             error_log( 'GCal API Error: ' . $e->getMessage() );
 
