@@ -189,11 +189,16 @@ class GCal_Calendar {
 
         switch ( $period ) {
             case 'week':
-                // Get start of current week (Sunday)
+                // Get start of current week (Monday)
                 $start_of_week = clone $now;
-                $start_of_week->modify( 'Sunday this week' );
+                $day_of_week = (int) $start_of_week->format( 'N' ); // 1 (Monday) to 7 (Sunday)
+                $start_of_week->modify( '-' . ( $day_of_week - 1 ) . ' days' );
+                $start_of_week->setTime( 0, 0, 0 );
                 $time_min = $start_of_week->format( DateTime::RFC3339 );
-                $time_max = ( clone $start_of_week )->modify( '+7 days' )->format( DateTime::RFC3339 );
+
+                $end_of_week = clone $start_of_week;
+                $end_of_week->modify( '+7 days' );
+                $time_max = $end_of_week->format( DateTime::RFC3339 );
                 break;
 
             case 'month':
