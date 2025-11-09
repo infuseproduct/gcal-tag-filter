@@ -433,7 +433,7 @@ class GCal_Display {
         if ( ! empty( $events ) ) {
             $now = new DateTime( 'now', new DateTimeZone( 'Asia/Hong_Kong' ) );
             $events = array_filter( $events, function( $event ) use ( $now ) {
-                $event_end = new DateTime( $event['end'] );
+                $event_end = new DateTime( $event['end'], new DateTimeZone( 'Asia/Hong_Kong' ) );
                 return $event_end >= $now;
             } );
         }
