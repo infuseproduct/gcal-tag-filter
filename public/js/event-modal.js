@@ -192,11 +192,6 @@
             // Title
             html += '<h2 class="gcal-modal-title">' + this.escapeHtml(event.title) + '</h2>';
 
-            // Category badge (if tags exist)
-            if (event.categoryNames && event.categoryNames.length > 0) {
-                html += '<div class="gcal-modal-category">' + this.escapeHtml(event.categoryNames[0]) + '</div>';
-            }
-
             // Meta information
             html += '<div class="gcal-modal-meta">';
 
