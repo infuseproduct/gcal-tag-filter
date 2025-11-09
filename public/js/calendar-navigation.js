@@ -349,6 +349,17 @@
             const year = date.getFullYear();
             const month = date.getMonth() + 1; // JavaScript months are 0-indexed
 
+            // Check if there's a category sidebar
+            const hasSidebar = wrapper.closest('.gcal-wrapper-with-sidebar.has-sidebar');
+
+            // If sidebar exists, reload the page so PHP can re-render the sidebar
+            // with categories that match the new period's events
+            if (hasSidebar) {
+                this.updateURL(period, date);
+                window.location.reload();
+                return;
+            }
+
             // For year view, fetch entire year; for month/week, fetch specific month
             if (period === 'year') {
                 console.log(`Fetching events for year ${year}`);
