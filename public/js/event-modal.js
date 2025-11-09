@@ -25,7 +25,41 @@
          * Initialize modal handlers
          */
         init: function() {
+            this.loadEventsFromDOM();
             this.attachEventListeners();
+        },
+
+        /**
+         * Load events from data-events attributes in the DOM
+         */
+        loadEventsFromDOM: function() {
+            const self = this;
+
+            // Find all calendar and list wrappers with event data
+            const wrappers = document.querySelectorAll('.gcal-calendar-wrapper[data-events], .gcal-list-wrapper[data-events]');
+
+            wrappers.forEach(function(wrapper) {
+                const instanceId = wrapper.id;
+                const eventsJson = wrapper.dataset.events;
+
+                if (!instanceId || !eventsJson) {
+                    console.warn('GCal: Wrapper missing ID or events data', wrapper);
+                    return;
+                }
+
+                try {
+                    const events = JSON.parse(eventsJson);
+
+                    if (Array.isArray(events) && events.length > 0) {
+                        self.registerEvents(instanceId, events);
+                        console.log('GCal: Registered', events.length, 'events for', instanceId);
+                    } else {
+                        console.warn('GCal: No events found in data attribute for', instanceId);
+                    }
+                } catch (e) {
+                    console.error('GCal: Failed to parse events JSON for', instanceId, e);
+                }
+            });
         },
 
         /**

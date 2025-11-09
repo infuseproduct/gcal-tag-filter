@@ -61,7 +61,11 @@ class GCal_Display {
 
         ob_start();
         ?>
-        <div class="gcal-calendar-wrapper" id="<?php echo esc_attr( $instance_id ); ?>" data-period="<?php echo esc_attr( $period ); ?>" data-tags="<?php echo esc_attr( implode( ',', $tags ) ); ?>">
+        <div class="gcal-calendar-wrapper"
+             id="<?php echo esc_attr( $instance_id ); ?>"
+             data-period="<?php echo esc_attr( $period ); ?>"
+             data-tags="<?php echo esc_attr( implode( ',', $tags ) ); ?>"
+             data-events="<?php echo esc_attr( $events_json ); ?>">
             <div class="gcal-calendar-header">
                 <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'gcal-tag-filter' ); ?>">
                     ‹
@@ -93,33 +97,6 @@ class GCal_Display {
                 <div class="gcal-modal-body"></div>
             </div>
         </div>
-
-        <script type="text/javascript">
-            var gcalEvents_<?php echo esc_js( $instance_id ); ?> = <?php echo $events_json; ?>;
-            console.log('GCal Events loaded:', <?php echo count( $events ); ?>, 'events for instance:', '<?php echo esc_js( $instance_id ); ?>');
-            // Register events with modal handler when available
-            (function() {
-                var attempts = 0;
-                function registerEvents() {
-                    attempts++;
-                    if (window.GCalEventModal) {
-                        console.log('Registering events with modal handler (attempt ' + attempts + ')');
-                        window.GCalEventModal.registerEvents('<?php echo esc_js( $instance_id ); ?>', gcalEvents_<?php echo esc_js( $instance_id ); ?>);
-                        console.log('Events registered successfully');
-                    } else if (attempts < 50) {
-                        // Retry after a short delay if not loaded yet (max 5 seconds)
-                        setTimeout(registerEvents, 100);
-                    } else {
-                        console.error('GCalEventModal not available after 5 seconds');
-                    }
-                }
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', registerEvents);
-                } else {
-                    registerEvents();
-                }
-            })();
-        </script>
         <?php
         return ob_get_clean();
     }
@@ -270,7 +247,11 @@ class GCal_Display {
 
         ob_start();
         ?>
-        <div class="gcal-list-wrapper" id="<?php echo esc_attr( $instance_id ); ?>" data-period="<?php echo esc_attr( $period ); ?>" data-tags="<?php echo esc_attr( implode( ',', $tags ) ); ?>">
+        <div class="gcal-list-wrapper"
+             id="<?php echo esc_attr( $instance_id ); ?>"
+             data-period="<?php echo esc_attr( $period ); ?>"
+             data-tags="<?php echo esc_attr( implode( ',', $tags ) ); ?>"
+             data-events="<?php echo esc_attr( $events_json ); ?>">
             <div class="gcal-list-loading">
                 <div class="gcal-spinner"></div>
             </div>
@@ -290,33 +271,6 @@ class GCal_Display {
                 <div class="gcal-modal-body"></div>
             </div>
         </div>
-
-        <script type="text/javascript">
-            var gcalEvents_<?php echo esc_js( $instance_id ); ?> = <?php echo $events_json; ?>;
-            console.log('GCal Events loaded:', <?php echo count( $events ); ?>, 'events for instance:', '<?php echo esc_js( $instance_id ); ?>');
-            // Register events with modal handler when available
-            (function() {
-                var attempts = 0;
-                function registerEvents() {
-                    attempts++;
-                    if (window.GCalEventModal) {
-                        console.log('Registering events with modal handler (attempt ' + attempts + ')');
-                        window.GCalEventModal.registerEvents('<?php echo esc_js( $instance_id ); ?>', gcalEvents_<?php echo esc_js( $instance_id ); ?>);
-                        console.log('Events registered successfully');
-                    } else if (attempts < 50) {
-                        // Retry after a short delay if not loaded yet (max 5 seconds)
-                        setTimeout(registerEvents, 100);
-                    } else {
-                        console.error('GCalEventModal not available after 5 seconds');
-                    }
-                }
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', registerEvents);
-                } else {
-                    registerEvents();
-                }
-            })();
-        </script>
         <?php
         return ob_get_clean();
     }
