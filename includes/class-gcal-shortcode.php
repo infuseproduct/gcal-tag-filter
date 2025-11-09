@@ -112,6 +112,9 @@ class GCal_Shortcode {
         $url_month = isset( $_GET['gcal_month'] ) ? intval( $_GET['gcal_month'] ) : null;
         $url_week  = isset( $_GET['gcal_week'] ) ? intval( $_GET['gcal_week'] ) : null;
 
+        // DEBUG: Add visible output to page
+        $debug_output = '<!-- DEBUG: URL params - year=' . ( $url_year ? $url_year : 'NULL' ) . ', month=' . ( $url_month ? $url_month : 'NULL' ) . ', week=' . ( $url_week ? $url_week : 'NULL' ) . ', period=' . $period . ' -->';
+
         // Debug logging
         error_log( 'GCal Shortcode - URL params: year=' . ( $url_year ? $url_year : 'NULL' ) . ', month=' . ( $url_month ? $url_month : 'NULL' ) . ', week=' . ( $url_week ? $url_week : 'NULL' ) );
         error_log( 'GCal Shortcode - Period: ' . $period );
@@ -145,13 +148,16 @@ class GCal_Shortcode {
         // Debug: Show visible warning if no events
         if ( empty( $events ) ) {
             error_log( 'GCal Shortcode - EMPTY EVENTS for period=' . $period . ', year=' . $url_year . ', month=' . $url_month . ', week=' . $url_week );
+            $debug_output .= '<!-- DEBUG: EMPTY EVENTS ARRAY! -->';
+        } else {
+            $debug_output .= '<!-- DEBUG: Found ' . count( $events ) . ' events -->';
         }
 
         // Render appropriate view
         if ( $view === 'calendar' ) {
-            return $this->display->render_calendar_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week );
+            return $debug_output . $this->display->render_calendar_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week );
         } else {
-            return $this->display->render_list_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week );
+            return $debug_output . $this->display->render_list_view( $events, $period, $tags, $show_categories, $selected_category, $show_display_style, $view, $url_year, $url_month, $url_week );
         }
     }
 
