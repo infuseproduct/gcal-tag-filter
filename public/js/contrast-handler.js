@@ -118,13 +118,22 @@
         applyContrastColors: function() {
             // Calendar view events
             const eventItems = document.querySelectorAll('.gcal-event-item');
+            console.log(`Applying contrast to ${eventItems.length} event items`);
+
             eventItems.forEach(item => {
                 const bgColor = window.getComputedStyle(item).backgroundColor;
-                if (this.shouldUseWhiteText(bgColor)) {
-                    item.style.color = '#ffffff';
-                } else {
-                    item.style.color = '#000000';
-                }
+                const useWhite = this.shouldUseWhiteText(bgColor);
+                const textColor = useWhite ? '#ffffff' : '#000000';
+
+                console.log(`Event: bgColor=${bgColor}, useWhite=${useWhite}, textColor=${textColor}`);
+
+                item.style.color = textColor;
+
+                // Also set on child elements to ensure they inherit
+                const time = item.querySelector('.gcal-event-time');
+                const title = item.querySelector('.gcal-event-title');
+                if (time) time.style.color = textColor;
+                if (title) title.style.color = textColor;
             });
 
             // List view category badges
