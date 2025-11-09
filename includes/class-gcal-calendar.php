@@ -174,6 +174,20 @@ class GCal_Calendar {
             $items = $events->getItems();
             error_log( 'API returned ' . count( $items ) . ' events' );
 
+            // Debug: Log first 3 event dates to console
+            if ( count( $items ) > 0 ) {
+                $sample_dates = array();
+                for ( $i = 0; $i < min( 3, count( $items ) ); $i++ ) {
+                    $event = $items[ $i ];
+                    $start_obj = $event->getStart();
+                    $start_time = ! empty( $start_obj->date ) ? $start_obj->date : $start_obj->dateTime;
+                    $sample_dates[] = substr( $start_time, 0, 10 ) . ' - ' . $event->getSummary();
+                }
+                add_action( 'wp_footer', function() use ( $sample_dates ) {
+                    echo '<script>console.log("Sample event dates: ' . esc_js( implode( ', ', $sample_dates ) ) . '");</script>';
+                } );
+            }
+
             return $items;
         } catch ( Exception $e ) {
             error_log( 'GCal API Error: ' . $e->getMessage() );
