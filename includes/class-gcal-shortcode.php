@@ -184,12 +184,12 @@ class GCal_Shortcode {
      * Validate period parameter.
      *
      * @param string $period Period value.
-     * @return string Validated period ('week', 'month', or 'year').
+     * @return string Validated period ('week', 'month', 'year', or 'future').
      */
     private function validate_period( $period ) {
         $period = strtolower( trim( $period ) );
 
-        if ( in_array( $period, array( 'week', 'month', 'year' ), true ) ) {
+        if ( in_array( $period, array( 'week', 'month', 'year', 'future' ), true ) ) {
             return $period;
         }
 

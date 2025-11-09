@@ -87,9 +87,12 @@ class GCal_Cache {
         // Sort tags for consistent cache keys
         sort( $tags );
 
-        // Add week/month/year to cache key to handle different time ranges
+        // Add week/month/year/future to cache key to handle different time ranges
         $date_key = '';
-        if ( $period === 'week' ) {
+        if ( $period === 'future' ) {
+            // For future period, use current date as part of key so cache updates daily
+            $date_key = date( 'Y-m-d' );
+        } elseif ( $period === 'week' ) {
             if ( $year && $month ) {
                 $date_key = sprintf( '%d-W%02d', $year, $week ? $week : 1 );
             } else {

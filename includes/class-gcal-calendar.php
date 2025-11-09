@@ -42,7 +42,7 @@ class GCal_Calendar {
     /**
      * Get events for a specific period.
      *
-     * @param string $period Period: 'week', 'month', or 'year'.
+     * @param string $period Period: 'week', 'month', 'year', or 'future'.
      * @param array  $tags   Optional. Array of tags to filter by.
      * @param int    $year   Optional. Specific year to fetch events for.
      * @param int    $month  Optional. Specific month to fetch events for (1-12).
@@ -116,7 +116,7 @@ class GCal_Calendar {
     /**
      * Fetch events from Google Calendar API.
      *
-     * @param string $period Period: 'week', 'month', or 'year'.
+     * @param string $period Period: 'week', 'month', 'year', or 'future'.
      * @param int    $year   Optional. Specific year to fetch events for.
      * @param int    $month  Optional. Specific month to fetch events for (1-12).
      * @param int    $week   Optional. Specific week number.
@@ -206,7 +206,7 @@ class GCal_Calendar {
     /**
      * Get time range for period.
      *
-     * @param string $period Period: 'week', 'month', or 'year'.
+     * @param string $period Period: 'week', 'month', 'year', or 'future'.
      * @param int    $year   Optional. Specific year to fetch events for.
      * @param int    $month  Optional. Specific month to fetch events for (1-12).
      * @param int    $week   Optional. Specific week number.
@@ -225,6 +225,20 @@ class GCal_Calendar {
         }
 
         switch ( $period ) {
+            case 'future':
+                // Get all upcoming events from now through the next 3 years
+                // (or until hitting the 100 event limit from the API)
+                $start_time = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
+                $start_time->setTime( 0, 0, 0 ); // Start of today
+                $time_min = $start_time->format( DateTime::RFC3339 );
+
+                // Set end to 3 years from now
+                $end_time = clone $start_time;
+                $end_time->modify( '+3 years' );
+                $end_time->setTime( 23, 59, 59 );
+                $time_max = $end_time->format( DateTime::RFC3339 );
+                break;
+
             case 'week':
                 // Calculate the Monday of the specified week
                 if ( $year && $month && $week ) {
