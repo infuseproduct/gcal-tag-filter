@@ -205,7 +205,12 @@ class GCal_Admin {
         </script>
 
         <div class="wrap">
-            <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+            <h1>
+                <?php echo esc_html( get_admin_page_title() ); ?>
+                <span style="font-size: 0.5em; font-weight: normal; color: #666; margin-left: 10px;">
+                    v<?php echo esc_html( GCAL_TAG_FILTER_VERSION ); ?>
+                </span>
+            </h1>
 
             <?php if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) : ?>
             <div class="notice notice-info">

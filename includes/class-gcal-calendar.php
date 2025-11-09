@@ -44,9 +44,12 @@ class GCal_Calendar {
      *
      * @param string $period Period: 'week', 'month', or 'year'.
      * @param array  $tags   Optional. Array of tags to filter by.
+     * @param int    $year   Optional. Specific year to fetch events for.
+     * @param int    $month  Optional. Specific month to fetch events for (1-12).
+     * @param int    $week   Optional. Specific week number.
      * @return array|WP_Error Array of events or WP_Error on failure.
      */
-    public function get_events( $period, $tags = array() ) {
+    public function get_events( $period, $tags = array(), $year = null, $month = null, $week = null ) {
         error_log( '=== GCal Get Events ===' );
         error_log( 'Period: ' . $period . ', Tags: ' . ( empty( $tags ) ? 'NONE' : implode( ',', $tags ) ) );
 
@@ -54,7 +57,7 @@ class GCal_Calendar {
         $bypass_cache = isset( $_GET['gcal_debug'] ) && $_GET['gcal_debug'] === '1';
 
         // Check cache first
-        $cache_key = $this->cache->generate_key( $period, $tags );
+        $cache_key = $this->cache->generate_key( $period, $tags, $year, $month, $week );
         $cached_events = $this->cache->get( $cache_key );
 
         if ( $cached_events !== false && ! $bypass_cache ) {
@@ -65,7 +68,7 @@ class GCal_Calendar {
         error_log( $bypass_cache ? 'Cache bypassed via gcal_debug parameter' : 'Cache miss, fetching from API' );
 
         // Fetch from API
-        $events = $this->fetch_events_from_api( $period );
+        $events = $this->fetch_events_from_api( $period, $year, $month, $week );
 
         if ( is_wp_error( $events ) ) {
             error_log( 'API fetch error: ' . $events->get_error_message() );
@@ -114,9 +117,12 @@ class GCal_Calendar {
      * Fetch events from Google Calendar API.
      *
      * @param string $period Period: 'week', 'month', or 'year'.
+     * @param int    $year   Optional. Specific year to fetch events for.
+     * @param int    $month  Optional. Specific month to fetch events for (1-12).
+     * @param int    $week   Optional. Specific week number.
      * @return array|WP_Error Array of events or WP_Error on failure.
      */
-    private function fetch_events_from_api( $period ) {
+    private function fetch_events_from_api( $period, $year = null, $month = null, $week = null ) {
         error_log( '=== GCal Fetch Events ===' );
 
         $client = $this->oauth->get_authenticated_client();
@@ -144,7 +150,7 @@ class GCal_Calendar {
             $service = new Google_Service_Calendar( $client );
 
             // Calculate time range based on period
-            list( $time_min, $time_max ) = $this->get_time_range( $period );
+            list( $time_min, $time_max ) = $this->get_time_range( $period, $year, $month, $week );
             error_log( 'Time range: ' . $time_min . ' to ' . ( $time_max ? $time_max : 'FUTURE' ) );
 
             $params = array(
@@ -182,10 +188,22 @@ class GCal_Calendar {
      * Get time range for period.
      *
      * @param string $period Period: 'week', 'month', or 'year'.
+     * @param int    $year   Optional. Specific year to fetch events for.
+     * @param int    $month  Optional. Specific month to fetch events for (1-12).
+     * @param int    $week   Optional. Specific week number.
      * @return array Array with timeMin and timeMax.
      */
-    private function get_time_range( $period ) {
+    private function get_time_range( $period, $year = null, $month = null, $week = null ) {
+        // Use provided year or current year
+        $target_year = $year ? $year : (int) date( 'Y' );
+        $target_month = $month ? $month : (int) date( 'n' );
+
         $now = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
+
+        // If specific year/month provided, adjust the base date
+        if ( $year ) {
+            $now->setDate( $target_year, $target_month, 1 );
+        }
 
         switch ( $period ) {
             case 'week':

@@ -3,7 +3,7 @@
  * Plugin Name: Google Calendar Tag Filter
  * Plugin URI: https://github.com/ccfhk/ccfhk-calendar-wp-plugin
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: CCFHK
@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version.
  */
-define( 'GCAL_TAG_FILTER_VERSION', '1.0.0' );
+define( 'GCAL_TAG_FILTER_VERSION', '1.0.1' );
 
 /**
  * Plugin directory path.
@@ -97,6 +97,20 @@ function gcal_tag_filter_load_textdomain() {
     );
 }
 add_action( 'plugins_loaded', 'gcal_tag_filter_load_textdomain' );
+
+/**
+ * Register custom query variables for calendar navigation.
+ */
+function gcal_tag_filter_query_vars( $vars ) {
+    $vars[] = 'gcal_view';
+    $vars[] = 'gcal_display';
+    $vars[] = 'gcal_category';
+    $vars[] = 'gcal_year';
+    $vars[] = 'gcal_month';
+    $vars[] = 'gcal_week';
+    return $vars;
+}
+add_filter( 'query_vars', 'gcal_tag_filter_query_vars' );
 
 /**
  * Initialize the plugin.

@@ -73,28 +73,44 @@ class GCal_Cache {
     /**
      * Generate cache key based on parameters.
      *
-     * @param string $period Period: 'week', 'month', or 'future'.
+     * @param string $period Period: 'week', 'month', or 'year'.
      * @param array  $tags   Optional. Array of tags.
+     * @param int    $year   Optional. Specific year.
+     * @param int    $month  Optional. Specific month (1-12).
+     * @param int    $week   Optional. Specific week number.
      * @return string Cache key.
      */
-    public function generate_key( $period, $tags = array() ) {
+    public function generate_key( $period, $tags = array(), $year = null, $month = null, $week = null ) {
         $oauth       = new GCal_OAuth();
         $calendar_id = $oauth->get_selected_calendar_id();
 
         // Sort tags for consistent cache keys
         sort( $tags );
 
-        // Add week/month start date to cache key to handle different time ranges
-        // This ensures that changes to the time range calculation create new cache entries
+        // Add week/month/year to cache key to handle different time ranges
         $date_key = '';
         if ( $period === 'week' ) {
-            $now = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
-            $day_of_week = (int) $now->format( 'N' );
-            $monday = clone $now;
-            $monday->modify( '-' . ( $day_of_week - 1 ) . ' days' );
-            $date_key = $monday->format( 'Y-m-d' );
+            if ( $year && $month ) {
+                $date_key = sprintf( '%d-W%02d', $year, $week ? $week : 1 );
+            } else {
+                $now = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
+                $day_of_week = (int) $now->format( 'N' );
+                $monday = clone $now;
+                $monday->modify( '-' . ( $day_of_week - 1 ) . ' days' );
+                $date_key = $monday->format( 'Y-m-d' );
+            }
         } elseif ( $period === 'month' ) {
-            $date_key = date( 'Y-m' );
+            if ( $year && $month ) {
+                $date_key = sprintf( '%d-%02d', $year, $month );
+            } else {
+                $date_key = date( 'Y-m' );
+            }
+        } elseif ( $period === 'year' ) {
+            if ( $year ) {
+                $date_key = (string) $year;
+            } else {
+                $date_key = date( 'Y' );
+            }
         }
 
         // Create a unique key

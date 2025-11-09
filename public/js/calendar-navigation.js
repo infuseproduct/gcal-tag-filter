@@ -89,8 +89,8 @@
          */
         initializeDateFromURL: function(wrapper, period) {
             const url = new URL(window.location);
-            const yearParam = url.searchParams.get('year');
-            const monthParam = url.searchParams.get('month');
+            const yearParam = url.searchParams.get('gcal_year');
+            const monthParam = url.searchParams.get('gcal_month');
 
             // If no URL parameters, use current date
             if (!yearParam) {
@@ -109,7 +109,7 @@
                     date = new Date(year, month, 1);
                 } else if (period === 'week' && monthParam) {
                     const month = parseInt(monthParam, 10) - 1;
-                    const weekParam = url.searchParams.get('week');
+                    const weekParam = url.searchParams.get('gcal_week');
                     const week = weekParam ? parseInt(weekParam, 10) : 1;
                     // Approximate the week start date
                     const day = (week - 1) * 7 + 1;
@@ -180,14 +180,14 @@
 
             // Add date parameters based on period
             if (period === 'year') {
-                url.searchParams.set('year', date.getFullYear());
+                url.searchParams.set('gcal_year', date.getFullYear());
                 // Remove month/week params if they exist
-                url.searchParams.delete('month');
-                url.searchParams.delete('week');
+                url.searchParams.delete('gcal_month');
+                url.searchParams.delete('gcal_week');
             } else if (period === 'month') {
-                url.searchParams.set('year', date.getFullYear());
-                url.searchParams.set('month', date.getMonth() + 1); // 1-indexed for URL
-                url.searchParams.delete('week');
+                url.searchParams.set('gcal_year', date.getFullYear());
+                url.searchParams.set('gcal_month', date.getMonth() + 1); // 1-indexed for URL
+                url.searchParams.delete('gcal_week');
             } else if (period === 'week') {
                 // For week, store the date of the Monday
                 const dayOfWeek = date.getDay();
@@ -195,9 +195,9 @@
                 const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                 monday.setDate(date.getDate() + diff);
 
-                url.searchParams.set('year', monday.getFullYear());
-                url.searchParams.set('month', monday.getMonth() + 1);
-                url.searchParams.set('week', Math.ceil(monday.getDate() / 7));
+                url.searchParams.set('gcal_year', monday.getFullYear());
+                url.searchParams.set('gcal_month', monday.getMonth() + 1);
+                url.searchParams.set('gcal_week', Math.ceil(monday.getDate() / 7));
             }
 
             // Update URL without reload
@@ -597,7 +597,7 @@
                     monthEvents.forEach((event, index) => {
                         const eventDate = new Date(event.start);
                         const dayOfMonth = eventDate.getDate();
-                        const isHidden = index >= 5;
+                        const isHidden = index >= 20;
                         const categoryColor = this.getCategoryColor(event.tags && event.tags.length > 0 ? event.tags[0] : null);
 
                         html += `<div class="gcal-year-event gcal-event-item ${isHidden ? 'gcal-year-event-hidden' : ''}" data-event-id="${event.id}" role="button" tabindex="0">`;
@@ -609,9 +609,9 @@
                         html += `</div>`;
                     });
 
-                    if (monthEvents.length > 5) {
+                    if (monthEvents.length > 20) {
                         html += `<button class="gcal-year-more" data-month="${monthKey}">`;
-                        html += `<span class="gcal-year-more-text">+${monthEvents.length - 5} de plus</span>`;
+                        html += `<span class="gcal-year-more-text">+${monthEvents.length - 20} de plus</span>`;
                         html += `<span class="gcal-year-less-text" style="display: none;">Voir moins</span>`;
                         html += `</button>`;
                     }

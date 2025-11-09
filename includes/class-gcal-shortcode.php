@@ -107,8 +107,13 @@ class GCal_Shortcode {
             );
         }
 
+        // Read date parameters from URL
+        $url_year  = isset( $_GET['gcal_year'] ) ? intval( $_GET['gcal_year'] ) : null;
+        $url_month = isset( $_GET['gcal_month'] ) ? intval( $_GET['gcal_month'] ) : null;
+        $url_week  = isset( $_GET['gcal_week'] ) ? intval( $_GET['gcal_week'] ) : null;
+
         // Fetch events
-        $events = $this->calendar->get_events( $period, $tags );
+        $events = $this->calendar->get_events( $period, $tags, $url_year, $url_month, $url_week );
 
         // Handle errors
         if ( is_wp_error( $events ) ) {
