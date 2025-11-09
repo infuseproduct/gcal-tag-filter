@@ -104,8 +104,11 @@
             // Update title
             this.updateTitle(wrapper, newDate);
 
-            // Re-render the calendar grid
-            this.renderCalendarGrid(wrapper, newDate);
+            // Show loading state
+            wrapper.classList.add('loading');
+
+            // Fetch events for the new month and re-render
+            this.fetchAndRenderMonth(wrapper, newDate);
         },
 
         /**
@@ -214,6 +217,51 @@
         },
 
         /**
+         * Fetch events for a specific month and render
+         *
+         * @param {HTMLElement} wrapper - Calendar wrapper
+         * @param {Date} date - Date to fetch events for
+         */
+        fetchAndRenderMonth: function(wrapper, date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+
+            console.log(`Fetching events for ${year}-${month}`);
+
+            // Prepare AJAX request
+            const formData = new FormData();
+            formData.append('action', 'gcal_fetch_events');
+            formData.append('nonce', gcalData.nonce);
+            formData.append('year', year);
+            formData.append('month', month);
+
+            fetch(gcalData.ajaxUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                wrapper.classList.remove('loading');
+
+                if (data.success) {
+                    console.log(`Received ${data.data.count} events for ${year}-${month}:`, data.data.events);
+
+                    // Update the wrapper's events data
+                    wrapper.dataset.events = JSON.stringify(data.data.events);
+
+                    // Re-render the calendar grid
+                    this.renderCalendarGrid(wrapper, date);
+                } else {
+                    console.error('Failed to fetch events:', data.data.message);
+                }
+            })
+            .catch(error => {
+                wrapper.classList.remove('loading');
+                console.error('AJAX error:', error);
+            });
+        },
+
+        /**
          * Re-render calendar grid with new date
          *
          * @param {HTMLElement} wrapper - Calendar wrapper
@@ -262,6 +310,8 @@
             const year = date.getFullYear();
             const month = date.getMonth();
 
+            console.log(`Rendering month grid for ${year}-${month + 1} with ${events.length} events`);
+
             // Get first and last day of month
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
@@ -283,13 +333,15 @@
                 eventsByDate[dateKey].push(event);
             });
 
-            // Build calendar HTML
-            let html = '<div class="gcal-month-view"><div class="gcal-weekday-headers">';
-            const weekdays = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
+            console.log('Events grouped by date:', eventsByDate);
+
+            // Build calendar HTML matching PHP structure exactly
+            let html = '<div class="gcal-weekday-headers">';
+            const weekdays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
             weekdays.forEach(day => {
-                html += `<div class="gcal-weekday-header">${day}</div>`;
+                html += `<div class="gcal-weekday">${day}</div>`;
             });
-            html += '</div><div class="gcal-month-grid">';
+            html += '</div><div class="gcal-days-grid">';
 
             // Add empty cells for days before month starts
             for (let i = 0; i < firstDayOfWeek; i++) {
@@ -314,7 +366,7 @@
                 html += '</div></div>';
             }
 
-            html += '</div></div>';
+            html += '</div>';
             container.innerHTML = html;
         },
 
