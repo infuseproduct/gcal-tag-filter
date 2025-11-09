@@ -243,13 +243,45 @@ class GCal_Display {
         // Use URL date if provided, otherwise current week
         if ( $url_year && $url_month && $url_week ) {
             // Calculate the Monday of the specified week
-            $now = new DateTime();
-            $now->setDate( $url_year, $url_month, 1 );
-            $first_day = (int) $now->format( 'N' );
-            $days_to_first_monday = $first_day === 1 ? 0 : 8 - $first_day;
-            $now->modify( '+' . $days_to_first_monday . ' days' );
-            $now->modify( '+' . ( ( $url_week - 1 ) * 7 ) . ' days' );
-            $monday = $now;
+            // Week 1 is the week containing the 1st of the month
+            // Find the first Monday of the month
+            $first_of_month = new DateTime();
+            $first_of_month->setDate( $url_year, $url_month, 1 );
+            $first_day_weekday = (int) $first_of_month->format( 'N' ); // 1=Monday, 7=Sunday
+
+            // Calculate when the first Monday occurs
+            if ( $first_day_weekday === 1 ) {
+                // First day is already Monday
+                $first_monday = clone $first_of_month;
+            } else {
+                // Find next Monday after the 1st
+                $days_to_monday = 8 - $first_day_weekday;
+                $first_monday = clone $first_of_month;
+                $first_monday->modify( '+' . $days_to_monday . ' days' );
+            }
+
+            // Now calculate which Monday we need
+            // Week 1 includes all days before first Monday
+            // If week is 1 and first day is after Monday, we need the PREVIOUS Monday
+            if ( $url_week === 1 && $first_day_weekday > 1 ) {
+                // Week 1 includes days before the first Monday, so go back
+                $monday = clone $first_of_month;
+                $days_back = $first_day_weekday - 1;
+                $monday->modify( '-' . $days_back . ' days' );
+            } else {
+                // Calculate from first Monday
+                $weeks_to_add = $url_week - 1;
+                if ( $first_day_weekday === 1 ) {
+                    // If month starts on Monday, week 1 starts on that Monday
+                    $monday = clone $first_monday;
+                    $monday->modify( '+' . ( $weeks_to_add * 7 ) . ' days' );
+                } else {
+                    // If month doesn't start on Monday, week 1 starts on the Monday BEFORE the 1st
+                    $monday = clone $first_of_month;
+                    $monday->modify( '-' . ( $first_day_weekday - 1 ) . ' days' );
+                    $monday->modify( '+' . ( $weeks_to_add * 7 ) . ' days' );
+                }
+            }
         } else {
             // Get current week starting from Monday
             $now = new DateTime();
