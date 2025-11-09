@@ -196,10 +196,11 @@
 
 /* Category filter active state for events */
 .gcal-event-item.filtered-out,
-.gcal-list-event-card.filtered-out,
-.gcal-day.filtered-out {
+.gcal-list-event-card.filtered-out {
     display: none !important;
 }
+
+/* Note: We do NOT hide .gcal-day elements to preserve calendar grid structure */
 
 /* Loading state */
 .gcal-wrapper-with-sidebar.filtering {

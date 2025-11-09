@@ -221,16 +221,8 @@
                 }
             });
 
-            // Update day visibility - hide days with no visible events
-            const days = wrapper.querySelectorAll('.gcal-day');
-            days.forEach(day => {
-                const dayEvents = day.querySelectorAll('.gcal-event-item:not(.filtered-out)');
-                if (dayEvents.length === 0 && day.classList.contains('gcal-day-has-events')) {
-                    day.classList.add('filtered-out');
-                } else {
-                    day.classList.remove('filtered-out');
-                }
-            });
+            // Note: We do NOT hide day cells in calendar view to maintain grid structure
+            // Days remain visible even when they have no matching events
 
             // For list view - hide event cards
             const eventCards = wrapper.querySelectorAll('.gcal-list-event-card');
