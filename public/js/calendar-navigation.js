@@ -186,17 +186,22 @@
             let title = '';
 
             if (period === 'week') {
-                // Show week range
-                const weekStart = new Date(currentDate);
-                const weekEnd = new Date(currentDate);
-                weekEnd.setDate(weekEnd.getDate() + 6);
+                // Show week range (Monday to Sunday)
+                const dayOfWeek = currentDate.getDay();
+                const monday = new Date(currentDate);
+                // Adjust to get Monday (0=Sunday, 1=Monday, etc.)
+                const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                monday.setDate(currentDate.getDate() + diff);
+
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
 
                 const formatter = new Intl.DateTimeFormat('fr-FR', {
                     month: 'short',
                     day: 'numeric'
                 });
 
-                title = formatter.format(weekStart) + ' - ' + formatter.format(weekEnd);
+                title = formatter.format(monday) + ' - ' + formatter.format(sunday);
             } else if (period === 'month') {
                 // Show month and year
                 const formatter = new Intl.DateTimeFormat('fr-FR', {
