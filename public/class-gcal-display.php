@@ -34,7 +34,7 @@ class GCal_Display {
         ob_start();
         ?>
         <div class="gcal-empty-state">
-            <p><?php esc_html_e( 'No events found.', 'gcal-tag-filter' ); ?></p>
+            <p><?php esc_html_e( 'Aucun événement trouvé.', 'gcal-tag-filter' ); ?></p>
         </div>
         <?php
         return ob_get_clean();
@@ -122,13 +122,13 @@ class GCal_Display {
             <div class="gcal-weekday-headers">
                 <?php
                 $weekdays = array(
-                    __( 'Sun', 'gcal-tag-filter' ),
-                    __( 'Mon', 'gcal-tag-filter' ),
-                    __( 'Tue', 'gcal-tag-filter' ),
-                    __( 'Wed', 'gcal-tag-filter' ),
-                    __( 'Thu', 'gcal-tag-filter' ),
-                    __( 'Fri', 'gcal-tag-filter' ),
-                    __( 'Sat', 'gcal-tag-filter' ),
+                    __( 'Lun', 'gcal-tag-filter' ),
+                    __( 'Mar', 'gcal-tag-filter' ),
+                    __( 'Mer', 'gcal-tag-filter' ),
+                    __( 'Jeu', 'gcal-tag-filter' ),
+                    __( 'Ven', 'gcal-tag-filter' ),
+                    __( 'Sam', 'gcal-tag-filter' ),
+                    __( 'Dim', 'gcal-tag-filter' ),
                 );
                 foreach ( $weekdays as $day ) :
                     ?>
@@ -141,8 +141,10 @@ class GCal_Display {
                 // Start from the first day of the week containing the 1st
                 $calendar_start = clone $month_start;
                 $day_of_week = (int) $calendar_start->format( 'w' );
-                if ( $day_of_week > 0 ) {
-                    $calendar_start->modify( "-{$day_of_week} days" );
+                // Adjust for Monday start (0=Sunday, 1=Monday, etc.)
+                $days_from_monday = ( $day_of_week === 0 ) ? 6 : $day_of_week - 1;
+                if ( $days_from_monday > 0 ) {
+                    $calendar_start->modify( "-{$days_from_monday} days" );
                 }
 
                 // Render 6 weeks (42 days)
@@ -216,7 +218,7 @@ class GCal_Display {
                                 <?php echo $this->render_event_item( $event ); ?>
                             <?php endforeach; ?>
                         <?php else : ?>
-                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'gcal-tag-filter' ); ?></div>
+                            <div class="gcal-no-events"><?php esc_html_e( 'Aucun événement', 'gcal-tag-filter' ); ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -343,7 +345,7 @@ class GCal_Display {
 
                 <div class="gcal-event-time">
                     <?php if ( $event['is_all_day'] ) : ?>
-                        <?php esc_html_e( 'All day', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Toute la journée', 'gcal-tag-filter' ); ?>
                     <?php else : ?>
                         <span class="gcal-event-start"><?php echo esc_html( $start_date->format( 'g:i A' ) ); ?></span>
                     <?php endif; ?>

@@ -206,6 +206,23 @@
     display: none;
 }
 
+/* Links in Description */
+.gcal-modal-description a {
+    color: #2271b1;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.gcal-modal-description a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+.gcal-modal-description a:visited {
+    color: #5856d6;
+}
+
 /* Event Category Badge */
 .gcal-modal-category {
     display: inline-block;

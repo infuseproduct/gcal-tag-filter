@@ -113,7 +113,7 @@ class GCal_Calendar {
             error_log( 'Client authentication failed' );
             return new WP_Error(
                 'auth_failed',
-                __( 'Not authenticated with Google Calendar. Please connect your account in plugin settings.', 'gcal-tag-filter' )
+                __( 'Non authentifié avec Google Calendar. Veuillez connecter votre compte dans les paramètres du plugin.', 'gcal-tag-filter' )
             );
         }
 
@@ -124,7 +124,7 @@ class GCal_Calendar {
             error_log( 'No calendar selected' );
             return new WP_Error(
                 'no_calendar',
-                __( 'No calendar selected. Please select a calendar in plugin settings.', 'gcal-tag-filter' )
+                __( 'Aucun calendrier sélectionné. Veuillez sélectionner un calendrier dans les paramètres du plugin.', 'gcal-tag-filter' )
             );
         }
 
@@ -159,7 +159,7 @@ class GCal_Calendar {
                 'api_error',
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'Failed to fetch events from Google Calendar: %s', 'gcal-tag-filter' ),
+                    __( 'Échec de récupération des événements de Google Calendar : %s', 'gcal-tag-filter' ),
                     $e->getMessage()
                 )
             );
@@ -229,7 +229,7 @@ class GCal_Calendar {
 
             $processed[] = array(
                 'id'          => $event->getId(),
-                'title'       => $event->getSummary() ?? __( '(No title)', 'gcal-tag-filter' ),
+                'title'       => $event->getSummary() ?? __( '(Sans titre)', 'gcal-tag-filter' ),
                 'description' => $clean_description,
                 'location'    => $location,
                 'start'       => $start_time,
