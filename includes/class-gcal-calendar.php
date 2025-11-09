@@ -50,16 +50,19 @@ class GCal_Calendar {
         error_log( '=== GCal Get Events ===' );
         error_log( 'Period: ' . $period . ', Tags: ' . ( empty( $tags ) ? 'NONE' : implode( ',', $tags ) ) );
 
+        // Allow bypassing cache with query parameter for debugging
+        $bypass_cache = isset( $_GET['gcal_debug'] ) && $_GET['gcal_debug'] === '1';
+
         // Check cache first
         $cache_key = $this->cache->generate_key( $period, $tags );
         $cached_events = $this->cache->get( $cache_key );
 
-        if ( $cached_events !== false ) {
+        if ( $cached_events !== false && ! $bypass_cache ) {
             error_log( 'Returning cached events: ' . count( $cached_events ) );
             return $cached_events;
         }
 
-        error_log( 'Cache miss, fetching from API' );
+        error_log( $bypass_cache ? 'Cache bypassed via gcal_debug parameter' : 'Cache miss, fetching from API' );
 
         // Fetch from API
         $events = $this->fetch_events_from_api( $period );
