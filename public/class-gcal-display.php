@@ -61,7 +61,16 @@ class GCal_Display {
         $instance_id = 'gcal-' . uniqid();
 
         // Prepare events data for JavaScript
-        $events_json = wp_json_encode( $this->prepare_events_for_js( $events ) );
+        $prepared_events = $this->prepare_events_for_js( $events );
+        $events_json = wp_json_encode( $prepared_events );
+
+        // Debug logging
+        error_log( sprintf(
+            'GCal Display: Instance %s - Preparing %d events for JS (is_admin: %s)',
+            $instance_id,
+            count( $prepared_events ),
+            current_user_can( 'manage_options' ) ? 'yes' : 'no'
+        ) );
 
         ob_start();
         ?>
@@ -342,7 +351,16 @@ class GCal_Display {
         $instance_id = 'gcal-list-' . uniqid();
 
         // Prepare events data for JavaScript
-        $events_json = wp_json_encode( $this->prepare_events_for_js( $events ) );
+        $prepared_events = $this->prepare_events_for_js( $events );
+        $events_json = wp_json_encode( $prepared_events );
+
+        // Debug logging
+        error_log( sprintf(
+            'GCal Display: Instance %s - Preparing %d events for JS (is_admin: %s)',
+            $instance_id,
+            count( $prepared_events ),
+            current_user_can( 'manage_options' ) ? 'yes' : 'no'
+        ) );
 
         ob_start();
         ?>
