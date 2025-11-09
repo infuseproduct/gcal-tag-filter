@@ -239,7 +239,7 @@
             // Description
             if (event.description) {
                 html += '<div class="gcal-modal-description">';
-                html += this.escapeHtml(event.description).replace(/\n/g, '<br>');
+                html += this.sanitizeDescription(event.description);
                 html += '</div>';
             }
 
@@ -313,6 +313,47 @@
         getCategoryDisplayName: function(categoryId) {
             // This would ideally come from PHP, but we can use the ID as fallback
             return categoryId.charAt(0).toUpperCase() + categoryId.slice(1).toLowerCase().replace(/_/g, ' ');
+        },
+
+        /**
+         * Sanitize description HTML - allow safe tags, remove dangerous ones
+         *
+         * @param {string} description - Description HTML
+         * @returns {string} Sanitized HTML
+         */
+        sanitizeDescription: function(description) {
+            // The description comes from the server already processed
+            // It has newlines converted to <br> and may contain safe HTML like <a> tags
+            // We just need to ensure no dangerous attributes or scripts
+
+            const temp = document.createElement('div');
+            temp.innerHTML = description;
+
+            // Remove any script tags or event handlers
+            const scripts = temp.querySelectorAll('script');
+            scripts.forEach(function(script) {
+                script.remove();
+            });
+
+            // Remove dangerous attributes from all elements
+            const allElements = temp.querySelectorAll('*');
+            allElements.forEach(function(elem) {
+                // Remove event handler attributes
+                for (let i = elem.attributes.length - 1; i >= 0; i--) {
+                    const attr = elem.attributes[i];
+                    if (attr.name.startsWith('on')) {
+                        elem.removeAttribute(attr.name);
+                    }
+                }
+
+                // Ensure links have safe attributes
+                if (elem.tagName === 'A') {
+                    elem.setAttribute('target', '_blank');
+                    elem.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+
+            return temp.innerHTML;
         },
 
         /**
