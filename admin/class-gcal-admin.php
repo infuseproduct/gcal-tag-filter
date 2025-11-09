@@ -75,10 +75,12 @@ class GCal_Admin {
 
     /**
      * Register settings.
+     *
+     * NOTE: Client ID and Secret are NOT registered here because they are saved via AJAX.
+     * Registering them would cause WordPress to delete them when saving other settings
+     * (like calendar selection) because they're not present in those forms.
      */
     public function register_settings() {
-        register_setting( 'gcal_tag_filter_options', GCal_OAuth::OPTION_CLIENT_ID );
-        register_setting( 'gcal_tag_filter_options', GCal_OAuth::OPTION_CLIENT_SECRET );
         register_setting( 'gcal_tag_filter_options', GCal_OAuth::OPTION_CALENDAR_ID );
         register_setting( 'gcal_tag_filter_options', GCal_Cache::OPTION_DURATION );
         register_setting( 'gcal_tag_filter_options', GCal_Categories::OPTION_CATEGORIES );
