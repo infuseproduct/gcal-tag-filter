@@ -1,8 +1,8 @@
-=== Google Calendar Tag Filter ===
+=== Calendar Tag Filter for Google ===
 Contributors: infuseproduct
 Tags: google calendar, events, calendar, oauth, tag filter
 Requires at least: 5.8
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 1.0.1
 License: GPLv2 or later
@@ -12,7 +12,7 @@ Embeds Google Calendar events with tag-based filtering capabilities using OAuth 
 
 == Description ==
 
-Google Calendar Tag Filter is a powerful WordPress plugin that seamlessly embeds your Google Calendar events with advanced tag-based filtering. Perfect for organizations, communities, and businesses that need to display categorized events with a beautiful, responsive interface.
+Calendar Tag Filter for Google is a powerful WordPress plugin that seamlessly embeds your Google Calendar events with advanced tag-based filtering. Perfect for organizations, communities, and businesses that need to display categorized events with a beautiful, responsive interface.
 
 = Key Features =
 

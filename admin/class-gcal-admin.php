@@ -81,9 +81,55 @@ class GCal_Admin {
      * (like calendar selection) because they're not present in those forms.
      */
     public function register_settings() {
-        register_setting( 'gcal_tag_filter_options', GCal_OAuth::OPTION_CALENDAR_ID );
-        register_setting( 'gcal_tag_filter_options', GCal_Cache::OPTION_DURATION );
-        register_setting( 'gcal_tag_filter_options', GCal_Categories::OPTION_CATEGORIES );
+        register_setting(
+            'gcal_tag_filter_options',
+            GCal_OAuth::OPTION_CALENDAR_ID,
+            array(
+                'type' => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+            )
+        );
+        register_setting(
+            'gcal_tag_filter_options',
+            GCal_Cache::OPTION_DURATION,
+            array(
+                'type' => 'integer',
+                'sanitize_callback' => 'absint',
+            )
+        );
+        register_setting(
+            'gcal_tag_filter_options',
+            GCal_Categories::OPTION_CATEGORIES,
+            array(
+                'type' => 'array',
+                'sanitize_callback' => array( $this, 'sanitize_categories' ),
+            )
+        );
+    }
+
+    /**
+     * Sanitize categories array.
+     *
+     * @param array $categories Categories to sanitize.
+     * @return array Sanitized categories.
+     */
+    public function sanitize_categories( $categories ) {
+        if ( ! is_array( $categories ) ) {
+            return array();
+        }
+
+        $sanitized = array();
+        foreach ( $categories as $category ) {
+            if ( is_array( $category ) ) {
+                $sanitized[] = array(
+                    'slug' => isset( $category['slug'] ) ? sanitize_key( $category['slug'] ) : '',
+                    'name' => isset( $category['name'] ) ? sanitize_text_field( $category['name'] ) : '',
+                    'color' => isset( $category['color'] ) ? sanitize_hex_color( $category['color'] ) : '',
+                );
+            }
+        }
+
+        return $sanitized;
     }
 
     /**

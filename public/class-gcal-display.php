@@ -723,14 +723,14 @@ class GCal_Display {
 
                         // Trim to 30 words, preserving HTML
                         // wp_trim_words strips tags by default, so we need to manually handle HTML trimming
-                        $words = str_word_count( strip_tags( $description_with_links ), 2, '0123456789' );
+                        $words = str_word_count( wp_strip_all_tags( $description_with_links ), 2, '0123456789' );
                         if ( count( $words ) > 30 ) {
                             // Find position of 30th word in the original HTML
                             $word_positions = array_keys( $words );
                             $cut_position = $word_positions[29] + strlen( $words[ $word_positions[29] ] );
 
                             // Cut at the character position in the stripped text
-                            $stripped_text = strip_tags( $description_with_links );
+                            $stripped_text = wp_strip_all_tags( $description_with_links );
                             $trimmed_text = substr( $stripped_text, 0, $cut_position );
 
                             // Find this position in the HTML version and cut there
@@ -1006,7 +1006,7 @@ class GCal_Display {
      */
     private function make_links_clickable( $text ) {
         // Check if text contains HTML tags (especially links)
-        $has_html = strip_tags( $text ) !== $text;
+        $has_html = wp_strip_all_tags( $text ) !== $text;
 
         if ( $has_html ) {
             // Text contains HTML - sanitize it but preserve safe tags

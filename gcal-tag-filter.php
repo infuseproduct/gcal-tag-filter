@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Google Calendar Tag Filter
+ * Plugin Name: Calendar Tag Filter for Google
  * Plugin URI: https://github.com/infuseproduct/google-calendar-tag-filter
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
  * Version: 1.0.1
@@ -88,15 +88,10 @@ register_deactivation_hook( __FILE__, 'gcal_tag_filter_deactivate' );
 
 /**
  * Load plugin textdomain for translations.
+ * Note: When hosted on WordPress.org, translations are automatically loaded.
+ * This function is removed as it's not needed for WordPress.org hosted plugins.
  */
-function gcal_tag_filter_load_textdomain() {
-    load_plugin_textdomain(
-        'google-calendar-tag-filter',
-        false,
-        dirname( plugin_basename( __FILE__ ) ) . '/languages'
-    );
-}
-add_action( 'plugins_loaded', 'gcal_tag_filter_load_textdomain' );
+// Removed load_plugin_textdomain() - WordPress.org handles translations automatically
 
 /**
  * Register custom query variables for calendar navigation.
@@ -279,7 +274,7 @@ function gcal_ajax_fetch_events() {
     check_ajax_referer( 'gcal-ajax-nonce', 'nonce' );
 
     // Get parameters
-    $year  = isset( $_POST['year'] ) ? intval( $_POST['year'] ) : date( 'Y' );
+    $year  = isset( $_POST['year'] ) ? intval( $_POST['year'] ) : gmdate( 'Y' );
     $month = isset( $_POST['month'] ) ? intval( $_POST['month'] ) : null;
 
     // Create date range based on whether month is provided

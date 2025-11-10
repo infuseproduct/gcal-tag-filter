@@ -65,7 +65,7 @@ class GCal_Shortcode {
 
         // Check for URL parameter override (from view toggle)
         if ( isset( $_GET['gcal_view'] ) ) {
-            $url_period = sanitize_text_field( $_GET['gcal_view'] );
+            $url_period = sanitize_text_field( wp_unslash( $_GET['gcal_view'] ) );
             $validated_url_period = $this->validate_period( $url_period );
             if ( $validated_url_period ) {
                 $period = $validated_url_period;
@@ -74,7 +74,7 @@ class GCal_Shortcode {
 
         // Check for URL parameter for display style toggle
         if ( isset( $_GET['gcal_display'] ) && $show_display_style ) {
-            $url_view = sanitize_text_field( $_GET['gcal_display'] );
+            $url_view = sanitize_text_field( wp_unslash( $_GET['gcal_display'] ) );
             $validated_url_view = $this->validate_view( $url_view );
             if ( $validated_url_view ) {
                 $view = $validated_url_view;
@@ -84,7 +84,7 @@ class GCal_Shortcode {
         // Check for URL parameter for category filter
         $selected_category = '';
         if ( isset( $_GET['gcal_category'] ) ) {
-            $selected_category = sanitize_text_field( $_GET['gcal_category'] );
+            $selected_category = sanitize_text_field( wp_unslash( $_GET['gcal_category'] ) );
         } elseif ( ! empty( $tags ) ) {
             // Pre-select the first tag if specified in shortcode
             // UNLESS it's a wildcard pattern - wildcards should show "All categories" as active

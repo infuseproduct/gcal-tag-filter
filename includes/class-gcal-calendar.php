@@ -215,8 +215,8 @@ class GCal_Calendar {
      */
     private function get_time_range( $period, $year = null, $month = null, $week = null ) {
         // Use provided year or current year
-        $target_year = $year ? $year : (int) date( 'Y' );
-        $target_month = $month ? $month : (int) date( 'n' );
+        $target_year = $year ? $year : (int) gmdate( 'Y' );
+        $target_month = $month ? $month : (int) gmdate( 'n' );
 
         $now = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
 

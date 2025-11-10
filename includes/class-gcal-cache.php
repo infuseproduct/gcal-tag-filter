@@ -91,7 +91,7 @@ class GCal_Cache {
         $date_key = '';
         if ( $period === 'future' ) {
             // For future period, use current date as part of key so cache updates daily
-            $date_key = date( 'Y-m-d' );
+            $date_key = gmdate( 'Y-m-d' );
         } elseif ( $period === 'week' ) {
             if ( $year && $month ) {
                 $date_key = sprintf( '%d-W%02d', $year, $week ? $week : 1 );
@@ -106,13 +106,13 @@ class GCal_Cache {
             if ( $year && $month ) {
                 $date_key = sprintf( '%d-%02d', $year, $month );
             } else {
-                $date_key = date( 'Y-m' );
+                $date_key = gmdate( 'Y-m' );
             }
         } elseif ( $period === 'year' ) {
             if ( $year ) {
                 $date_key = (string) $year;
             } else {
-                $date_key = date( 'Y' );
+                $date_key = gmdate( 'Y' );
             }
         }
 
