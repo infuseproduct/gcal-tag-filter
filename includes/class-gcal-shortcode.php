@@ -64,8 +64,8 @@ class GCal_Shortcode {
         $hide_past          = filter_var( $atts['hide_past'], FILTER_VALIDATE_BOOLEAN );
 
         // Check for URL parameter override (from view toggle)
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public parameter for calendar navigation
         if ( isset( $_GET['gcal_view'] ) ) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public parameter for calendar navigation
             $url_period = sanitize_text_field( wp_unslash( $_GET['gcal_view'] ) );
             $validated_url_period = $this->validate_period( $url_period );
             if ( $validated_url_period ) {
@@ -74,8 +74,8 @@ class GCal_Shortcode {
         }
 
         // Check for URL parameter for display style toggle
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public parameter for display style
         if ( isset( $_GET['gcal_display'] ) && $show_display_style ) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public parameter for display style
             $url_view = sanitize_text_field( wp_unslash( $_GET['gcal_display'] ) );
             $validated_url_view = $this->validate_view( $url_view );
             if ( $validated_url_view ) {
@@ -85,8 +85,8 @@ class GCal_Shortcode {
 
         // Check for URL parameter for category filter
         $selected_category = '';
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public parameter for category filtering
         if ( isset( $_GET['gcal_category'] ) ) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public parameter for category filtering
             $selected_category = sanitize_text_field( wp_unslash( $_GET['gcal_category'] ) );
         } elseif ( ! empty( $tags ) ) {
             // Pre-select the first tag if specified in shortcode

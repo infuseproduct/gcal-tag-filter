@@ -180,6 +180,7 @@ class GCal_Admin {
      * Handle OAuth callback.
      */
     public function handle_oauth_callback() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, verified by user capability check
         if ( ! isset( $_GET['gcal_oauth_callback'] ) || ! isset( $_GET['code'] ) ) {
             return;
         }
@@ -188,6 +189,7 @@ class GCal_Admin {
             wp_die( esc_html__( 'You do not have permission to perform this action.', 'google-calendar-tag-filter' ) );
         }
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, verified by user capability check
         $code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 
         if ( $this->oauth->handle_callback( $code ) ) {

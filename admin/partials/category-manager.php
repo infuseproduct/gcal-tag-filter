@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$categories = GCal_Categories::get_categories();
+$gcal_categories = GCal_Categories::get_categories();
 
 // Sort categories by display name (A-Z)
-if ( ! empty( $categories ) ) {
-    usort( $categories, function( $a, $b ) {
+if ( ! empty( $gcal_categories ) ) {
+    usort( $gcal_categories, function( $a, $b ) {
         return strcasecmp( $a['display_name'], $b['display_name'] );
     } );
 }
@@ -77,7 +77,7 @@ if ( ! empty( $categories ) ) {
     <div class="gcal-categories-list">
         <h3><?php esc_html_e( 'Existing Categories', 'google-calendar-tag-filter' ); ?></h3>
 
-        <?php if ( empty( $categories ) ) : ?>
+        <?php if ( empty( $gcal_categories ) ) : ?>
             <p class="description"><?php esc_html_e( 'No categories defined yet.', 'google-calendar-tag-filter' ); ?></p>
         <?php else : ?>
             <table class="wp-list-table widefat fixed striped">
@@ -90,27 +90,27 @@ if ( ! empty( $categories ) ) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ( $categories as $category ) : ?>
-                        <tr data-category-id="<?php echo esc_attr( $category['id'] ); ?>">
+                    <?php foreach ( $gcal_categories as $gcal_category ) : ?>
+                        <tr data-category-id="<?php echo esc_attr( $gcal_category['id'] ); ?>">
                             <td>
-                                <code><?php echo esc_html( $category['id'] ); ?></code>
+                                <code><?php echo esc_html( $gcal_category['id'] ); ?></code>
                             </td>
                             <td class="category-display-name">
-                                <?php echo esc_html( $category['display_name'] ); ?>
+                                <?php echo esc_html( $gcal_category['display_name'] ); ?>
                             </td>
                             <td>
-                                <span class="gcal-color-preview" style="background-color: <?php echo esc_attr( $category['color'] ); ?>"></span>
-                                <code class="category-color"><?php echo esc_html( $category['color'] ); ?></code>
+                                <span class="gcal-color-preview" style="background-color: <?php echo esc_attr( $gcal_category['color'] ); ?>"></span>
+                                <code class="category-color"><?php echo esc_html( $gcal_category['color'] ); ?></code>
                             </td>
                             <td>
                                 <button type="button" class="button button-small gcal-edit-category"
-                                        data-id="<?php echo esc_attr( $category['id'] ); ?>"
-                                        data-display-name="<?php echo esc_attr( $category['display_name'] ); ?>"
-                                        data-color="<?php echo esc_attr( $category['color'] ); ?>">
+                                        data-id="<?php echo esc_attr( $gcal_category['id'] ); ?>"
+                                        data-display-name="<?php echo esc_attr( $gcal_category['display_name'] ); ?>"
+                                        data-color="<?php echo esc_attr( $gcal_category['color'] ); ?>">
                                     <?php esc_html_e( 'Edit', 'google-calendar-tag-filter' ); ?>
                                 </button>
                                 <button type="button" class="button button-small gcal-button-danger gcal-delete-category"
-                                        data-id="<?php echo esc_attr( $category['id'] ); ?>">
+                                        data-id="<?php echo esc_attr( $gcal_category['id'] ); ?>">
                                     <?php esc_html_e( 'Delete', 'google-calendar-tag-filter' ); ?>
                                 </button>
                             </td>

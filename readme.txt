@@ -1,4 +1,4 @@
-=== Calendar Tag Filter for Google ===
+=== GCal Tag Filter for Google Calendar ===
 Contributors: infuseproduct
 Tags: google calendar, events, calendar, oauth, tag filter
 Requires at least: 5.8

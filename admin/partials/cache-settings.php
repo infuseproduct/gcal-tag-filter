@@ -42,9 +42,9 @@ if ( ! function_exists( 'gcal_format_duration' ) ) {
     }
 }
 
-$cache = new GCal_Cache();
-$cache_stats = $cache->get_cache_stats();
-$current_duration = $cache->get_cache_duration();
+$gcal_cache = new GCal_Cache();
+$gcal_cache_stats = $gcal_cache->get_cache_stats();
+$gcal_current_duration = $gcal_cache->get_cache_duration();
 ?>
 
 <div class="gcal-cache-settings">
@@ -59,9 +59,9 @@ $current_duration = $cache->get_cache_duration();
                 <td>
                     <input type="range" name="<?php echo esc_attr( GCal_Cache::OPTION_DURATION ); ?>"
                            id="cache_duration" min="0" max="3600" step="60"
-                           value="<?php echo esc_attr( $current_duration ); ?>"
+                           value="<?php echo esc_attr( $gcal_current_duration ); ?>"
                            class="gcal-cache-slider" />
-                    <span id="cache_duration_display"><?php echo esc_html( gcal_format_duration( $current_duration ) ); ?></span>
+                    <span id="cache_duration_display"><?php echo esc_html( gcal_format_duration( $gcal_current_duration ) ); ?></span>
 
                     <p class="description">
                         <?php esc_html_e( 'How long to cache calendar events before refreshing from Google Calendar. Set to 0 for no caching.', 'google-calendar-tag-filter' ); ?>
@@ -81,19 +81,19 @@ $current_duration = $cache->get_cache_duration();
             <tr>
                 <th><?php esc_html_e( 'Cached Items', 'google-calendar-tag-filter' ); ?></th>
                 <td>
-                    <strong><?php echo esc_html( $cache_stats['cached_items'] ); ?></strong>
+                    <strong><?php echo esc_html( $gcal_cache_stats['cached_items'] ); ?></strong>
                     <?php esc_html_e( 'items', 'google-calendar-tag-filter' ); ?>
                 </td>
             </tr>
-            <?php if ( $cache_stats['last_cache_time'] ) : ?>
+            <?php if ( $gcal_cache_stats['last_cache_time'] ) : ?>
                 <tr>
                     <th><?php esc_html_e( 'Last Refresh', 'google-calendar-tag-filter' ); ?></th>
-                    <td><?php echo esc_html( $cache_stats['last_cache_time'] ); ?></td>
+                    <td><?php echo esc_html( $gcal_cache_stats['last_cache_time'] ); ?></td>
                 </tr>
             <?php endif; ?>
             <tr>
                 <th><?php esc_html_e( 'Current Duration', 'google-calendar-tag-filter' ); ?></th>
-                <td><?php echo esc_html( gcal_format_duration( $cache_stats['duration'] ) ); ?></td>
+                <td><?php echo esc_html( gcal_format_duration( $gcal_cache_stats['duration'] ) ); ?></td>
             </tr>
         </table>
 

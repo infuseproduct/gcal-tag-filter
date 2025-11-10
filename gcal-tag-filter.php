@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Calendar Tag Filter for Google
+ * Plugin Name: GCal Tag Filter for Google Calendar
  * Plugin URI: https://github.com/infuseproduct/google-calendar-tag-filter
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
  * Version: 1.0.1
