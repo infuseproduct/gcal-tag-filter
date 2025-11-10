@@ -510,7 +510,7 @@
 
             // Build calendar HTML matching PHP structure exactly
             let html = '<div class="gcal-weekday-headers">';
-            const weekdays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+            const weekdays = gcalData.i18n.weekdaysShort;
             weekdays.forEach(day => {
                 html += `<div class="gcal-weekday">${day}</div>`;
             });
@@ -553,7 +553,7 @@
             const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust for Monday start
             monday.setDate(date.getDate() + diff);
 
-            const frenchDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+            const frenchDays = gcalData.i18n.weekdaysShort;
 
             // Group events by date
             const eventsByDate = {};
@@ -586,7 +586,7 @@
                         html += this.renderEventHTML(event);
                     });
                 } else {
-                    html += '<div class="gcal-no-events">Aucun événement</div>';
+                    html += `<div class="gcal-no-events">${gcalData.i18n.noEvents}</div>`;
                 }
 
                 html += '</div></div>';
@@ -601,7 +601,7 @@
          */
         renderYearGrid: function(container, date, events) {
             const year = date.getFullYear();
-            const frenchMonths = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            const frenchMonths = gcalData.i18n.months;
 
             // Group events by month
             const eventsByMonth = {};
@@ -624,7 +624,7 @@
                 html += `<div class="gcal-year-month">`;
                 html += `<div class="gcal-year-month-header">`;
                 html += `<h4>${monthName}</h4>`;
-                html += `<span class="gcal-year-month-count">${monthEvents.length} ${monthEvents.length === 1 ? 'événement' : 'événements'}</span>`;
+                html += `<span class="gcal-year-month-count">${monthEvents.length} ${monthEvents.length === 1 ? gcalData.i18n.event : gcalData.i18n.events}</span>`;
                 html += `</div>`;
                 html += `<div class="gcal-year-month-events">`;
 
@@ -651,7 +651,7 @@
                         html += `</button>`;
                     }
                 } else {
-                    html += `<div class="gcal-no-events">Aucun événement</div>`;
+                    html += `<div class="gcal-no-events">${gcalData.i18n.noEvents}</div>`;
                 }
 
                 html += `</div></div>`;

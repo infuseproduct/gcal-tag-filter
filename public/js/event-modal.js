@@ -222,12 +222,12 @@
             html += '<div class="gcal-modal-meta-item">';
             html += '<span class="gcal-modal-meta-icon">📅</span>';
             html += '<div class="gcal-modal-meta-content">';
-            html += '<div class="gcal-modal-meta-label">Date et heure</div>';
+            html += '<div class="gcal-modal-meta-label">' + (gcalData.i18n.dateAndTime || 'Date and time') + '</div>';
             html += '<div class="gcal-modal-datetime">';
 
             if (event.isAllDay) {
                 html += '<div class="gcal-modal-date">' + (event.formattedDate || event.startDate) + '</div>';
-                html += '<div class="gcal-all-day-badge">Toute la journée</div>';
+                html += '<div class="gcal-all-day-badge">' + gcalData.i18n.allDay + '</div>';
             } else {
                 html += '<div class="gcal-modal-date">' + (event.formattedRange || event.formattedDateTime) + '</div>';
                 if (event.timezoneAbbr) {
@@ -242,7 +242,7 @@
                 html += '<div class="gcal-modal-meta-item">';
                 html += '<span class="gcal-modal-meta-icon">📍</span>';
                 html += '<div class="gcal-modal-meta-content">';
-                html += '<div class="gcal-modal-meta-label">Lieu</div>';
+                html += '<div class="gcal-modal-meta-label">' + (gcalData.i18n.location || 'Location') + '</div>';
                 html += '<div class="gcal-modal-meta-value">';
 
                 if (event.mapLink) {
@@ -269,11 +269,11 @@
             if (event.htmlLink) {
                 html += '<div class="gcal-modal-footer">';
                 html += '<a href="' + this.escapeHtml(event.htmlLink) + '" target="_blank" rel="noopener" class="gcal-modal-footer-link">';
-                html += 'Voir dans Google Calendar →';
+                html += (gcalData.i18n.viewInGoogleCalendar || 'View in Google Calendar') + ' →';
                 html += '</a>';
-                html += '<button type="button" class="gcal-share-button" data-event-id="' + this.escapeHtml(event.id) + '" title="Copier le lien">';
+                html += '<button type="button" class="gcal-share-button" data-event-id="' + this.escapeHtml(event.id) + '" title="' + (gcalData.i18n.copyLink || 'Copy link') + '">';
                 html += '<span class="gcal-share-icon">🔗</span>';
-                html += '<span class="gcal-share-text">Copier le lien</span>';
+                html += '<span class="gcal-share-text">' + (gcalData.i18n.copyLink || 'Copy link') + '</span>';
                 html += '</button>';
                 html += '</div>';
             }

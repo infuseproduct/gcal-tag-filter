@@ -34,7 +34,7 @@ class GCal_Display {
         ob_start();
         ?>
         <div class="gcal-empty-state">
-            <p><?php esc_html_e( 'Aucun événement trouvé.', 'gcal-tag-filter' ); ?></p>
+            <p><?php esc_html_e( 'No events found.', 'gcal-tag-filter' ); ?></p>
         </div>
         <?php
         return ob_get_clean();
@@ -86,23 +86,23 @@ class GCal_Display {
             <?php if ( $period !== 'future' ) : ?>
             <div class="gcal-calendar-header">
                 <div class="gcal-header-left">
-                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Précédent', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'gcal-tag-filter' ); ?>">
                         ‹
                     </button>
                     <h3 class="gcal-calendar-title"></h3>
-                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Suivant', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Next', 'gcal-tag-filter' ); ?>">
                         ›
                     </button>
                 </div>
                 <div class="gcal-view-toggle">
                     <button class="gcal-view-btn <?php echo $period === 'week' ? 'active' : ''; ?>" data-view="week">
-                        <?php esc_html_e( 'Semaine', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Week', 'gcal-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'month' ? 'active' : ''; ?>" data-view="month">
-                        <?php esc_html_e( 'Mois', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Month', 'gcal-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'year' ? 'active' : ''; ?>" data-view="year">
-                        <?php esc_html_e( 'Année', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Year', 'gcal-tag-filter' ); ?>
                     </button>
                 </div>
             </div>
@@ -164,13 +164,13 @@ class GCal_Display {
             <div class="gcal-weekday-headers">
                 <?php
                 $weekdays = array(
-                    __( 'Lun', 'gcal-tag-filter' ),
-                    __( 'Mar', 'gcal-tag-filter' ),
-                    __( 'Mer', 'gcal-tag-filter' ),
-                    __( 'Jeu', 'gcal-tag-filter' ),
-                    __( 'Ven', 'gcal-tag-filter' ),
-                    __( 'Sam', 'gcal-tag-filter' ),
-                    __( 'Dim', 'gcal-tag-filter' ),
+                    __( 'Mon', 'gcal-tag-filter' ),
+                    __( 'Tue', 'gcal-tag-filter' ),
+                    __( 'Wed', 'gcal-tag-filter' ),
+                    __( 'Thu', 'gcal-tag-filter' ),
+                    __( 'Fri', 'gcal-tag-filter' ),
+                    __( 'Sat', 'gcal-tag-filter' ),
+                    __( 'Sun', 'gcal-tag-filter' ),
                 );
                 foreach ( $weekdays as $day ) :
                     ?>
@@ -295,8 +295,16 @@ class GCal_Display {
             $monday->modify( '-' . ( $day_of_week - 1 ) . ' days' ); // Go back to Monday
         }
 
-        // French day names
-        $french_days = array( 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim' );
+        // Abbreviated day names for week view
+        $weekday_abbr = array(
+            __( 'Mon', 'gcal-tag-filter' ),
+            __( 'Tue', 'gcal-tag-filter' ),
+            __( 'Wed', 'gcal-tag-filter' ),
+            __( 'Thu', 'gcal-tag-filter' ),
+            __( 'Fri', 'gcal-tag-filter' ),
+            __( 'Sat', 'gcal-tag-filter' ),
+            __( 'Sun', 'gcal-tag-filter' ),
+        );
 
         ob_start();
         ?>
@@ -311,7 +319,7 @@ class GCal_Display {
                 ?>
                 <div class="gcal-week-day <?php echo $is_today ? 'gcal-day-today' : ''; ?>" data-date="<?php echo esc_attr( $date_str ); ?>">
                     <div class="gcal-week-day-header">
-                        <div class="gcal-week-day-name"><?php echo esc_html( $french_days[ $i ] ); ?></div>
+                        <div class="gcal-week-day-name"><?php echo esc_html( $weekday_abbr[ $i ] ); ?></div>
                         <div class="gcal-week-day-number"><?php echo esc_html( $date->format( 'j' ) ); ?></div>
                     </div>
                     <div class="gcal-week-day-events">
@@ -320,7 +328,7 @@ class GCal_Display {
                                 <?php echo $this->render_event_item( $event ); ?>
                             <?php endforeach; ?>
                         <?php else : ?>
-                            <div class="gcal-no-events"><?php esc_html_e( 'Aucun événement', 'gcal-tag-filter' ); ?></div>
+                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'gcal-tag-filter' ); ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -365,15 +373,28 @@ class GCal_Display {
                 $month_key = sprintf( '%s-%02d', $year, $month );
                 $month_events = $events_by_month[ $month_key ] ?? array();
                 $month_date = new DateTime( $month_key . '-01' );
-                $french_months = array( 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre' );
-                $month_name = $french_months[ $month - 1 ];
+                $month_names = array(
+                    __( 'January', 'gcal-tag-filter' ),
+                    __( 'February', 'gcal-tag-filter' ),
+                    __( 'March', 'gcal-tag-filter' ),
+                    __( 'April', 'gcal-tag-filter' ),
+                    __( 'May', 'gcal-tag-filter' ),
+                    __( 'June', 'gcal-tag-filter' ),
+                    __( 'July', 'gcal-tag-filter' ),
+                    __( 'August', 'gcal-tag-filter' ),
+                    __( 'September', 'gcal-tag-filter' ),
+                    __( 'October', 'gcal-tag-filter' ),
+                    __( 'November', 'gcal-tag-filter' ),
+                    __( 'December', 'gcal-tag-filter' ),
+                );
+                $month_name = $month_names[ $month - 1 ];
                 ?>
                 <div class="gcal-year-month">
                     <div class="gcal-year-month-header">
                         <h4><?php echo esc_html( ucfirst( $month_name ) ); ?></h4>
                         <span class="gcal-year-month-count">
                             <?php echo count( $month_events ); ?>
-                            <?php echo count( $month_events ) === 1 ? esc_html__( 'événement', 'gcal-tag-filter' ) : esc_html__( 'événements', 'gcal-tag-filter' ); ?>
+                            <?php echo count( $month_events ) === 1 ? esc_html__( 'event', 'gcal-tag-filter' ) : esc_html__( 'events', 'gcal-tag-filter' ); ?>
                         </span>
                     </div>
                     <div class="gcal-year-month-events">
@@ -397,12 +418,12 @@ class GCal_Display {
                             <?php endforeach; ?>
                             <?php if ( count( $month_events ) > 5 ) : ?>
                                 <button class="gcal-year-more" data-month="<?php echo esc_attr( $month_key ); ?>">
-                                    <span class="gcal-year-more-text">+<?php echo count( $month_events ) - 5; ?> <?php esc_html_e( 'de plus', 'gcal-tag-filter' ); ?></span>
-                                    <span class="gcal-year-less-text" style="display: none;"><?php esc_html_e( 'Voir moins', 'gcal-tag-filter' ); ?></span>
+                                    <span class="gcal-year-more-text">+<?php echo count( $month_events ) - 5; ?> <?php esc_html_e( 'more', 'gcal-tag-filter' ); ?></span>
+                                    <span class="gcal-year-less-text" style="display: none;"><?php esc_html_e( 'Show less', 'gcal-tag-filter' ); ?></span>
                                 </button>
                             <?php endif; ?>
                         <?php else : ?>
-                            <div class="gcal-no-events"><?php esc_html_e( 'Aucun événement', 'gcal-tag-filter' ); ?></div>
+                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'gcal-tag-filter' ); ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -482,23 +503,23 @@ class GCal_Display {
             <?php if ( $period !== 'future' ) : ?>
             <div class="gcal-list-header">
                 <div class="gcal-header-left">
-                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Précédent', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'gcal-tag-filter' ); ?>">
                         ‹
                     </button>
                     <h3 class="gcal-list-title"></h3>
-                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Suivant', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Next', 'gcal-tag-filter' ); ?>">
                         ›
                     </button>
                 </div>
                 <div class="gcal-view-toggle">
                     <button class="gcal-view-btn <?php echo $period === 'week' ? 'active' : ''; ?>" data-view="week">
-                        <?php esc_html_e( 'Semaine', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Week', 'gcal-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'month' ? 'active' : ''; ?>" data-view="month">
-                        <?php esc_html_e( 'Mois', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Month', 'gcal-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'year' ? 'active' : ''; ?>" data-view="year">
-                        <?php esc_html_e( 'Année', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Year', 'gcal-tag-filter' ); ?>
                     </button>
                 </div>
             </div>
@@ -597,14 +618,15 @@ class GCal_Display {
         if ( $is_untagged ) {
             // Untagged events get black background (for admins only)
             $category_color = '#000000';
-            $category_name = '⚠️ Non catégorisé';
+            $category_name = '⚠️ ' . __( 'Uncategorized', 'gcal-tag-filter' );
             $css_class = 'gcal-event-untagged';
         } elseif ( $has_unknown_tags ) {
             // Events with unknown tags get dark red background (for admins only)
             $category_color = '#8B0000';
             // Show the first invalid tag
             $first_invalid = ! empty( $event['invalid_tags'][0] ) ? $event['invalid_tags'][0] : 'UNKNOWN';
-            $category_name = '⚠️ Tag inconnu: ' . $first_invalid;
+            /* translators: %s: invalid tag name */
+            $category_name = '⚠️ ' . sprintf( __( 'Unknown tag: %s', 'gcal-tag-filter' ), $first_invalid );
             $css_class = 'gcal-event-unknown-tags';
         } elseif ( ! empty( $event['tags'] ) ) {
             $category_color = GCal_Categories::get_category_color( $event['tags'][0] );
@@ -622,17 +644,38 @@ class GCal_Display {
 
             <div class="gcal-event-date">
                 <?php
-                $french_months_short = array( 'jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'aoû', 'sep', 'oct', 'nov', 'déc' );
-                $french_days_short = array( 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.', 'Dim.' );
+                $month_abbr = array(
+                    __( 'Jan', 'gcal-tag-filter' ),
+                    __( 'Feb', 'gcal-tag-filter' ),
+                    __( 'Mar', 'gcal-tag-filter' ),
+                    __( 'Apr', 'gcal-tag-filter' ),
+                    __( 'May', 'gcal-tag-filter' ),
+                    __( 'Jun', 'gcal-tag-filter' ),
+                    __( 'Jul', 'gcal-tag-filter' ),
+                    __( 'Aug', 'gcal-tag-filter' ),
+                    __( 'Sep', 'gcal-tag-filter' ),
+                    __( 'Oct', 'gcal-tag-filter' ),
+                    __( 'Nov', 'gcal-tag-filter' ),
+                    __( 'Dec', 'gcal-tag-filter' ),
+                );
+                $weekday_abbr_dot = array(
+                    __( 'Mon.', 'gcal-tag-filter' ),
+                    __( 'Tue.', 'gcal-tag-filter' ),
+                    __( 'Wed.', 'gcal-tag-filter' ),
+                    __( 'Thu.', 'gcal-tag-filter' ),
+                    __( 'Fri.', 'gcal-tag-filter' ),
+                    __( 'Sat.', 'gcal-tag-filter' ),
+                    __( 'Sun.', 'gcal-tag-filter' ),
+                );
                 $month_index = (int) $start_date->format( 'n' ) - 1;
                 $day_of_week_index = (int) $start_date->format( 'N' ) - 1; // 1 (Monday) to 7 (Sunday)
                 ?>
-                <div class="gcal-event-weekday"><?php echo esc_html( $french_days_short[ $day_of_week_index ] ); ?></div>
+                <div class="gcal-event-weekday"><?php echo esc_html( $weekday_abbr_dot[ $day_of_week_index ] ); ?></div>
                 <div class="gcal-event-day"><?php echo esc_html( $start_date->format( 'd' ) ); ?></div>
-                <div class="gcal-event-month"><?php echo esc_html( $french_months_short[ $month_index ] ); ?></div>
+                <div class="gcal-event-month"><?php echo esc_html( $month_abbr[ $month_index ] ); ?></div>
                 <div class="gcal-event-time">
                     <?php if ( $event['is_all_day'] ) : ?>
-                        <?php esc_html_e( 'Toute la journée', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'All day', 'gcal-tag-filter' ); ?>
                     <?php else : ?>
                         <?php
                         $end_date = new DateTime( $event['end'] );
@@ -692,7 +735,7 @@ class GCal_Display {
                 <?php endif; ?>
 
                 <button class="gcal-event-read-more" data-event-id="<?php echo esc_attr( $event['id'] ); ?>">
-                    <?php esc_html_e( 'En savoir plus', 'gcal-tag-filter' ); ?> →
+                    <?php esc_html_e( 'Learn more', 'gcal-tag-filter' ); ?> →
                 </button>
             </div>
         </div>
@@ -781,11 +824,11 @@ class GCal_Display {
                 <div class="gcal-display-style-toggle">
                     <button class="gcal-display-btn <?php echo $current_view === 'list' ? 'active' : ''; ?>" data-display="list">
                         <span class="dashicons dashicons-list-view"></span>
-                        <?php esc_html_e( 'Liste', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'List', 'gcal-tag-filter' ); ?>
                     </button>
                     <button class="gcal-display-btn <?php echo $current_view === 'calendar' ? 'active' : ''; ?>" data-display="calendar">
                         <span class="dashicons dashicons-calendar-alt"></span>
-                        <?php esc_html_e( 'Calendrier', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Calendar', 'gcal-tag-filter' ); ?>
                     </button>
                 </div>
             <?php endif; ?>
@@ -835,13 +878,13 @@ class GCal_Display {
         ob_start();
         ?>
         <div class="gcal-category-sidebar" data-instance="<?php echo esc_attr( $instance_id ); ?>">
-            <h3 class="gcal-category-title"><?php esc_html_e( 'Catégories', 'gcal-tag-filter' ); ?></h3>
+            <h3 class="gcal-category-title"><?php esc_html_e( 'Categories', 'gcal-tag-filter' ); ?></h3>
 
             <!-- Mobile Dropdown -->
             <div class="gcal-category-dropdown-wrapper">
                 <select class="gcal-category-dropdown" data-instance="<?php echo esc_attr( $instance_id ); ?>">
                     <option value="" <?php echo empty( $selected_category ) ? 'selected' : ''; ?>>
-                        <?php esc_html_e( 'Toutes les catégories', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'All categories', 'gcal-tag-filter' ); ?>
                     </option>
                     <?php foreach ( $all_categories as $category ) : ?>
                         <option value="<?php echo esc_attr( $category ); ?>"
@@ -851,12 +894,12 @@ class GCal_Display {
                     <?php endforeach; ?>
                     <?php if ( $is_admin && $has_untagged ) : ?>
                         <option value="UNTAGGED" <?php echo strtoupper( $selected_category ) === 'UNTAGGED' ? 'selected' : ''; ?>>
-                            ⚠️ <?php esc_html_e( 'Sans catégorie', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Uncategorized', 'gcal-tag-filter' ); ?>
                         </option>
                     <?php endif; ?>
                     <?php if ( $is_admin && $has_unknown_tags ) : ?>
                         <option value="UNKNOWN" <?php echo strtoupper( $selected_category ) === 'UNKNOWN' ? 'selected' : ''; ?>>
-                            ⚠️ <?php esc_html_e( 'Tags inconnus', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Unknown tags', 'gcal-tag-filter' ); ?>
                         </option>
                     <?php endif; ?>
                 </select>
@@ -867,7 +910,7 @@ class GCal_Display {
                 <li>
                     <button class="gcal-category-btn <?php echo empty( $selected_category ) ? 'active' : ''; ?>"
                             data-category="">
-                        <?php esc_html_e( 'Toutes les catégories', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'All categories', 'gcal-tag-filter' ); ?>
                     </button>
                 </li>
                 <?php foreach ( $all_categories as $category ) : ?>
@@ -882,7 +925,7 @@ class GCal_Display {
                     <li>
                         <button class="gcal-category-btn <?php echo strtoupper( $selected_category ) === 'UNTAGGED' ? 'active' : ''; ?>"
                                 data-category="UNTAGGED">
-                            ⚠️ <?php esc_html_e( 'Sans catégorie', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Uncategorized', 'gcal-tag-filter' ); ?>
                         </button>
                     </li>
                 <?php endif; ?>
@@ -890,7 +933,7 @@ class GCal_Display {
                     <li>
                         <button class="gcal-category-btn <?php echo strtoupper( $selected_category ) === 'UNKNOWN' ? 'active' : ''; ?>"
                                 data-category="UNKNOWN">
-                            ⚠️ <?php esc_html_e( 'Tags inconnus', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Unknown tags', 'gcal-tag-filter' ); ?>
                         </button>
                     </li>
                 <?php endif; ?>

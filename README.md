@@ -29,7 +29,7 @@ A WordPress plugin that embeds Google Calendar events with tag-based filtering c
 ### 1. Install Dependencies
 
 ```bash
-cd /path/to/wp-content/plugins/ccfhk-calendar-wp-plugin
+cd /path/to/wp-content/plugins/google-calendar-tag-filter
 composer install
 ```
 
@@ -90,26 +90,26 @@ Before the plugin can connect to Google Calendar, you need to set up OAuth crede
 To tag events for filtering, add tags to the event **description** using this format:
 
 ```
-[[[TAG:CATEGORY_ID]]]
+[[[CATEGORY_ID]]]
 ```
 
 **Examples:**
 
 - Single tag:
   ```
-  [[[TAG:COMMUNITY]]]
+  [[[COMMUNITY]]]
   Join us for our monthly community meetup!
   ```
 
 - Multiple tags:
   ```
-  [[[TAG:WORKSHOP]]][[[TAG:TRAINING]]]
+  [[[WORKSHOP]]][[[TRAINING]]]
   Learn React.js in this hands-on workshop.
   ```
 
 - Tags with location:
   ```
-  [[[TAG:COMMUNITY]]]
+  [[[COMMUNITY]]]
   Community potluck dinner - bring your favorite dish!
 
   Location: 123 Main St
@@ -149,22 +149,25 @@ Use the `[gcal_embed]` shortcode to display events on any page or post.
 [gcal_embed view="list" period="month" show_display_style="true"]
 
 <!-- Show all upcoming events (future period) -->
-[gcal_embed view="list" tags="MESSE-MUI-WO" period="future"]
+[gcal_embed view="list" period="future"]
 
 <!-- Show events matching wildcard pattern -->
-[gcal_embed view="list" tags="MESSE*" period="future"]
+[gcal_embed view="list" tags="WORKSHOP*" period="future"]
 
 <!-- Show current year's upcoming events only -->
 [gcal_embed view="list" period="year" hide_past="true"]
+
+<!-- Filter multiple categories -->
+[gcal_embed tags="COMMUNITY,TRAINING" view="list" period="month"]
 ```
 
 **New Features:**
 
 - **Future Period (`period="future"`)**: Shows all upcoming events from today through the next 3 years (up to 100 events). Period navigation is hidden for this view.
-- **Wildcard Tags (`tags="MESSE*"`)**: Use asterisk (*) to match tag patterns. Examples:
-  - `MESSE*` matches all tags starting with MESSE
-  - `*-WO` matches all tags ending with -WO
-  - `MESSE*,REUNION*` matches multiple patterns (OR logic)
+- **Wildcard Tags (`tags="WORKSHOP*"`)**: Use asterisk (*) to match tag patterns. Examples:
+  - `WORKSHOP*` matches all tags starting with WORKSHOP
+  - `*-TRAINING` matches all tags ending with -TRAINING
+  - `WORKSHOP*,COMMUNITY*` matches multiple patterns (OR logic)
 - **Hide Past Events (`hide_past="true"`)**: Filters out past events in list view, useful with year/month/week periods.
 
 **URL Parameters:**
@@ -210,7 +213,7 @@ The plugin caches events to minimize API calls and improve performance:
 ### File Structure
 
 ```
-ccfhk-calendar-wp-plugin/
+google-calendar-tag-filter/
 ├── gcal-tag-filter.php          # Main plugin file
 ├── composer.json                 # Dependencies
 ├── includes/                     # Core classes
@@ -251,8 +254,8 @@ The plugin is translation-ready with text domain `gcal-tag-filter`. To translate
 ## Support
 
 For issues, feature requests, or contributions:
-- **GitHub**: https://github.com/ccfhk/ccfhk-calendar-wp-plugin
-- **Documentation**: See `/DOCS` folder
+- **GitHub**: https://github.com/infuseproduct/google-calendar-tag-filter
+- **Documentation**: See `/docs` folder
 
 ## License
 
@@ -260,4 +263,4 @@ GPL v2 or later
 
 ## Credits
 
-Developed by CCFHK
+Developed by infuseproduct

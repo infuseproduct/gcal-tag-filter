@@ -1,7 +1,7 @@
 # Google Calendar Tag Filter - User Manual
 
-**Version:** 1.0.0
-**Last Updated:** January 2025
+**Version:** 1.0.1
+**Last Updated:** November 2025
 
 ---
 
@@ -484,7 +484,6 @@ Events are tagged by adding special codes to the event **description**.
 - Don't add spaces: `[[[COMMUNITY ]]]` ❌ (won't work)
 - Don't misspell: `[[[COMUNITY]]]` ❌ (won't be recognized)
 - Don't use non-whitelisted tags (they'll be ignored)
-- Don't use old format: `[[[TAG:COMMUNITY]]]` ❌ (outdated format)
 
 ### What Happens to Tags
 
@@ -712,7 +711,7 @@ A: Google Calendar API allows 1 million requests per day. Normal usage won't hit
 ### Support Channels
 
 1. **Plugin Settings:** Built-in help text and tooltips
-2. **GitHub Issues:** [Report bugs or request features](https://github.com/ccfhk/ccfhk-calendar-wp-plugin/issues)
+2. **GitHub Issues:** [Report bugs or request features](https://github.com/infuseproduct/google-calendar-tag-filter/issues)
 3. **WordPress Debug:** Enable WP_DEBUG for detailed error messages
 
 ### Before Asking for Help

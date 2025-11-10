@@ -1,12 +1,12 @@
 {
-    "name": "ccfhk/gcal-tag-filter",
+    "name": "infuseproduct/google-calendar-tag-filter",
     "description": "WordPress plugin for displaying Google Calendar events with tag-based filtering",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
-            "name": "CCFHK",
-            "email": "info@ccfhk.org"
+            "name": "infuseproduct",
+            "email": "hello@infuse.hk"
         }
     ],
     "require": {

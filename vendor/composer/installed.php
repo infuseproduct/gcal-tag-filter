@@ -1,24 +1,15 @@
 <?php return array(
     'root' => array(
-        'name' => 'ccfhk/gcal-tag-filter',
+        'name' => 'infuseproduct/google-calendar-tag-filter',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a8ce3c65f88b3696315ff83bf44b8df94f514e56',
+        'reference' => '6b29ba0f7bf4b7f32866b9ebb489ce7763fc4235',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => false,
+        'dev' => true,
     ),
     'versions' => array(
-        'ccfhk/gcal-tag-filter' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => 'a8ce3c65f88b3696315ff83bf44b8df94f514e56',
-            'type' => 'wordpress-plugin',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'firebase/php-jwt' => array(
             'pretty_version' => 'v6.11.1',
             'version' => '6.11.1.0',
@@ -79,6 +70,15 @@
             'reference' => '21dc724a0583619cd1652f673303492272778051',
             'type' => 'library',
             'install_path' => __DIR__ . '/../guzzlehttp/psr7',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'infuseproduct/google-calendar-tag-filter' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '6b29ba0f7bf4b7f32866b9ebb489ce7763fc4235',
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

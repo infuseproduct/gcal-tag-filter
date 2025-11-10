@@ -388,7 +388,7 @@ If you encounter issues:
 
 1. Double-check all steps in this guide
 2. Review the **Troubleshooting** section above
-3. Check the [WordPress plugin support forum](https://github.com/ccfhk/ccfhk-calendar-wp-plugin/issues)
+3. Check the [WordPress plugin support forum](https://github.com/infuseproduct/google-calendar-tag-filter/issues)
 4. Enable WordPress debug mode to see detailed error messages
 
 ---

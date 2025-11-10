@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Google Calendar Tag Filter
- * Plugin URI: https://github.com/ccfhk/ccfhk-calendar-wp-plugin
+ * Plugin URI: https://github.com/infuseproduct/google-calendar-tag-filter
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
  * Version: 1.0.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
- * Author: CCFHK
- * Author URI: https://ccfhk.org
+ * Author: infuseproduct
+ * Author URI: https://infuse.hk
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: gcal-tag-filter
@@ -218,7 +218,7 @@ function gcal_tag_filter_enqueue_scripts() {
             $category_colors[ $category['id'] ] = $category['color'];
         }
 
-        // Localize script with necessary data
+        // Localize script with necessary data and i18n strings
         wp_localize_script(
             'gcal-calendar-navigation',
             'gcalData',
@@ -226,6 +226,45 @@ function gcal_tag_filter_enqueue_scripts() {
                 'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
                 'nonce'     => wp_create_nonce( 'gcal-ajax-nonce' ),
                 'categories' => $category_colors,
+                'i18n' => array(
+                    'weekdaysShort' => array(
+                        __( 'Mon', 'gcal-tag-filter' ),
+                        __( 'Tue', 'gcal-tag-filter' ),
+                        __( 'Wed', 'gcal-tag-filter' ),
+                        __( 'Thu', 'gcal-tag-filter' ),
+                        __( 'Fri', 'gcal-tag-filter' ),
+                        __( 'Sat', 'gcal-tag-filter' ),
+                        __( 'Sun', 'gcal-tag-filter' ),
+                    ),
+                    'months' => array(
+                        __( 'January', 'gcal-tag-filter' ),
+                        __( 'February', 'gcal-tag-filter' ),
+                        __( 'March', 'gcal-tag-filter' ),
+                        __( 'April', 'gcal-tag-filter' ),
+                        __( 'May', 'gcal-tag-filter' ),
+                        __( 'June', 'gcal-tag-filter' ),
+                        __( 'July', 'gcal-tag-filter' ),
+                        __( 'August', 'gcal-tag-filter' ),
+                        __( 'September', 'gcal-tag-filter' ),
+                        __( 'October', 'gcal-tag-filter' ),
+                        __( 'November', 'gcal-tag-filter' ),
+                        __( 'December', 'gcal-tag-filter' ),
+                    ),
+                    'noEvents' => __( 'No events', 'gcal-tag-filter' ),
+                    'allDay' => __( 'All day', 'gcal-tag-filter' ),
+                    'event' => __( 'event', 'gcal-tag-filter' ),
+                    'events' => __( 'events', 'gcal-tag-filter' ),
+                    'learnMore' => __( 'Learn more', 'gcal-tag-filter' ),
+                    'close' => __( 'Close', 'gcal-tag-filter' ),
+                    'copied' => __( 'Copied!', 'gcal-tag-filter' ),
+                    'error' => __( 'Error', 'gcal-tag-filter' ),
+                    'noEventsCategory' => __( 'No events found for this category.', 'gcal-tag-filter' ),
+                    'eventNotVisible' => __( 'The shared event is not visible in the current period. Try changing the view or period.', 'gcal-tag-filter' ),
+                    'dateAndTime' => __( 'Date and time', 'gcal-tag-filter' ),
+                    'location' => __( 'Location', 'gcal-tag-filter' ),
+                    'viewInGoogleCalendar' => __( 'View in Google Calendar', 'gcal-tag-filter' ),
+                    'copyLink' => __( 'Copy link', 'gcal-tag-filter' ),
+                ),
             )
         );
     }
@@ -319,7 +358,7 @@ function gcal_ajax_fetch_events() {
 
             $processed[] = array(
                 'id'               => $event->getId(),
-                'title'            => $event->getSummary() ?? '(Sans titre)',
+                'title'            => $event->getSummary() ?? __( '(Untitled)', 'gcal-tag-filter' ),
                 'description'      => $clean_description,
                 'location'         => $event->getLocation() ?? '',
                 'start'            => $start_time,

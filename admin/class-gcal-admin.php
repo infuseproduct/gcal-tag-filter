@@ -483,7 +483,7 @@ class GCal_Admin {
 
                     <p style="margin-top: 16px;">
                         <strong><?php esc_html_e( 'For complete documentation, see:', 'gcal-tag-filter' ); ?></strong>
-                        <code>/DOCS/SHORTCODE-REFERENCE.md</code>
+                        <code>/docs/SHORTCODE-REFERENCE.md</code>
                     </p>
                 </div>
             </div>
