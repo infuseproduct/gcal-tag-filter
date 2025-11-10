@@ -177,15 +177,26 @@ class GCal_Display {
         <div class="gcal-month-view">
             <div class="gcal-weekday-headers">
                 <?php
-                $weekdays = array(
-                    __( 'Mon', 'gcal-tag-filter' ),
-                    __( 'Tue', 'gcal-tag-filter' ),
-                    __( 'Wed', 'gcal-tag-filter' ),
-                    __( 'Thu', 'gcal-tag-filter' ),
-                    __( 'Fri', 'gcal-tag-filter' ),
-                    __( 'Sat', 'gcal-tag-filter' ),
-                    __( 'Sun', 'gcal-tag-filter' ),
+                // Get WordPress week start setting
+                $week_starts_on = (int) get_option( 'start_of_week', 1 ); // 0=Sunday, 1=Monday, etc.
+
+                // All weekdays starting from Sunday (0)
+                $all_weekdays = array(
+                    __( 'Sun', 'gcal-tag-filter' ), // 0
+                    __( 'Mon', 'gcal-tag-filter' ), // 1
+                    __( 'Tue', 'gcal-tag-filter' ), // 2
+                    __( 'Wed', 'gcal-tag-filter' ), // 3
+                    __( 'Thu', 'gcal-tag-filter' ), // 4
+                    __( 'Fri', 'gcal-tag-filter' ), // 5
+                    __( 'Sat', 'gcal-tag-filter' ), // 6
                 );
+
+                // Reorder based on week start setting
+                $weekdays = array();
+                for ( $i = 0; $i < 7; $i++ ) {
+                    $weekdays[] = $all_weekdays[ ( $week_starts_on + $i ) % 7 ];
+                }
+
                 foreach ( $weekdays as $day ) :
                     ?>
                     <div class="gcal-weekday"><?php echo esc_html( $day ); ?></div>
@@ -196,11 +207,13 @@ class GCal_Display {
                 <?php
                 // Start from the first day of the week containing the 1st
                 $calendar_start = clone $month_start;
-                $day_of_week = (int) $calendar_start->format( 'w' );
-                // Adjust for Monday start (0=Sunday, 1=Monday, etc.)
-                $days_from_monday = ( $day_of_week === 0 ) ? 6 : $day_of_week - 1;
-                if ( $days_from_monday > 0 ) {
-                    $calendar_start->modify( "-{$days_from_monday} days" );
+                $day_of_week = (int) $calendar_start->format( 'w' ); // 0=Sunday, 1=Monday, etc.
+                $week_starts_on = (int) get_option( 'start_of_week', 1 ); // WordPress setting: 0=Sunday, 1=Monday, etc.
+
+                // Calculate days to subtract to reach the week start day
+                $days_to_subtract = ( $day_of_week - $week_starts_on + 7 ) % 7;
+                if ( $days_to_subtract > 0 ) {
+                    $calendar_start->modify( "-{$days_to_subtract} days" );
                 }
 
                 // Render 6 weeks (42 days)
@@ -258,78 +271,60 @@ class GCal_Display {
         // Initialize $now for "is today" checks later
         $now = new DateTime();
 
+        $week_starts_on = (int) get_option( 'start_of_week', 1 ); // WordPress setting: 0=Sunday, 1=Monday, etc.
+
         // Use URL date if provided, otherwise current week
         if ( $url_year && $url_month && $url_week ) {
-            // Calculate the Monday of the specified week
-            // Week 1 is the week containing the 1st of the month
-            // Find the first Monday of the month
+            // Calculate the start day of the specified week
+            // This MUST match the JavaScript logic exactly
             $first_of_month = new DateTime();
             $first_of_month->setDate( $url_year, $url_month, 1 );
-            $first_day_weekday = (int) $first_of_month->format( 'N' ); // 1=Monday, 7=Sunday
+            $first_day_weekday = (int) $first_of_month->format( 'w' ); // 0=Sunday, 1=Monday, etc.
 
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'GCal Display - Week render: year=' . $url_year . ', month=' . $url_month . ', week=' . $url_week . ', first_day_weekday=' . $first_day_weekday );
+            // Calculate the configured week start day that starts week 1
+            // Week 1 starts on the configured week start day BEFORE or ON the 1st
+            $week_start_of_week_1 = clone $first_of_month;
+            $days_to_week_start = ( $first_day_weekday - $week_starts_on + 7 ) % 7;
+            if ( $days_to_week_start > 0 ) {
+                // Go back to the previous week start day
+                $week_start_of_week_1->modify( '-' . $days_to_week_start . ' days' );
             }
 
-            // Calculate when the first Monday occurs
-            if ( $first_day_weekday === 1 ) {
-                // First day is already Monday
-                $first_monday = clone $first_of_month;
-            } else {
-                // Find next Monday after the 1st
-                $days_to_monday = 8 - $first_day_weekday;
-                $first_monday = clone $first_of_month;
-                $first_monday->modify( '+' . $days_to_monday . ' days' );
-            }
-
-            // Now calculate which Monday we need
-            // Week 1 includes all days before first Monday
-            // If week is 1 and first day is after Monday, we need the PREVIOUS Monday
-            if ( $url_week === 1 && $first_day_weekday > 1 ) {
-                // Week 1 includes days before the first Monday, so go back
-                $monday = clone $first_of_month;
-                $days_back = $first_day_weekday - 1;
-                $monday->modify( '-' . $days_back . ' days' );
-                if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                    error_log( 'GCal Display - Week 1 special case: going back ' . $days_back . ' days to ' . $monday->format('Y-m-d') );
-                }
-            } else {
-                // Calculate from first Monday
-                $weeks_to_add = $url_week - 1;
-                if ( $first_day_weekday === 1 ) {
-                    // If month starts on Monday, week 1 starts on that Monday
-                    $monday = clone $first_monday;
-                    $monday->modify( '+' . ( $weeks_to_add * 7 ) . ' days' );
-                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                        error_log( 'GCal Display - Month starts on Monday, week ' . $url_week . ' = ' . $monday->format('Y-m-d') );
-                    }
-                } else {
-                    // If month doesn't start on Monday, week 1 starts on the Monday BEFORE the 1st
-                    $monday = clone $first_of_month;
-                    $monday->modify( '-' . ( $first_day_weekday - 1 ) . ' days' );
-                    $monday->modify( '+' . ( $weeks_to_add * 7 ) . ' days' );
-                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                        error_log( 'GCal Display - Normal week calculation: week ' . $url_week . ' = ' . $monday->format('Y-m-d') );
-                    }
-                }
+            // Calculate week start based on week number
+            $week_start = clone $week_start_of_week_1;
+            $weeks_to_add = $url_week - 1;
+            if ( $weeks_to_add > 0 ) {
+                $week_start->modify( '+' . ( $weeks_to_add * 7 ) . ' days' );
             }
         } else {
-            // Get current week starting from Monday
-            $day_of_week = $now->format( 'N' ); // 1 (Monday) through 7 (Sunday)
-            $monday = clone $now;
-            $monday->modify( '-' . ( $day_of_week - 1 ) . ' days' ); // Go back to Monday
+            // Get current week starting from configured start day
+            $current_day_of_week = (int) $now->format( 'w' ); // 0=Sunday, 1=Monday, etc.
+            $days_from_week_start = ( $current_day_of_week - $week_starts_on + 7 ) % 7;
+            $week_start = clone $now;
+            if ( $days_from_week_start > 0 ) {
+                $week_start->modify( '-' . $days_from_week_start . ' days' );
+            }
         }
 
-        // Abbreviated day names for week view
-        $weekday_abbr = array(
-            __( 'Mon', 'gcal-tag-filter' ),
-            __( 'Tue', 'gcal-tag-filter' ),
-            __( 'Wed', 'gcal-tag-filter' ),
-            __( 'Thu', 'gcal-tag-filter' ),
-            __( 'Fri', 'gcal-tag-filter' ),
-            __( 'Sat', 'gcal-tag-filter' ),
-            __( 'Sun', 'gcal-tag-filter' ),
+        // Rename for compatibility with existing code
+        $monday = $week_start;
+
+        // Abbreviated day names for week view (starting from WordPress configured day)
+        $all_weekday_abbr = array(
+            __( 'Sun', 'gcal-tag-filter' ), // 0
+            __( 'Mon', 'gcal-tag-filter' ), // 1
+            __( 'Tue', 'gcal-tag-filter' ), // 2
+            __( 'Wed', 'gcal-tag-filter' ), // 3
+            __( 'Thu', 'gcal-tag-filter' ), // 4
+            __( 'Fri', 'gcal-tag-filter' ), // 5
+            __( 'Sat', 'gcal-tag-filter' ), // 6
         );
+
+        // Reorder to start from configured week start
+        $weekday_abbr = array();
+        for ( $i = 0; $i < 7; $i++ ) {
+            $weekday_abbr[] = $all_weekday_abbr[ ( $week_starts_on + $i ) % 7 ];
+        }
 
         ob_start();
         ?>
@@ -997,17 +992,14 @@ class GCal_Display {
     }
 
     /**
-     * Format time in 24-hour format without :00 minutes.
+     * Format time using WordPress time format setting.
      *
      * @param DateTime $datetime DateTime object.
-     * @return string Formatted time (e.g., "18h" instead of "18:00" or "18h30").
+     * @return string Formatted time according to WordPress settings.
      */
     private function format_time( $datetime ) {
-        $minutes = $datetime->format( 'i' );
-        if ( $minutes === '00' ) {
-            return $datetime->format( 'G' ) . 'h';
-        }
-        return $datetime->format( 'G' ) . 'h' . $minutes;
+        $wp_time_format = get_option( 'time_format', 'g:i a' );
+        return $datetime->format( $wp_time_format );
     }
 
     /**

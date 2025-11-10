@@ -190,9 +190,8 @@
                 url.searchParams.delete('gcal_week');
             } else if (period === 'week') {
                 // For week, we need to find which week of the month this date belongs to
-                // This MUST match the PHP logic exactly:
-                // - Week 1 starts on the Monday BEFORE or ON the 1st of the month
-                // - Subsequent weeks are calculated from that Monday
+                // This MUST match the PHP logic exactly
+                const weekStartsOn = gcalData.settings.weekStartsOn; // 0=Sunday, 1=Monday, etc.
                 const year = date.getFullYear();
                 const month = date.getMonth(); // 0-indexed
 
@@ -200,21 +199,17 @@
                 const firstDayOfMonth = new Date(year, month, 1);
                 const firstDayWeekday = firstDayOfMonth.getDay(); // 0=Sunday, 1=Monday, etc.
 
-                // Convert to ISO weekday (1=Monday, 7=Sunday)
-                const firstDayWeekdayISO = firstDayWeekday === 0 ? 7 : firstDayWeekday;
-
-                // Calculate the Monday that starts week 1
-                // If the 1st is Monday, week 1 starts on the 1st
-                // Otherwise, week 1 starts on the Monday BEFORE the 1st
-                const mondayOfWeek1 = new Date(year, month, 1);
-                if (firstDayWeekdayISO !== 1) {
-                    // Go back to the previous Monday
-                    const daysBack = firstDayWeekdayISO - 1;
-                    mondayOfWeek1.setDate(1 - daysBack);
+                // Calculate the configured week start day that starts week 1
+                // Week 1 starts on the configured week start day BEFORE or ON the 1st
+                const weekStartOfWeek1 = new Date(year, month, 1);
+                const daysToWeekStart = (firstDayWeekday - weekStartsOn + 7) % 7;
+                if (daysToWeekStart > 0) {
+                    // Go back to the previous week start day
+                    weekStartOfWeek1.setDate(1 - daysToWeekStart);
                 }
 
-                // Calculate week number based on how many weeks from the Monday of week 1
-                const daysDiff = Math.floor((date - mondayOfWeek1) / (1000 * 60 * 60 * 24));
+                // Calculate week number based on how many weeks from the week start of week 1
+                const daysDiff = Math.floor((date - weekStartOfWeek1) / (1000 * 60 * 60 * 24));
                 const weekNumber = Math.floor(daysDiff / 7) + 1;
 
                 url.searchParams.set('gcal_year', year);
@@ -303,22 +298,23 @@
             let title = '';
 
             if (period === 'week') {
-                // Show week range (Monday to Sunday)
+                // Show week range (week start day to week end day)
+                const weekStartsOn = gcalData.settings.weekStartsOn; // 0=Sunday, 1=Monday, etc.
                 const dayOfWeek = currentDate.getDay();
-                const monday = new Date(currentDate);
-                // Adjust to get Monday (0=Sunday, 1=Monday, etc.)
-                const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                monday.setDate(currentDate.getDate() + diff);
+                const weekStart = new Date(currentDate);
+                // Calculate days to subtract to reach week start
+                const diff = (dayOfWeek - weekStartsOn + 7) % 7;
+                weekStart.setDate(currentDate.getDate() - diff);
 
-                const sunday = new Date(monday);
-                sunday.setDate(monday.getDate() + 6);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
 
                 const formatter = new Intl.DateTimeFormat('fr-FR', {
                     month: 'short',
                     day: 'numeric'
                 });
 
-                title = formatter.format(monday) + ' - ' + formatter.format(sunday);
+                title = formatter.format(weekStart) + ' - ' + formatter.format(weekEnd);
             } else if (period === 'month') {
                 // Show month and year
                 const formatter = new Intl.DateTimeFormat('fr-FR', {
@@ -489,9 +485,11 @@
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
 
-            // Get day of week for first day (0 = Sunday, need to convert to Monday = 0)
-            let firstDayOfWeek = firstDay.getDay();
-            firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1; // Convert to Monday = 0
+            // Get day of week for first day and adjust based on WordPress week start setting
+            const weekStartsOn = gcalData.settings.weekStartsOn; // 0=Sunday, 1=Monday, etc.
+            let firstDayOfWeek = firstDay.getDay(); // 0=Sunday, 1=Monday, etc.
+            // Calculate offset from configured week start
+            firstDayOfWeek = (firstDayOfWeek - weekStartsOn + 7) % 7;
 
             const daysInMonth = lastDay.getDate();
 
@@ -547,11 +545,12 @@
          * Render week view grid
          */
         renderWeekGrid: function(container, date, events) {
-            // Get Monday of the week
+            // Get week start day based on WordPress setting
+            const weekStartsOn = gcalData.settings.weekStartsOn; // 0=Sunday, 1=Monday, etc.
             const dayOfWeek = date.getDay();
-            const monday = new Date(date);
-            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust for Monday start
-            monday.setDate(date.getDate() + diff);
+            const weekStart = new Date(date);
+            const diff = (dayOfWeek - weekStartsOn + 7) % 7;
+            weekStart.setDate(date.getDate() - diff);
 
             const frenchDays = gcalData.i18n.weekdaysShort;
 
@@ -569,8 +568,8 @@
             let html = '<div class="gcal-week-view">';
 
             for (let i = 0; i < 7; i++) {
-                const currentDay = new Date(monday);
-                currentDay.setDate(monday.getDate() + i);
+                const currentDay = new Date(weekStart);
+                currentDay.setDate(weekStart.getDate() + i);
                 const dateKey = `${currentDay.getFullYear()}-${String(currentDay.getMonth() + 1).padStart(2, '0')}-${String(currentDay.getDate()).padStart(2, '0')}`;
                 const dayEvents = eventsByDate[dateKey] || [];
                 const isToday = this.isToday(currentDay);

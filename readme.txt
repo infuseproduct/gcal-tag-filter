@@ -4,7 +4,7 @@ Tags: google calendar, events, calendar, oauth, tag filter
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.10
+Stable tag: 1.0.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -175,7 +175,7 @@ Yes! The plugin is fully internationalized with text domain `gcal-tag-filter`. P
 
 == Changelog ==
 
-= 1.0.1 =
+= 1.0.15 =
 * Initial release
 
 == Privacy Policy ==

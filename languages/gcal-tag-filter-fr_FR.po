@@ -732,21 +732,19 @@ msgstr ""
 
 #: gcal-tag-filter.php:263
 msgid "Date and time"
-msgstr ""
+msgstr "Date et heure"
 
 #: gcal-tag-filter.php:264
-#, fuzzy
 msgid "Location"
-msgstr "Actions"
+msgstr "Lieu"
 
 #: gcal-tag-filter.php:265
-#, fuzzy
 msgid "View in Google Calendar"
-msgstr "Sélectionner un calendrier"
+msgstr "Voir dans Google Agenda"
 
 #: gcal-tag-filter.php:266
 msgid "Copy link"
-msgstr ""
+msgstr "Copier le lien"
 
 #: gcal-tag-filter.php:361 includes/class-gcal-calendar.php:400
 msgid "(Untitled)"

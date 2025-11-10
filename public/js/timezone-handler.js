@@ -80,11 +80,16 @@
          * @returns {string} Formatted time string
          */
         formatTime: function(date, options = {}) {
+            // Use WordPress time format setting (12-hour vs 24-hour)
+            const is24Hour = (typeof gcalData !== 'undefined' && gcalData.settings && gcalData.settings.is24Hour !== undefined)
+                ? gcalData.settings.is24Hour
+                : false; // Default to 12-hour if setting not available
+
             const defaultOptions = {
                 timeZone: this.userTimezone,
                 hour: 'numeric',
                 minute: '2-digit',
-                hour12: false // Use 24-hour format for French
+                hour12: !is24Hour // Use WordPress setting for 12/24 hour format
             };
 
             const formatOptions = Object.assign({}, defaultOptions, options);

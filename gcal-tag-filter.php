@@ -3,7 +3,7 @@
  * Plugin Name: GCal Tag Filter for Google Calendar
  * Plugin URI: https://github.com/infuseproduct/gcal-tag-filter
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
- * Version: 1.0.10
+ * Version: 1.0.15
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: infuseproduct
@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version.
  */
-define( 'GCAL_TAG_FILTER_VERSION', '1.0.10' );
+define( 'GCAL_TAG_FILTER_VERSION', '1.0.15' );
 
 /**
  * Plugin directory path.
@@ -218,6 +218,27 @@ function gcal_tag_filter_enqueue_scripts() {
             $category_colors[ $category['id'] ] = $category['color'];
         }
 
+        // Get WordPress settings
+        $week_starts_on = (int) get_option( 'start_of_week', 1 ); // 0=Sunday, 1=Monday, etc.
+        $time_format = get_option( 'time_format', 'g:i a' );
+        $date_format = get_option( 'date_format', 'F j, Y' );
+
+        // Reorder weekdays based on WordPress week start setting
+        $all_weekdays = array(
+            __( 'Sun', 'gcal-tag-filter' ), // 0
+            __( 'Mon', 'gcal-tag-filter' ), // 1
+            __( 'Tue', 'gcal-tag-filter' ), // 2
+            __( 'Wed', 'gcal-tag-filter' ), // 3
+            __( 'Thu', 'gcal-tag-filter' ), // 4
+            __( 'Fri', 'gcal-tag-filter' ), // 5
+            __( 'Sat', 'gcal-tag-filter' ), // 6
+        );
+
+        $weekdays_short = array();
+        for ( $i = 0; $i < 7; $i++ ) {
+            $weekdays_short[] = $all_weekdays[ ( $week_starts_on + $i ) % 7 ];
+        }
+
         // Localize script with necessary data and i18n strings
         wp_localize_script(
             'gcal-calendar-navigation',
@@ -226,16 +247,14 @@ function gcal_tag_filter_enqueue_scripts() {
                 'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
                 'nonce'     => wp_create_nonce( 'gcal-ajax-nonce' ),
                 'categories' => $category_colors,
+                'settings' => array(
+                    'weekStartsOn' => $week_starts_on,
+                    'timeFormat'   => $time_format,
+                    'dateFormat'   => $date_format,
+                    'is24Hour'     => ( strpos( $time_format, 'H' ) !== false || strpos( $time_format, 'G' ) !== false ),
+                ),
                 'i18n' => array(
-                    'weekdaysShort' => array(
-                        __( 'Mon', 'gcal-tag-filter' ),
-                        __( 'Tue', 'gcal-tag-filter' ),
-                        __( 'Wed', 'gcal-tag-filter' ),
-                        __( 'Thu', 'gcal-tag-filter' ),
-                        __( 'Fri', 'gcal-tag-filter' ),
-                        __( 'Sat', 'gcal-tag-filter' ),
-                        __( 'Sun', 'gcal-tag-filter' ),
-                    ),
+                    'weekdaysShort' => $weekdays_short,
                     'months' => array(
                         __( 'January', 'gcal-tag-filter' ),
                         __( 'February', 'gcal-tag-filter' ),
