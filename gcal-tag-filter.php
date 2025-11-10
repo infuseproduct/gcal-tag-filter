@@ -10,7 +10,7 @@
  * Author URI: https://infuse.hk
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: gcal-tag-filter
+ * Text Domain: google-calendar-tag-filter
  * Domain Path: /languages
  */
 
@@ -91,7 +91,7 @@ register_deactivation_hook( __FILE__, 'gcal_tag_filter_deactivate' );
  */
 function gcal_tag_filter_load_textdomain() {
     load_plugin_textdomain(
-        'gcal-tag-filter',
+        'google-calendar-tag-filter',
         false,
         dirname( plugin_basename( __FILE__ ) ) . '/languages'
     );
@@ -228,42 +228,42 @@ function gcal_tag_filter_enqueue_scripts() {
                 'categories' => $category_colors,
                 'i18n' => array(
                     'weekdaysShort' => array(
-                        __( 'Mon', 'gcal-tag-filter' ),
-                        __( 'Tue', 'gcal-tag-filter' ),
-                        __( 'Wed', 'gcal-tag-filter' ),
-                        __( 'Thu', 'gcal-tag-filter' ),
-                        __( 'Fri', 'gcal-tag-filter' ),
-                        __( 'Sat', 'gcal-tag-filter' ),
-                        __( 'Sun', 'gcal-tag-filter' ),
+                        __( 'Mon', 'google-calendar-tag-filter' ),
+                        __( 'Tue', 'google-calendar-tag-filter' ),
+                        __( 'Wed', 'google-calendar-tag-filter' ),
+                        __( 'Thu', 'google-calendar-tag-filter' ),
+                        __( 'Fri', 'google-calendar-tag-filter' ),
+                        __( 'Sat', 'google-calendar-tag-filter' ),
+                        __( 'Sun', 'google-calendar-tag-filter' ),
                     ),
                     'months' => array(
-                        __( 'January', 'gcal-tag-filter' ),
-                        __( 'February', 'gcal-tag-filter' ),
-                        __( 'March', 'gcal-tag-filter' ),
-                        __( 'April', 'gcal-tag-filter' ),
-                        __( 'May', 'gcal-tag-filter' ),
-                        __( 'June', 'gcal-tag-filter' ),
-                        __( 'July', 'gcal-tag-filter' ),
-                        __( 'August', 'gcal-tag-filter' ),
-                        __( 'September', 'gcal-tag-filter' ),
-                        __( 'October', 'gcal-tag-filter' ),
-                        __( 'November', 'gcal-tag-filter' ),
-                        __( 'December', 'gcal-tag-filter' ),
+                        __( 'January', 'google-calendar-tag-filter' ),
+                        __( 'February', 'google-calendar-tag-filter' ),
+                        __( 'March', 'google-calendar-tag-filter' ),
+                        __( 'April', 'google-calendar-tag-filter' ),
+                        __( 'May', 'google-calendar-tag-filter' ),
+                        __( 'June', 'google-calendar-tag-filter' ),
+                        __( 'July', 'google-calendar-tag-filter' ),
+                        __( 'August', 'google-calendar-tag-filter' ),
+                        __( 'September', 'google-calendar-tag-filter' ),
+                        __( 'October', 'google-calendar-tag-filter' ),
+                        __( 'November', 'google-calendar-tag-filter' ),
+                        __( 'December', 'google-calendar-tag-filter' ),
                     ),
-                    'noEvents' => __( 'No events', 'gcal-tag-filter' ),
-                    'allDay' => __( 'All day', 'gcal-tag-filter' ),
-                    'event' => __( 'event', 'gcal-tag-filter' ),
-                    'events' => __( 'events', 'gcal-tag-filter' ),
-                    'learnMore' => __( 'Learn more', 'gcal-tag-filter' ),
-                    'close' => __( 'Close', 'gcal-tag-filter' ),
-                    'copied' => __( 'Copied!', 'gcal-tag-filter' ),
-                    'error' => __( 'Error', 'gcal-tag-filter' ),
-                    'noEventsCategory' => __( 'No events found for this category.', 'gcal-tag-filter' ),
-                    'eventNotVisible' => __( 'The shared event is not visible in the current period. Try changing the view or period.', 'gcal-tag-filter' ),
-                    'dateAndTime' => __( 'Date and time', 'gcal-tag-filter' ),
-                    'location' => __( 'Location', 'gcal-tag-filter' ),
-                    'viewInGoogleCalendar' => __( 'View in Google Calendar', 'gcal-tag-filter' ),
-                    'copyLink' => __( 'Copy link', 'gcal-tag-filter' ),
+                    'noEvents' => __( 'No events', 'google-calendar-tag-filter' ),
+                    'allDay' => __( 'All day', 'google-calendar-tag-filter' ),
+                    'event' => __( 'event', 'google-calendar-tag-filter' ),
+                    'events' => __( 'events', 'google-calendar-tag-filter' ),
+                    'learnMore' => __( 'Learn more', 'google-calendar-tag-filter' ),
+                    'close' => __( 'Close', 'google-calendar-tag-filter' ),
+                    'copied' => __( 'Copied!', 'google-calendar-tag-filter' ),
+                    'error' => __( 'Error', 'google-calendar-tag-filter' ),
+                    'noEventsCategory' => __( 'No events found for this category.', 'google-calendar-tag-filter' ),
+                    'eventNotVisible' => __( 'The shared event is not visible in the current period. Try changing the view or period.', 'google-calendar-tag-filter' ),
+                    'dateAndTime' => __( 'Date and time', 'google-calendar-tag-filter' ),
+                    'location' => __( 'Location', 'google-calendar-tag-filter' ),
+                    'viewInGoogleCalendar' => __( 'View in Google Calendar', 'google-calendar-tag-filter' ),
+                    'copyLink' => __( 'Copy link', 'google-calendar-tag-filter' ),
                 ),
             )
         );
@@ -358,7 +358,7 @@ function gcal_ajax_fetch_events() {
 
             $processed[] = array(
                 'id'               => $event->getId(),
-                'title'            => $event->getSummary() ?? __( '(Untitled)', 'gcal-tag-filter' ),
+                'title'            => $event->getSummary() ?? __( '(Untitled)', 'google-calendar-tag-filter' ),
                 'description'      => $clean_description,
                 'location'         => $event->getLocation() ?? '',
                 'start'            => $start_time,

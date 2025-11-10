@@ -3,11 +3,11 @@
         'name' => 'infuseproduct/google-calendar-tag-filter',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '6b29ba0f7bf4b7f32866b9ebb489ce7763fc4235',
+        'reference' => 'a7ac7e710d1c61ea18f4c9f411ed84bc6767310f',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => true,
+        'dev' => false,
     ),
     'versions' => array(
         'firebase/php-jwt' => array(
@@ -76,7 +76,7 @@
         'infuseproduct/google-calendar-tag-filter' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6b29ba0f7bf4b7f32866b9ebb489ce7763fc4235',
+            'reference' => 'a7ac7e710d1c61ea18f4c9f411ed84bc6767310f',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

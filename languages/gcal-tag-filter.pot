@@ -12,31 +12,31 @@ msgstr ""
 "POT-Creation-Date: 2025-11-10T00:41:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: gcal-tag-filter\n"
+"X-Domain: google-calendar-tag-filter\n"
 
 #. Plugin Name of the plugin
-#: gcal-tag-filter.php
+#: google-calendar-tag-filter.php
 #: admin/class-gcal-admin.php:68
 msgid "Google Calendar Tag Filter"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: gcal-tag-filter.php
+#: google-calendar-tag-filter.php
 msgid "https://github.com/infuseproduct/google-calendar-tag-filter"
 msgstr ""
 
 #. Description of the plugin
-#: gcal-tag-filter.php
+#: google-calendar-tag-filter.php
 msgid "Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication"
 msgstr ""
 
 #. Author of the plugin
-#: gcal-tag-filter.php
+#: google-calendar-tag-filter.php
 msgid "infuseproduct"
 msgstr ""
 
 #. Author URI of the plugin
-#: gcal-tag-filter.php
+#: google-calendar-tag-filter.php
 msgid "https://infuse.hk"
 msgstr ""
 
@@ -529,158 +529,158 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: gcal-tag-filter.php:231
+#: google-calendar-tag-filter.php:231
 #: public/class-gcal-display.php:167
 #: public/class-gcal-display.php:300
 msgid "Mon"
 msgstr ""
 
-#: gcal-tag-filter.php:232
+#: google-calendar-tag-filter.php:232
 #: public/class-gcal-display.php:168
 #: public/class-gcal-display.php:301
 msgid "Tue"
 msgstr ""
 
-#: gcal-tag-filter.php:233
+#: google-calendar-tag-filter.php:233
 #: public/class-gcal-display.php:169
 #: public/class-gcal-display.php:302
 msgid "Wed"
 msgstr ""
 
-#: gcal-tag-filter.php:234
+#: google-calendar-tag-filter.php:234
 #: public/class-gcal-display.php:170
 #: public/class-gcal-display.php:303
 msgid "Thu"
 msgstr ""
 
-#: gcal-tag-filter.php:235
+#: google-calendar-tag-filter.php:235
 #: public/class-gcal-display.php:171
 #: public/class-gcal-display.php:304
 msgid "Fri"
 msgstr ""
 
-#: gcal-tag-filter.php:236
+#: google-calendar-tag-filter.php:236
 #: public/class-gcal-display.php:172
 #: public/class-gcal-display.php:305
 msgid "Sat"
 msgstr ""
 
-#: gcal-tag-filter.php:237
+#: google-calendar-tag-filter.php:237
 #: public/class-gcal-display.php:173
 #: public/class-gcal-display.php:306
 msgid "Sun"
 msgstr ""
 
-#: gcal-tag-filter.php:240
+#: google-calendar-tag-filter.php:240
 #: public/class-gcal-display.php:377
 msgid "January"
 msgstr ""
 
-#: gcal-tag-filter.php:241
+#: google-calendar-tag-filter.php:241
 #: public/class-gcal-display.php:378
 msgid "February"
 msgstr ""
 
-#: gcal-tag-filter.php:242
+#: google-calendar-tag-filter.php:242
 #: public/class-gcal-display.php:379
 msgid "March"
 msgstr ""
 
-#: gcal-tag-filter.php:243
+#: google-calendar-tag-filter.php:243
 #: public/class-gcal-display.php:380
 msgid "April"
 msgstr ""
 
-#: gcal-tag-filter.php:244
+#: google-calendar-tag-filter.php:244
 #: public/class-gcal-display.php:381
 #: public/class-gcal-display.php:652
 msgid "May"
 msgstr ""
 
-#: gcal-tag-filter.php:245
+#: google-calendar-tag-filter.php:245
 #: public/class-gcal-display.php:382
 msgid "June"
 msgstr ""
 
-#: gcal-tag-filter.php:246
+#: google-calendar-tag-filter.php:246
 #: public/class-gcal-display.php:383
 msgid "July"
 msgstr ""
 
-#: gcal-tag-filter.php:247
+#: google-calendar-tag-filter.php:247
 #: public/class-gcal-display.php:384
 msgid "August"
 msgstr ""
 
-#: gcal-tag-filter.php:248
+#: google-calendar-tag-filter.php:248
 #: public/class-gcal-display.php:385
 msgid "September"
 msgstr ""
 
-#: gcal-tag-filter.php:249
+#: google-calendar-tag-filter.php:249
 #: public/class-gcal-display.php:386
 msgid "October"
 msgstr ""
 
-#: gcal-tag-filter.php:250
+#: google-calendar-tag-filter.php:250
 #: public/class-gcal-display.php:387
 msgid "November"
 msgstr ""
 
-#: gcal-tag-filter.php:251
+#: google-calendar-tag-filter.php:251
 #: public/class-gcal-display.php:388
 msgid "December"
 msgstr ""
 
-#: gcal-tag-filter.php:253
+#: google-calendar-tag-filter.php:253
 #: public/class-gcal-display.php:331
 #: public/class-gcal-display.php:426
 msgid "No events"
 msgstr ""
 
-#: gcal-tag-filter.php:254
+#: google-calendar-tag-filter.php:254
 #: public/class-gcal-display.php:678
 msgid "All day"
 msgstr ""
 
-#: gcal-tag-filter.php:255
+#: google-calendar-tag-filter.php:255
 #: public/class-gcal-display.php:397
 msgid "event"
 msgstr ""
 
-#: gcal-tag-filter.php:256
+#: google-calendar-tag-filter.php:256
 #: public/class-gcal-display.php:397
 msgid "events"
 msgstr ""
 
-#: gcal-tag-filter.php:257
+#: google-calendar-tag-filter.php:257
 #: public/class-gcal-display.php:738
 msgid "Learn more"
 msgstr ""
 
-#: gcal-tag-filter.php:258
+#: google-calendar-tag-filter.php:258
 #: public/class-gcal-display.php:130
 #: public/class-gcal-display.php:547
 msgid "Close"
 msgstr ""
 
-#: gcal-tag-filter.php:259
+#: google-calendar-tag-filter.php:259
 msgid "Copied!"
 msgstr ""
 
-#: gcal-tag-filter.php:260
+#: google-calendar-tag-filter.php:260
 msgid "Error"
 msgstr ""
 
-#: gcal-tag-filter.php:261
+#: google-calendar-tag-filter.php:261
 msgid "No events found for this category."
 msgstr ""
 
-#: gcal-tag-filter.php:262
+#: google-calendar-tag-filter.php:262
 msgid "The shared event is not visible in the current period. Try changing the view or period."
 msgstr ""
 
-#: gcal-tag-filter.php:357
+#: google-calendar-tag-filter.php:357
 #: includes/class-gcal-calendar.php:358
 msgid "(Untitled)"
 msgstr ""

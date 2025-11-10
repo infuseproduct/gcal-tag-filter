@@ -68,7 +68,7 @@ class GCal_OAuth {
      * @return string
      */
     public function get_redirect_uri() {
-        return admin_url( 'admin.php?page=gcal-tag-filter-settings&gcal_oauth_callback=1' );
+        return admin_url( 'admin.php?page=google-calendar-tag-filter-settings&gcal_oauth_callback=1' );
     }
 
     /**

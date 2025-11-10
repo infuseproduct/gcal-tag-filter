@@ -24,5 +24,13 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "bash -c 'cd vendor/google/apiclient-services/src && ls -1 | grep -v \"^Calendar\" | grep -v \"^Resource\" | xargs rm -rf || true'"
+        ],
+        "post-update-cmd": [
+            "bash -c 'cd vendor/google/apiclient-services/src && ls -1 | grep -v \"^Calendar\" | grep -v \"^Resource\" | xargs rm -rf || true'"
+        ]
     }
 }

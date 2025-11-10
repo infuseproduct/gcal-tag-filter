@@ -65,10 +65,10 @@ class GCal_Admin {
      */
     public function add_admin_menu() {
         add_options_page(
-            __( 'Google Calendar Tag Filter', 'gcal-tag-filter' ),
-            __( 'Calendar Filter', 'gcal-tag-filter' ),
+            __( 'Google Calendar Tag Filter', 'google-calendar-tag-filter' ),
+            __( 'Calendar Filter', 'google-calendar-tag-filter' ),
             'manage_options',
-            'gcal-tag-filter-settings',
+            'google-calendar-tag-filter-settings',
             array( $this, 'render_settings_page' )
         );
     }
@@ -93,7 +93,7 @@ class GCal_Admin {
      */
     public function enqueue_admin_assets( $hook ) {
         // Only load on our settings page
-        if ( 'settings_page_gcal-tag-filter-settings' !== $hook ) {
+        if ( 'settings_page_google-calendar-tag-filter-settings' !== $hook ) {
             return;
         }
 
@@ -122,9 +122,9 @@ class GCal_Admin {
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
                 'nonce'   => wp_create_nonce( 'gcal-admin-nonce' ),
                 'strings' => array(
-                    'confirmDelete'     => __( 'Are you sure you want to delete this category?', 'gcal-tag-filter' ),
-                    'confirmDisconnect' => __( 'Are you sure you want to disconnect your Google Calendar?', 'gcal-tag-filter' ),
-                    'confirmClearCache' => __( 'Are you sure you want to clear the cache?', 'gcal-tag-filter' ),
+                    'confirmDelete'     => __( 'Are you sure you want to delete this category?', 'google-calendar-tag-filter' ),
+                    'confirmDisconnect' => __( 'Are you sure you want to disconnect your Google Calendar?', 'google-calendar-tag-filter' ),
+                    'confirmClearCache' => __( 'Are you sure you want to clear the cache?', 'google-calendar-tag-filter' ),
                 ),
             )
         );
@@ -139,7 +139,7 @@ class GCal_Admin {
         }
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( esc_html__( 'You do not have permission to perform this action.', 'gcal-tag-filter' ) );
+            wp_die( esc_html__( 'You do not have permission to perform this action.', 'google-calendar-tag-filter' ) );
         }
 
         $code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
@@ -148,20 +148,20 @@ class GCal_Admin {
             add_settings_error(
                 'gcal_tag_filter_messages',
                 'gcal_oauth_success',
-                __( 'Successfully connected to Google Calendar!', 'gcal-tag-filter' ),
+                __( 'Successfully connected to Google Calendar!', 'google-calendar-tag-filter' ),
                 'success'
             );
         } else {
             add_settings_error(
                 'gcal_tag_filter_messages',
                 'gcal_oauth_error',
-                __( 'Failed to connect to Google Calendar. Please try again.', 'gcal-tag-filter' ),
+                __( 'Failed to connect to Google Calendar. Please try again.', 'google-calendar-tag-filter' ),
                 'error'
             );
         }
 
         // Redirect to settings page
-        wp_safe_redirect( admin_url( 'options-general.php?page=gcal-tag-filter-settings' ) );
+        wp_safe_redirect( admin_url( 'options-general.php?page=google-calendar-tag-filter-settings' ) );
         exit;
     }
 
@@ -229,27 +229,27 @@ class GCal_Admin {
             <div class="gcal-admin-container">
                 <!-- OAuth Connection Section -->
                 <div class="gcal-admin-section">
-                    <h2><?php esc_html_e( 'Google Calendar Connection', 'gcal-tag-filter' ); ?></h2>
+                    <h2><?php esc_html_e( 'Google Calendar Connection', 'google-calendar-tag-filter' ); ?></h2>
 
                     <?php if ( $is_authenticated ) : ?>
                         <div class="gcal-connection-status gcal-connected">
                             <span class="dashicons dashicons-yes-alt"></span>
-                            <?php esc_html_e( 'Connected', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Connected', 'google-calendar-tag-filter' ); ?>
                         </div>
 
                         <?php if ( $selected_calendar ) : ?>
-                            <p><?php printf( __( 'Selected Calendar: <strong>%s</strong>', 'gcal-tag-filter' ), esc_html( $selected_calendar ) ); ?></p>
+                            <p><?php printf( esc_html__( 'Selected Calendar: <strong>%s</strong>', 'google-calendar-tag-filter' ), esc_html( $selected_calendar ) ); ?></p>
                         <?php endif; ?>
 
                         <div class="gcal-actions" style="margin: 20px 0;">
                             <button type="button" class="button" id="gcal-refresh-calendars" style="margin-right: 10px;">
-                                <?php esc_html_e( 'Refresh Calendar List', 'gcal-tag-filter' ); ?>
+                                <?php esc_html_e( 'Refresh Calendar List', 'google-calendar-tag-filter' ); ?>
                             </button>
                             <button type="button" class="button" id="gcal-test-connection" style="margin-right: 10px;">
-                                <?php esc_html_e( 'Test Connection', 'gcal-tag-filter' ); ?>
+                                <?php esc_html_e( 'Test Connection', 'google-calendar-tag-filter' ); ?>
                             </button>
                             <button type="button" class="button gcal-button-danger" id="gcal-disconnect">
-                                <?php esc_html_e( 'Disconnect', 'gcal-tag-filter' ); ?>
+                                <?php esc_html_e( 'Disconnect', 'google-calendar-tag-filter' ); ?>
                             </button>
                         </div>
 
@@ -263,47 +263,47 @@ class GCal_Admin {
                                 <table class="form-table">
                                     <tr>
                                         <th scope="row">
-                                            <label for="calendar_id"><?php esc_html_e( 'Select Calendar', 'gcal-tag-filter' ); ?></label>
+                                            <label for="calendar_id"><?php esc_html_e( 'Select Calendar', 'google-calendar-tag-filter' ); ?></label>
                                         </th>
                                         <td>
                                             <select name="<?php echo esc_attr( GCal_OAuth::OPTION_CALENDAR_ID ); ?>" id="calendar_id" class="regular-text">
-                                                <option value=""><?php esc_html_e( '-- Select a calendar --', 'gcal-tag-filter' ); ?></option>
+                                                <option value=""><?php esc_html_e( '-- Select a calendar --', 'google-calendar-tag-filter' ); ?></option>
                                                 <?php foreach ( $calendars as $calendar ) : ?>
                                                     <option value="<?php echo esc_attr( $calendar['id'] ); ?>"
                                                         <?php selected( $selected_calendar, $calendar['id'] ); ?>>
                                                         <?php echo esc_html( $calendar['summary'] ); ?>
-                                                        <?php echo $calendar['primary'] ? '(' . esc_html__( 'Primary', 'gcal-tag-filter' ) . ')' : ''; ?>
+                                                        <?php echo $calendar['primary'] ? '(' . esc_html__( 'Primary', 'google-calendar-tag-filter' ) . ')' : ''; ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
                                             <p class="description">
-                                                <?php esc_html_e( 'Choose which calendar to display events from.', 'gcal-tag-filter' ); ?>
+                                                <?php esc_html_e( 'Choose which calendar to display events from.', 'google-calendar-tag-filter' ); ?>
                                             </p>
                                         </td>
                                     </tr>
                                 </table>
 
-                                <?php submit_button( __( 'Save Calendar Selection', 'gcal-tag-filter' ) ); ?>
+                                <?php submit_button( __( 'Save Calendar Selection', 'google-calendar-tag-filter' ) ); ?>
                             </form>
                         <?php else : ?>
                             <div class="notice notice-warning inline">
-                                <p><?php esc_html_e( 'Unable to retrieve calendar list. Click "Test Connection" to diagnose the issue.', 'gcal-tag-filter' ); ?></p>
+                                <p><?php esc_html_e( 'Unable to retrieve calendar list. Click "Test Connection" to diagnose the issue.', 'google-calendar-tag-filter' ); ?></p>
                             </div>
                         <?php endif; ?>
 
                     <?php else : ?>
                         <div class="gcal-connection-status gcal-disconnected">
                             <span class="dashicons dashicons-dismiss"></span>
-                            <?php esc_html_e( 'Not Connected', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Not Connected', 'google-calendar-tag-filter' ); ?>
                         </div>
 
-                        <p><?php esc_html_e( 'Enter your Google OAuth credentials to connect to Google Calendar.', 'gcal-tag-filter' ); ?></p>
+                        <p><?php esc_html_e( 'Enter your Google OAuth credentials to connect to Google Calendar.', 'google-calendar-tag-filter' ); ?></p>
 
                         <form id="gcal-credentials-form">
                             <table class="form-table">
                                 <tr>
                                     <th scope="row">
-                                        <label for="client_id"><?php esc_html_e( 'Client ID', 'gcal-tag-filter' ); ?></label>
+                                        <label for="client_id"><?php esc_html_e( 'Client ID', 'google-calendar-tag-filter' ); ?></label>
                                     </th>
                                     <td>
                                         <input type="text" name="client_id" id="client_id" class="regular-text" required />
@@ -311,8 +311,8 @@ class GCal_Admin {
                                             <?php
                                             printf(
                                                 /* translators: %s: link to Google Cloud Console */
-                                                esc_html__( 'Get this from your %s.', 'gcal-tag-filter' ),
-                                                '<a href="https://console.cloud.google.com/apis/credentials" target="_blank">' . esc_html__( 'Google Cloud Console', 'gcal-tag-filter' ) . '</a>'
+                                                esc_html__( 'Get this from your %s.', 'google-calendar-tag-filter' ),
+                                                '<a href="https://console.cloud.google.com/apis/credentials" target="_blank">' . esc_html__( 'Google Cloud Console', 'google-calendar-tag-filter' ) . '</a>'
                                             );
                                             ?>
                                         </p>
@@ -320,7 +320,7 @@ class GCal_Admin {
                                 </tr>
                                 <tr>
                                     <th scope="row">
-                                        <label for="client_secret"><?php esc_html_e( 'Client Secret', 'gcal-tag-filter' ); ?></label>
+                                        <label for="client_secret"><?php esc_html_e( 'Client Secret', 'google-calendar-tag-filter' ); ?></label>
                                     </th>
                                     <td>
                                         <input type="password" name="client_secret" id="client_secret" class="regular-text" required />
@@ -328,19 +328,19 @@ class GCal_Admin {
                                 </tr>
                                 <tr>
                                     <th scope="row">
-                                        <?php esc_html_e( 'Redirect URI', 'gcal-tag-filter' ); ?>
+                                        <?php esc_html_e( 'Redirect URI', 'google-calendar-tag-filter' ); ?>
                                     </th>
                                     <td>
                                         <code><?php echo esc_html( $this->oauth->get_redirect_uri() ); ?></code>
                                         <p class="description">
-                                            <?php esc_html_e( 'Use this as the authorized redirect URI in your Google Cloud Console OAuth credentials.', 'gcal-tag-filter' ); ?>
+                                            <?php esc_html_e( 'Use this as the authorized redirect URI in your Google Cloud Console OAuth credentials.', 'google-calendar-tag-filter' ); ?>
                                         </p>
                                     </td>
                                 </tr>
                             </table>
 
                             <button type="submit" class="button button-primary">
-                                <?php esc_html_e( 'Save and Connect with Google', 'gcal-tag-filter' ); ?>
+                                <?php esc_html_e( 'Save and Connect with Google', 'google-calendar-tag-filter' ); ?>
                             </button>
                         </form>
                     <?php endif; ?>
@@ -348,32 +348,32 @@ class GCal_Admin {
 
                 <!-- Category Management Section -->
                 <div class="gcal-admin-section">
-                    <h2><?php esc_html_e( 'Category Whitelist', 'gcal-tag-filter' ); ?></h2>
-                    <p><?php esc_html_e( 'Manage the categories that can be used to tag events. Only whitelisted categories will be recognized.', 'gcal-tag-filter' ); ?></p>
+                    <h2><?php esc_html_e( 'Category Whitelist', 'google-calendar-tag-filter' ); ?></h2>
+                    <p><?php esc_html_e( 'Manage the categories that can be used to tag events. Only whitelisted categories will be recognized.', 'google-calendar-tag-filter' ); ?></p>
 
                     <?php require_once GCAL_TAG_FILTER_PATH . 'admin/partials/category-manager.php'; ?>
                 </div>
 
                 <!-- Cache Settings Section -->
                 <div class="gcal-admin-section">
-                    <h2><?php esc_html_e( 'Cache Settings', 'gcal-tag-filter' ); ?></h2>
+                    <h2><?php esc_html_e( 'Cache Settings', 'google-calendar-tag-filter' ); ?></h2>
 
                     <?php require_once GCAL_TAG_FILTER_PATH . 'admin/partials/cache-settings.php'; ?>
                 </div>
 
                 <!-- Shortcode Documentation Section -->
                 <div class="gcal-admin-section">
-                    <h2><?php esc_html_e( 'Shortcode Usage', 'gcal-tag-filter' ); ?></h2>
-                    <p><?php esc_html_e( 'Use the [gcal_embed] shortcode to display events on any page or post.', 'gcal-tag-filter' ); ?></p>
+                    <h2><?php esc_html_e( 'Shortcode Usage', 'google-calendar-tag-filter' ); ?></h2>
+                    <p><?php esc_html_e( 'Use the [gcal_embed] shortcode to display events on any page or post.', 'google-calendar-tag-filter' ); ?></p>
 
-                    <h3><?php esc_html_e( 'Parameters', 'gcal-tag-filter' ); ?></h3>
+                    <h3><?php esc_html_e( 'Parameters', 'google-calendar-tag-filter' ); ?></h3>
                     <table class="widefat striped">
                         <thead>
                             <tr>
-                                <th><?php esc_html_e( 'Parameter', 'gcal-tag-filter' ); ?></th>
-                                <th><?php esc_html_e( 'Options', 'gcal-tag-filter' ); ?></th>
-                                <th><?php esc_html_e( 'Default', 'gcal-tag-filter' ); ?></th>
-                                <th><?php esc_html_e( 'Description', 'gcal-tag-filter' ); ?></th>
+                                <th><?php esc_html_e( 'Parameter', 'google-calendar-tag-filter' ); ?></th>
+                                <th><?php esc_html_e( 'Options', 'google-calendar-tag-filter' ); ?></th>
+                                <th><?php esc_html_e( 'Default', 'google-calendar-tag-filter' ); ?></th>
+                                <th><?php esc_html_e( 'Description', 'google-calendar-tag-filter' ); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -381,108 +381,108 @@ class GCal_Admin {
                                 <td><code>view</code></td>
                                 <td><code>calendar</code>, <code>list</code></td>
                                 <td><code>list</code></td>
-                                <td><?php esc_html_e( 'Display format: calendar grid or vertical list', 'gcal-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Display format: calendar grid or vertical list', 'google-calendar-tag-filter' ); ?></td>
                             </tr>
                             <tr>
                                 <td><code>period</code></td>
                                 <td><code>week</code>, <code>month</code>, <code>year</code>, <code>future</code></td>
                                 <td><code>year</code></td>
-                                <td><?php esc_html_e( 'Time range to display. "future" shows all upcoming events (up to 100) and hides period navigation.', 'gcal-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Time range to display. "future" shows all upcoming events (up to 100) and hides period navigation.', 'google-calendar-tag-filter' ); ?></td>
                             </tr>
                             <tr>
                                 <td><code>tags</code></td>
-                                <td><?php esc_html_e( 'Category IDs (comma-separated)', 'gcal-tag-filter' ); ?></td>
-                                <td><?php esc_html_e( 'Empty (all events)', 'gcal-tag-filter' ); ?></td>
-                                <td><?php esc_html_e( 'Filter by categories. Supports wildcards (e.g., "MESSE*" matches all tags starting with MESSE).', 'gcal-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Category IDs (comma-separated)', 'google-calendar-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Empty (all events)', 'google-calendar-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Filter by categories. Supports wildcards (e.g., "MESSE*" matches all tags starting with MESSE).', 'google-calendar-tag-filter' ); ?></td>
                             </tr>
                             <tr>
                                 <td><code>show_categories</code></td>
                                 <td><code>true</code>, <code>false</code></td>
                                 <td><code>false</code></td>
-                                <td><?php esc_html_e( 'Show category filter sidebar with interactive buttons', 'gcal-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Show category filter sidebar with interactive buttons', 'google-calendar-tag-filter' ); ?></td>
                             </tr>
                             <tr>
                                 <td><code>show_display_style</code></td>
                                 <td><code>true</code>, <code>false</code></td>
                                 <td><code>false</code></td>
-                                <td><?php esc_html_e( 'Show calendar/list view toggle in sidebar', 'gcal-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Show calendar/list view toggle in sidebar', 'google-calendar-tag-filter' ); ?></td>
                             </tr>
                             <tr>
                                 <td><code>hide_past</code></td>
                                 <td><code>true</code>, <code>false</code></td>
                                 <td><code>false</code></td>
-                                <td><?php esc_html_e( 'Hide past events in list view (useful with year/month/week periods)', 'gcal-tag-filter' ); ?></td>
+                                <td><?php esc_html_e( 'Hide past events in list view (useful with year/month/week periods)', 'google-calendar-tag-filter' ); ?></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h3 style="margin-top: 24px;"><?php esc_html_e( 'Examples', 'gcal-tag-filter' ); ?></h3>
+                    <h3 style="margin-top: 24px;"><?php esc_html_e( 'Examples', 'google-calendar-tag-filter' ); ?></h3>
 
                     <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; margin-bottom: 12px;">
-                        <strong><?php esc_html_e( 'Basic Calendar View (Current Month)', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'Basic Calendar View (Current Month)', 'google-calendar-tag-filter' ); ?></strong>
                         <pre style="background: white; padding: 12px; margin-top: 8px; overflow-x: auto;"><code>[gcal_embed view="calendar" period="month"]</code></pre>
                     </div>
 
                     <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; margin-bottom: 12px;">
-                        <strong><?php esc_html_e( 'List of All Upcoming Events', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'List of All Upcoming Events', 'google-calendar-tag-filter' ); ?></strong>
                         <pre style="background: white; padding: 12px; margin-top: 8px; overflow-x: auto;"><code>[gcal_embed view="list" period="future"]</code></pre>
                         <p style="margin: 8px 0 0 0; font-size: 13px; color: #666;">
-                            <?php esc_html_e( 'Shows all future events (up to 100 from Google API). Period navigation is automatically hidden.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Shows all future events (up to 100 from Google API). Period navigation is automatically hidden.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </div>
 
                     <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; margin-bottom: 12px;">
-                        <strong><?php esc_html_e( 'Filter by Specific Category', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'Filter by Specific Category', 'google-calendar-tag-filter' ); ?></strong>
                         <pre style="background: white; padding: 12px; margin-top: 8px; overflow-x: auto;"><code>[gcal_embed tags="WORKSHOP" view="list" period="year"]</code></pre>
                     </div>
 
                     <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; margin-bottom: 12px;">
-                        <strong><?php esc_html_e( 'Filter by Wildcard Pattern', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'Filter by Wildcard Pattern', 'google-calendar-tag-filter' ); ?></strong>
                         <pre style="background: white; padding: 12px; margin-top: 8px; overflow-x: auto;"><code>[gcal_embed tags="MESSE*" view="list" period="future"]</code></pre>
                         <p style="margin: 8px 0 0 0; font-size: 13px; color: #666;">
-                            <?php esc_html_e( 'Matches all tags starting with "MESSE" (e.g., MESSE-MUI-WO, MESSE-AUTRE). Wildcards use asterisk (*) to match patterns.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Matches all tags starting with "MESSE" (e.g., MESSE-MUI-WO, MESSE-AUTRE). Wildcards use asterisk (*) to match patterns.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </div>
 
                     <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; margin-bottom: 12px;">
-                        <strong><?php esc_html_e( 'Interactive Calendar with Sidebar', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'Interactive Calendar with Sidebar', 'google-calendar-tag-filter' ); ?></strong>
                         <pre style="background: white; padding: 12px; margin-top: 8px; overflow-x: auto;"><code>[gcal_embed view="calendar" period="month" show_categories="true" show_display_style="true"]</code></pre>
                         <p style="margin: 8px 0 0 0; font-size: 13px; color: #666;">
-                            <?php esc_html_e( 'Includes category filter buttons and view toggle (calendar/list) in the sidebar.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Includes category filter buttons and view toggle (calendar/list) in the sidebar.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </div>
 
                     <div style="background: #f5f5f5; padding: 16px; border-radius: 4px; margin-bottom: 12px;">
-                        <strong><?php esc_html_e( 'Hide Past Events (List View)', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'Hide Past Events (List View)', 'google-calendar-tag-filter' ); ?></strong>
                         <pre style="background: white; padding: 12px; margin-top: 8px; overflow-x: auto;"><code>[gcal_embed view="list" period="year" hide_past="true"]</code></pre>
                         <p style="margin: 8px 0 0 0; font-size: 13px; color: #666;">
-                            <?php esc_html_e( 'Shows only upcoming events from today through the end of the year.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Shows only upcoming events from today through the end of the year.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </div>
 
-                    <h3 style="margin-top: 24px;"><?php esc_html_e( 'Wildcard Pattern Rules', 'gcal-tag-filter' ); ?></h3>
+                    <h3 style="margin-top: 24px;"><?php esc_html_e( 'Wildcard Pattern Rules', 'google-calendar-tag-filter' ); ?></h3>
                     <ul style="margin-left: 20px;">
-                        <li><?php esc_html_e( 'Use asterisk (*) to match zero or more characters', 'gcal-tag-filter' ); ?></li>
-                        <li><code>MESSE*</code> - <?php esc_html_e( 'Matches all tags starting with MESSE', 'gcal-tag-filter' ); ?></li>
-                        <li><code>*-WO</code> - <?php esc_html_e( 'Matches all tags ending with -WO', 'gcal-tag-filter' ); ?></li>
-                        <li><code>MESSE*,REUNION*</code> - <?php esc_html_e( 'Matches tags starting with MESSE or REUNION (OR logic)', 'gcal-tag-filter' ); ?></li>
-                        <li><?php esc_html_e( 'Wildcards bypass the category whitelist (no need to pre-define patterns)', 'gcal-tag-filter' ); ?></li>
-                        <li><?php esc_html_e( 'Only alphanumeric characters, hyphens (-), underscores (_), and asterisk (*) allowed', 'gcal-tag-filter' ); ?></li>
+                        <li><?php esc_html_e( 'Use asterisk (*) to match zero or more characters', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>MESSE*</code> - <?php esc_html_e( 'Matches all tags starting with MESSE', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>*-WO</code> - <?php esc_html_e( 'Matches all tags ending with -WO', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>MESSE*,REUNION*</code> - <?php esc_html_e( 'Matches tags starting with MESSE or REUNION (OR logic)', 'google-calendar-tag-filter' ); ?></li>
+                        <li><?php esc_html_e( 'Wildcards bypass the category whitelist (no need to pre-define patterns)', 'google-calendar-tag-filter' ); ?></li>
+                        <li><?php esc_html_e( 'Only alphanumeric characters, hyphens (-), underscores (_), and asterisk (*) allowed', 'google-calendar-tag-filter' ); ?></li>
                     </ul>
 
-                    <h3 style="margin-top: 24px;"><?php esc_html_e( 'URL Parameters', 'gcal-tag-filter' ); ?></h3>
-                    <p><?php esc_html_e( 'Users can override shortcode settings using URL parameters:', 'gcal-tag-filter' ); ?></p>
+                    <h3 style="margin-top: 24px;"><?php esc_html_e( 'URL Parameters', 'google-calendar-tag-filter' ); ?></h3>
+                    <p><?php esc_html_e( 'Users can override shortcode settings using URL parameters:', 'google-calendar-tag-filter' ); ?></p>
                     <ul style="margin-left: 20px;">
-                        <li><code>?gcal_view=week</code> - <?php esc_html_e( 'Switch to week view', 'gcal-tag-filter' ); ?></li>
-                        <li><code>?gcal_view=month</code> - <?php esc_html_e( 'Switch to month view', 'gcal-tag-filter' ); ?></li>
-                        <li><code>?gcal_view=year</code> - <?php esc_html_e( 'Switch to year view', 'gcal-tag-filter' ); ?></li>
-                        <li><code>?gcal_display=calendar</code> - <?php esc_html_e( 'Switch to calendar display', 'gcal-tag-filter' ); ?></li>
-                        <li><code>?gcal_display=list</code> - <?php esc_html_e( 'Switch to list display', 'gcal-tag-filter' ); ?></li>
-                        <li><code>?gcal_category=WORKSHOP</code> - <?php esc_html_e( 'Filter by specific category', 'gcal-tag-filter' ); ?></li>
+                        <li><code>?gcal_view=week</code> - <?php esc_html_e( 'Switch to week view', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>?gcal_view=month</code> - <?php esc_html_e( 'Switch to month view', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>?gcal_view=year</code> - <?php esc_html_e( 'Switch to year view', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>?gcal_display=calendar</code> - <?php esc_html_e( 'Switch to calendar display', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>?gcal_display=list</code> - <?php esc_html_e( 'Switch to list display', 'google-calendar-tag-filter' ); ?></li>
+                        <li><code>?gcal_category=WORKSHOP</code> - <?php esc_html_e( 'Filter by specific category', 'google-calendar-tag-filter' ); ?></li>
                     </ul>
 
                     <p style="margin-top: 16px;">
-                        <strong><?php esc_html_e( 'For complete documentation, see:', 'gcal-tag-filter' ); ?></strong>
+                        <strong><?php esc_html_e( 'For complete documentation, see:', 'google-calendar-tag-filter' ); ?></strong>
                         <code>/docs/SHORTCODE-REFERENCE.md</code>
                     </p>
                 </div>
@@ -498,14 +498,14 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $client_id = isset( $_POST['client_id'] ) ? sanitize_text_field( wp_unslash( $_POST['client_id'] ) ) : '';
         $client_secret = isset( $_POST['client_secret'] ) ? sanitize_text_field( wp_unslash( $_POST['client_secret'] ) ) : '';
 
         if ( empty( $client_id ) || empty( $client_secret ) ) {
-            wp_send_json_error( array( 'message' => __( 'Client ID and Secret are required.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Client ID and Secret are required.', 'google-calendar-tag-filter' ) ) );
         }
 
         if ( $this->oauth->save_credentials( $client_id, $client_secret ) ) {
@@ -513,16 +513,16 @@ class GCal_Admin {
 
             if ( empty( $auth_url ) ) {
                 wp_send_json_error( array(
-                    'message' => __( 'Credentials saved but failed to generate Google authorization URL. Please check your credentials and try again.', 'gcal-tag-filter' )
+                    'message' => __( 'Credentials saved but failed to generate Google authorization URL. Please check your credentials and try again.', 'google-calendar-tag-filter' )
                 ) );
             }
 
             wp_send_json_success( array(
-                'message'  => __( 'Credentials saved. Redirecting to Google...', 'gcal-tag-filter' ),
+                'message'  => __( 'Credentials saved. Redirecting to Google...', 'google-calendar-tag-filter' ),
                 'auth_url' => $auth_url,
             ) );
         } else {
-            wp_send_json_error( array( 'message' => __( 'Failed to save credentials. Please check that they are valid.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Failed to save credentials. Please check that they are valid.', 'google-calendar-tag-filter' ) ) );
         }
     }
 
@@ -533,14 +533,14 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $this->oauth->disconnect();
         GCal_Cache::clear_all_cache();
 
         wp_send_json_success( array(
-            'message' => __( 'Disconnected successfully.', 'gcal-tag-filter' ),
+            'message' => __( 'Disconnected successfully.', 'google-calendar-tag-filter' ),
         ) );
     }
 
@@ -551,7 +551,7 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $result = $this->calendar->test_connection();
@@ -570,7 +570,7 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $deleted = GCal_Cache::clear_all_cache();
@@ -578,7 +578,7 @@ class GCal_Admin {
         wp_send_json_success( array(
             'message' => sprintf(
                 /* translators: %d: number of cache entries cleared */
-                __( 'Cache cleared! %d entries removed.', 'gcal-tag-filter' ),
+                __( 'Cache cleared! %d entries removed.', 'google-calendar-tag-filter' ),
                 $deleted
             ),
         ) );
@@ -591,7 +591,7 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $id = isset( $_POST['id'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_POST['id'] ) ) ) : '';
@@ -604,7 +604,7 @@ class GCal_Admin {
             wp_send_json_error( array( 'message' => $result->get_error_message() ) );
         } else {
             wp_send_json_success( array(
-                'message' => __( 'Category added successfully.', 'gcal-tag-filter' ),
+                'message' => __( 'Category added successfully.', 'google-calendar-tag-filter' ),
             ) );
         }
     }
@@ -616,7 +616,7 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $id = isset( $_POST['id'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_POST['id'] ) ) ) : '';
@@ -629,7 +629,7 @@ class GCal_Admin {
             wp_send_json_error( array( 'message' => $result->get_error_message() ) );
         } else {
             wp_send_json_success( array(
-                'message' => __( 'Category updated successfully.', 'gcal-tag-filter' ),
+                'message' => __( 'Category updated successfully.', 'google-calendar-tag-filter' ),
             ) );
         }
     }
@@ -641,7 +641,7 @@ class GCal_Admin {
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'google-calendar-tag-filter' ) ) );
         }
 
         $id = isset( $_POST['id'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_POST['id'] ) ) ) : '';
@@ -652,7 +652,7 @@ class GCal_Admin {
             wp_send_json_error( array( 'message' => $result->get_error_message() ) );
         } else {
             wp_send_json_success( array(
-                'message' => __( 'Category deleted successfully.', 'gcal-tag-filter' ),
+                'message' => __( 'Category deleted successfully.', 'google-calendar-tag-filter' ),
             ) );
         }
     }

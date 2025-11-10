@@ -34,7 +34,7 @@ class GCal_Display {
         ob_start();
         ?>
         <div class="gcal-empty-state">
-            <p><?php esc_html_e( 'No events found.', 'gcal-tag-filter' ); ?></p>
+            <p><?php esc_html_e( 'No events found.', 'google-calendar-tag-filter' ); ?></p>
         </div>
         <?php
         return ob_get_clean();
@@ -75,7 +75,10 @@ class GCal_Display {
         ?>
         <div class="gcal-wrapper-with-sidebar <?php echo ( $show_categories || $show_display_style ) ? 'has-sidebar' : ''; ?>">
             <?php if ( $show_categories || $show_display_style ) : ?>
-                <?php echo $this->render_sidebar( $events, $selected_category, $instance_id, $show_categories, $show_display_style, $current_view ); ?>
+                <?php
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_sidebar returns sanitized HTML
+                echo $this->render_sidebar( $events, $selected_category, $instance_id, $show_categories, $show_display_style, $current_view );
+                ?>
             <?php endif; ?>
 
             <div class="gcal-calendar-wrapper"
@@ -86,23 +89,23 @@ class GCal_Display {
             <?php if ( $period !== 'future' ) : ?>
             <div class="gcal-calendar-header">
                 <div class="gcal-header-left">
-                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'google-calendar-tag-filter' ); ?>">
                         ‹
                     </button>
                     <h3 class="gcal-calendar-title"></h3>
-                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Next', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Next', 'google-calendar-tag-filter' ); ?>">
                         ›
                     </button>
                 </div>
                 <div class="gcal-view-toggle">
                     <button class="gcal-view-btn <?php echo $period === 'week' ? 'active' : ''; ?>" data-view="week">
-                        <?php esc_html_e( 'Week', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Week', 'google-calendar-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'month' ? 'active' : ''; ?>" data-view="month">
-                        <?php esc_html_e( 'Month', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Month', 'google-calendar-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'year' ? 'active' : ''; ?>" data-view="year">
-                        <?php esc_html_e( 'Year', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Year', 'google-calendar-tag-filter' ); ?>
                     </button>
                 </div>
             </div>
@@ -114,11 +117,20 @@ class GCal_Display {
 
             <div class="gcal-calendar-grid" data-current-view="<?php echo esc_attr( $period ); ?>">
                 <?php if ( $period === 'week' ) : ?>
-                    <?php echo $this->render_week_view( $events, $url_year, $url_month, $url_week ); ?>
+                    <?php
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_week_view returns sanitized HTML
+                    echo $this->render_week_view( $events, $url_year, $url_month, $url_week );
+                    ?>
                 <?php elseif ( $period === 'year' ) : ?>
-                    <?php echo $this->render_year_view( $events, $url_year ); ?>
+                    <?php
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_year_view returns sanitized HTML
+                    echo $this->render_year_view( $events, $url_year );
+                    ?>
                 <?php else : ?>
-                    <?php echo $this->render_month_view( $events, $url_year, $url_month ); ?>
+                    <?php
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_month_view returns sanitized HTML
+                    echo $this->render_month_view( $events, $url_year, $url_month );
+                    ?>
                 <?php endif; ?>
             </div>
             </div><!-- .gcal-calendar-wrapper -->
@@ -127,7 +139,7 @@ class GCal_Display {
             <div class="gcal-modal" id="<?php echo esc_attr( $instance_id ); ?>-modal" style="display: none;">
                 <div class="gcal-modal-overlay"></div>
                 <div class="gcal-modal-content">
-                    <button class="gcal-modal-close" aria-label="<?php esc_attr_e( 'Close', 'gcal-tag-filter' ); ?>">×</button>
+                    <button class="gcal-modal-close" aria-label="<?php esc_attr_e( 'Close', 'google-calendar-tag-filter' ); ?>">×</button>
                     <div class="gcal-modal-body"></div>
                 </div>
             </div>
@@ -164,13 +176,13 @@ class GCal_Display {
             <div class="gcal-weekday-headers">
                 <?php
                 $weekdays = array(
-                    __( 'Mon', 'gcal-tag-filter' ),
-                    __( 'Tue', 'gcal-tag-filter' ),
-                    __( 'Wed', 'gcal-tag-filter' ),
-                    __( 'Thu', 'gcal-tag-filter' ),
-                    __( 'Fri', 'gcal-tag-filter' ),
-                    __( 'Sat', 'gcal-tag-filter' ),
-                    __( 'Sun', 'gcal-tag-filter' ),
+                    __( 'Mon', 'google-calendar-tag-filter' ),
+                    __( 'Tue', 'google-calendar-tag-filter' ),
+                    __( 'Wed', 'google-calendar-tag-filter' ),
+                    __( 'Thu', 'google-calendar-tag-filter' ),
+                    __( 'Fri', 'google-calendar-tag-filter' ),
+                    __( 'Sat', 'google-calendar-tag-filter' ),
+                    __( 'Sun', 'google-calendar-tag-filter' ),
                 );
                 foreach ( $weekdays as $day ) :
                     ?>
@@ -211,7 +223,10 @@ class GCal_Display {
                         <div class="gcal-day-number"><?php echo esc_html( $calendar_start->format( 'j' ) ); ?></div>
                         <div class="gcal-day-events">
                             <?php foreach ( $day_events as $event ) : ?>
-                                <?php echo $this->render_event_item( $event ); ?>
+                                <?php
+                                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_event_item returns sanitized HTML
+                                echo $this->render_event_item( $event );
+                                ?>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -297,13 +312,13 @@ class GCal_Display {
 
         // Abbreviated day names for week view
         $weekday_abbr = array(
-            __( 'Mon', 'gcal-tag-filter' ),
-            __( 'Tue', 'gcal-tag-filter' ),
-            __( 'Wed', 'gcal-tag-filter' ),
-            __( 'Thu', 'gcal-tag-filter' ),
-            __( 'Fri', 'gcal-tag-filter' ),
-            __( 'Sat', 'gcal-tag-filter' ),
-            __( 'Sun', 'gcal-tag-filter' ),
+            __( 'Mon', 'google-calendar-tag-filter' ),
+            __( 'Tue', 'google-calendar-tag-filter' ),
+            __( 'Wed', 'google-calendar-tag-filter' ),
+            __( 'Thu', 'google-calendar-tag-filter' ),
+            __( 'Fri', 'google-calendar-tag-filter' ),
+            __( 'Sat', 'google-calendar-tag-filter' ),
+            __( 'Sun', 'google-calendar-tag-filter' ),
         );
 
         ob_start();
@@ -325,10 +340,13 @@ class GCal_Display {
                     <div class="gcal-week-day-events">
                         <?php if ( ! empty( $day_events ) ) : ?>
                             <?php foreach ( $day_events as $event ) : ?>
-                                <?php echo $this->render_event_item( $event ); ?>
+                                <?php
+                                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_event_item returns sanitized HTML
+                                echo $this->render_event_item( $event );
+                                ?>
                             <?php endforeach; ?>
                         <?php else : ?>
-                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'gcal-tag-filter' ); ?></div>
+                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'google-calendar-tag-filter' ); ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -374,18 +392,18 @@ class GCal_Display {
                 $month_events = $events_by_month[ $month_key ] ?? array();
                 $month_date = new DateTime( $month_key . '-01' );
                 $month_names = array(
-                    __( 'January', 'gcal-tag-filter' ),
-                    __( 'February', 'gcal-tag-filter' ),
-                    __( 'March', 'gcal-tag-filter' ),
-                    __( 'April', 'gcal-tag-filter' ),
-                    __( 'May', 'gcal-tag-filter' ),
-                    __( 'June', 'gcal-tag-filter' ),
-                    __( 'July', 'gcal-tag-filter' ),
-                    __( 'August', 'gcal-tag-filter' ),
-                    __( 'September', 'gcal-tag-filter' ),
-                    __( 'October', 'gcal-tag-filter' ),
-                    __( 'November', 'gcal-tag-filter' ),
-                    __( 'December', 'gcal-tag-filter' ),
+                    __( 'January', 'google-calendar-tag-filter' ),
+                    __( 'February', 'google-calendar-tag-filter' ),
+                    __( 'March', 'google-calendar-tag-filter' ),
+                    __( 'April', 'google-calendar-tag-filter' ),
+                    __( 'May', 'google-calendar-tag-filter' ),
+                    __( 'June', 'google-calendar-tag-filter' ),
+                    __( 'July', 'google-calendar-tag-filter' ),
+                    __( 'August', 'google-calendar-tag-filter' ),
+                    __( 'September', 'google-calendar-tag-filter' ),
+                    __( 'October', 'google-calendar-tag-filter' ),
+                    __( 'November', 'google-calendar-tag-filter' ),
+                    __( 'December', 'google-calendar-tag-filter' ),
                 );
                 $month_name = $month_names[ $month - 1 ];
                 ?>
@@ -394,7 +412,7 @@ class GCal_Display {
                         <h4><?php echo esc_html( ucfirst( $month_name ) ); ?></h4>
                         <span class="gcal-year-month-count">
                             <?php echo count( $month_events ); ?>
-                            <?php echo count( $month_events ) === 1 ? esc_html__( 'event', 'gcal-tag-filter' ) : esc_html__( 'events', 'gcal-tag-filter' ); ?>
+                            <?php echo count( $month_events ) === 1 ? esc_html__( 'event', 'google-calendar-tag-filter' ) : esc_html__( 'events', 'google-calendar-tag-filter' ); ?>
                         </span>
                     </div>
                     <div class="gcal-year-month-events">
@@ -418,12 +436,12 @@ class GCal_Display {
                             <?php endforeach; ?>
                             <?php if ( count( $month_events ) > 5 ) : ?>
                                 <button class="gcal-year-more" data-month="<?php echo esc_attr( $month_key ); ?>">
-                                    <span class="gcal-year-more-text">+<?php echo count( $month_events ) - 5; ?> <?php esc_html_e( 'more', 'gcal-tag-filter' ); ?></span>
-                                    <span class="gcal-year-less-text" style="display: none;"><?php esc_html_e( 'Show less', 'gcal-tag-filter' ); ?></span>
+                                    <span class="gcal-year-more-text">+<?php echo count( $month_events ) - 5; ?> <?php esc_html_e( 'more', 'google-calendar-tag-filter' ); ?></span>
+                                    <span class="gcal-year-less-text" style="display: none;"><?php esc_html_e( 'Show less', 'google-calendar-tag-filter' ); ?></span>
                                 </button>
                             <?php endif; ?>
                         <?php else : ?>
-                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'gcal-tag-filter' ); ?></div>
+                            <div class="gcal-no-events"><?php esc_html_e( 'No events', 'google-calendar-tag-filter' ); ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -492,7 +510,10 @@ class GCal_Display {
         ?>
         <div class="gcal-wrapper-with-sidebar <?php echo ( $show_categories || $show_display_style ) ? 'has-sidebar' : ''; ?>">
             <?php if ( $show_categories || $show_display_style ) : ?>
-                <?php echo $this->render_sidebar( $events, $selected_category, $instance_id, $show_categories, $show_display_style, $current_view ); ?>
+                <?php
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_sidebar returns sanitized HTML
+                echo $this->render_sidebar( $events, $selected_category, $instance_id, $show_categories, $show_display_style, $current_view );
+                ?>
             <?php endif; ?>
 
             <div class="gcal-list-wrapper"
@@ -503,23 +524,23 @@ class GCal_Display {
             <?php if ( $period !== 'future' ) : ?>
             <div class="gcal-list-header">
                 <div class="gcal-header-left">
-                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-prev" aria-label="<?php esc_attr_e( 'Previous', 'google-calendar-tag-filter' ); ?>">
                         ‹
                     </button>
                     <h3 class="gcal-list-title"></h3>
-                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Next', 'gcal-tag-filter' ); ?>">
+                    <button class="gcal-nav-next" aria-label="<?php esc_attr_e( 'Next', 'google-calendar-tag-filter' ); ?>">
                         ›
                     </button>
                 </div>
                 <div class="gcal-view-toggle">
                     <button class="gcal-view-btn <?php echo $period === 'week' ? 'active' : ''; ?>" data-view="week">
-                        <?php esc_html_e( 'Week', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Week', 'google-calendar-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'month' ? 'active' : ''; ?>" data-view="month">
-                        <?php esc_html_e( 'Month', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Month', 'google-calendar-tag-filter' ); ?>
                     </button>
                     <button class="gcal-view-btn <?php echo $period === 'year' ? 'active' : ''; ?>" data-view="year">
-                        <?php esc_html_e( 'Year', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Year', 'google-calendar-tag-filter' ); ?>
                     </button>
                 </div>
             </div>
@@ -531,10 +552,16 @@ class GCal_Display {
 
             <div class="gcal-list">
                 <?php if ( empty( $events ) ) : ?>
-                    <?php echo $this->render_empty_state(); ?>
+                    <?php
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_empty_state returns sanitized HTML
+                    echo $this->render_empty_state();
+                    ?>
                 <?php else : ?>
                     <?php foreach ( $events as $event ) : ?>
-                        <?php echo $this->render_list_event_card( $event ); ?>
+                        <?php
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_list_event_card returns sanitized HTML
+                        echo $this->render_list_event_card( $event );
+                        ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
@@ -544,7 +571,7 @@ class GCal_Display {
             <div class="gcal-modal" id="<?php echo esc_attr( $instance_id ); ?>-modal" style="display: none;">
                 <div class="gcal-modal-overlay"></div>
                 <div class="gcal-modal-content">
-                    <button class="gcal-modal-close" aria-label="<?php esc_attr_e( 'Close', 'gcal-tag-filter' ); ?>">×</button>
+                    <button class="gcal-modal-close" aria-label="<?php esc_attr_e( 'Close', 'google-calendar-tag-filter' ); ?>">×</button>
                     <div class="gcal-modal-body"></div>
                 </div>
             </div>
@@ -618,7 +645,7 @@ class GCal_Display {
         if ( $is_untagged ) {
             // Untagged events get black background (for admins only)
             $category_color = '#000000';
-            $category_name = '⚠️ ' . __( 'Uncategorized', 'gcal-tag-filter' );
+            $category_name = '⚠️ ' . __( 'Uncategorized', 'google-calendar-tag-filter' );
             $css_class = 'gcal-event-untagged';
         } elseif ( $has_unknown_tags ) {
             // Events with unknown tags get dark red background (for admins only)
@@ -626,7 +653,7 @@ class GCal_Display {
             // Show the first invalid tag
             $first_invalid = ! empty( $event['invalid_tags'][0] ) ? $event['invalid_tags'][0] : 'UNKNOWN';
             /* translators: %s: invalid tag name */
-            $category_name = '⚠️ ' . sprintf( __( 'Unknown tag: %s', 'gcal-tag-filter' ), $first_invalid );
+            $category_name = '⚠️ ' . sprintf( __( 'Unknown tag: %s', 'google-calendar-tag-filter' ), $first_invalid );
             $css_class = 'gcal-event-unknown-tags';
         } elseif ( ! empty( $event['tags'] ) ) {
             $category_color = GCal_Categories::get_category_color( $event['tags'][0] );
@@ -645,27 +672,27 @@ class GCal_Display {
             <div class="gcal-event-date">
                 <?php
                 $month_abbr = array(
-                    __( 'Jan', 'gcal-tag-filter' ),
-                    __( 'Feb', 'gcal-tag-filter' ),
-                    __( 'Mar', 'gcal-tag-filter' ),
-                    __( 'Apr', 'gcal-tag-filter' ),
-                    __( 'May', 'gcal-tag-filter' ),
-                    __( 'Jun', 'gcal-tag-filter' ),
-                    __( 'Jul', 'gcal-tag-filter' ),
-                    __( 'Aug', 'gcal-tag-filter' ),
-                    __( 'Sep', 'gcal-tag-filter' ),
-                    __( 'Oct', 'gcal-tag-filter' ),
-                    __( 'Nov', 'gcal-tag-filter' ),
-                    __( 'Dec', 'gcal-tag-filter' ),
+                    __( 'Jan', 'google-calendar-tag-filter' ),
+                    __( 'Feb', 'google-calendar-tag-filter' ),
+                    __( 'Mar', 'google-calendar-tag-filter' ),
+                    __( 'Apr', 'google-calendar-tag-filter' ),
+                    __( 'May', 'google-calendar-tag-filter' ),
+                    __( 'Jun', 'google-calendar-tag-filter' ),
+                    __( 'Jul', 'google-calendar-tag-filter' ),
+                    __( 'Aug', 'google-calendar-tag-filter' ),
+                    __( 'Sep', 'google-calendar-tag-filter' ),
+                    __( 'Oct', 'google-calendar-tag-filter' ),
+                    __( 'Nov', 'google-calendar-tag-filter' ),
+                    __( 'Dec', 'google-calendar-tag-filter' ),
                 );
                 $weekday_abbr_dot = array(
-                    __( 'Mon.', 'gcal-tag-filter' ),
-                    __( 'Tue.', 'gcal-tag-filter' ),
-                    __( 'Wed.', 'gcal-tag-filter' ),
-                    __( 'Thu.', 'gcal-tag-filter' ),
-                    __( 'Fri.', 'gcal-tag-filter' ),
-                    __( 'Sat.', 'gcal-tag-filter' ),
-                    __( 'Sun.', 'gcal-tag-filter' ),
+                    __( 'Mon.', 'google-calendar-tag-filter' ),
+                    __( 'Tue.', 'google-calendar-tag-filter' ),
+                    __( 'Wed.', 'google-calendar-tag-filter' ),
+                    __( 'Thu.', 'google-calendar-tag-filter' ),
+                    __( 'Fri.', 'google-calendar-tag-filter' ),
+                    __( 'Sat.', 'google-calendar-tag-filter' ),
+                    __( 'Sun.', 'google-calendar-tag-filter' ),
                 );
                 $month_index = (int) $start_date->format( 'n' ) - 1;
                 $day_of_week_index = (int) $start_date->format( 'N' ) - 1; // 1 (Monday) to 7 (Sunday)
@@ -675,7 +702,7 @@ class GCal_Display {
                 <div class="gcal-event-month"><?php echo esc_html( $month_abbr[ $month_index ] ); ?></div>
                 <div class="gcal-event-time">
                     <?php if ( $event['is_all_day'] ) : ?>
-                        <?php esc_html_e( 'All day', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'All day', 'google-calendar-tag-filter' ); ?>
                     <?php else : ?>
                         <?php
                         $end_date = new DateTime( $event['end'] );
@@ -716,6 +743,7 @@ class GCal_Display {
                             $description = $description_with_links;
                         }
 
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already sanitized with wp_kses_post and convert_links_to_anchors
                         echo $description;
                         ?>
                     </div>
@@ -735,7 +763,7 @@ class GCal_Display {
                 <?php endif; ?>
 
                 <button class="gcal-event-read-more" data-event-id="<?php echo esc_attr( $event['id'] ); ?>">
-                    <?php esc_html_e( 'Learn more', 'gcal-tag-filter' ); ?> →
+                    <?php esc_html_e( 'Learn more', 'google-calendar-tag-filter' ); ?> →
                 </button>
             </div>
         </div>
@@ -824,17 +852,20 @@ class GCal_Display {
                 <div class="gcal-display-style-toggle">
                     <button class="gcal-display-btn <?php echo $current_view === 'list' ? 'active' : ''; ?>" data-display="list">
                         <span class="dashicons dashicons-list-view"></span>
-                        <?php esc_html_e( 'List', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'List', 'google-calendar-tag-filter' ); ?>
                     </button>
                     <button class="gcal-display-btn <?php echo $current_view === 'calendar' ? 'active' : ''; ?>" data-display="calendar">
                         <span class="dashicons dashicons-calendar-alt"></span>
-                        <?php esc_html_e( 'Calendar', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Calendar', 'google-calendar-tag-filter' ); ?>
                     </button>
                 </div>
             <?php endif; ?>
 
             <?php if ( $show_categories ) : ?>
-                <?php echo $this->render_category_sidebar( $events, $selected_category, $instance_id ); ?>
+                <?php
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_category_sidebar returns sanitized HTML
+                echo $this->render_category_sidebar( $events, $selected_category, $instance_id );
+                ?>
             <?php endif; ?>
         </div>
         <?php
@@ -878,13 +909,13 @@ class GCal_Display {
         ob_start();
         ?>
         <div class="gcal-category-sidebar" data-instance="<?php echo esc_attr( $instance_id ); ?>">
-            <h3 class="gcal-category-title"><?php esc_html_e( 'Categories', 'gcal-tag-filter' ); ?></h3>
+            <h3 class="gcal-category-title"><?php esc_html_e( 'Categories', 'google-calendar-tag-filter' ); ?></h3>
 
             <!-- Mobile Dropdown -->
             <div class="gcal-category-dropdown-wrapper">
                 <select class="gcal-category-dropdown" data-instance="<?php echo esc_attr( $instance_id ); ?>">
                     <option value="" <?php echo empty( $selected_category ) ? 'selected' : ''; ?>>
-                        <?php esc_html_e( 'All categories', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'All categories', 'google-calendar-tag-filter' ); ?>
                     </option>
                     <?php foreach ( $all_categories as $category ) : ?>
                         <option value="<?php echo esc_attr( $category ); ?>"
@@ -894,12 +925,12 @@ class GCal_Display {
                     <?php endforeach; ?>
                     <?php if ( $is_admin && $has_untagged ) : ?>
                         <option value="UNTAGGED" <?php echo strtoupper( $selected_category ) === 'UNTAGGED' ? 'selected' : ''; ?>>
-                            ⚠️ <?php esc_html_e( 'Uncategorized', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Uncategorized', 'google-calendar-tag-filter' ); ?>
                         </option>
                     <?php endif; ?>
                     <?php if ( $is_admin && $has_unknown_tags ) : ?>
                         <option value="UNKNOWN" <?php echo strtoupper( $selected_category ) === 'UNKNOWN' ? 'selected' : ''; ?>>
-                            ⚠️ <?php esc_html_e( 'Unknown tags', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Unknown tags', 'google-calendar-tag-filter' ); ?>
                         </option>
                     <?php endif; ?>
                 </select>
@@ -910,7 +941,7 @@ class GCal_Display {
                 <li>
                     <button class="gcal-category-btn <?php echo empty( $selected_category ) ? 'active' : ''; ?>"
                             data-category="">
-                        <?php esc_html_e( 'All categories', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'All categories', 'google-calendar-tag-filter' ); ?>
                     </button>
                 </li>
                 <?php foreach ( $all_categories as $category ) : ?>
@@ -925,7 +956,7 @@ class GCal_Display {
                     <li>
                         <button class="gcal-category-btn <?php echo strtoupper( $selected_category ) === 'UNTAGGED' ? 'active' : ''; ?>"
                                 data-category="UNTAGGED">
-                            ⚠️ <?php esc_html_e( 'Uncategorized', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Uncategorized', 'google-calendar-tag-filter' ); ?>
                         </button>
                     </li>
                 <?php endif; ?>
@@ -933,7 +964,7 @@ class GCal_Display {
                     <li>
                         <button class="gcal-category-btn <?php echo strtoupper( $selected_category ) === 'UNKNOWN' ? 'active' : ''; ?>"
                                 data-category="UNKNOWN">
-                            ⚠️ <?php esc_html_e( 'Unknown tags', 'gcal-tag-filter' ); ?>
+                            ⚠️ <?php esc_html_e( 'Unknown tags', 'google-calendar-tag-filter' ); ?>
                         </button>
                     </li>
                 <?php endif; ?>

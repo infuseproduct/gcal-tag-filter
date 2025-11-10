@@ -166,7 +166,7 @@ Before creating credentials, you must configure the OAuth consent screen.
    - Click **"+ ADD URI"**
    - Enter your WordPress redirect URI (found in plugin settings):
      ```
-     https://yoursite.com/wp-admin/admin.php?page=gcal-tag-filter-settings&gcal_oauth_callback=1
+     https://yoursite.com/wp-admin/admin.php?page=google-calendar-tag-filter-settings&gcal_oauth_callback=1
      ```
    - **Replace `yoursite.com` with your actual domain**
    - **Must include `https://` and the exact path**
@@ -219,7 +219,7 @@ Before saving, verify that the **Redirect URI** shown in the plugin settings mat
 
 Should look like:
 ```
-https://yoursite.com/wp-admin/admin.php?page=gcal-tag-filter-settings&gcal_oauth_callback=1
+https://yoursite.com/wp-admin/admin.php?page=google-calendar-tag-filter-settings&gcal_oauth_callback=1
 ```
 
 ### 5.4 Connect to Google Calendar

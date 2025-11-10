@@ -83,7 +83,7 @@ class GCal_Categories {
         if ( ! GCal_Parser::is_valid_tag_format( $id ) ) {
             return new WP_Error(
                 'invalid_format',
-                __( 'Category ID must be uppercase alphanumeric with underscores or hyphens only.', 'gcal-tag-filter' )
+                __( 'Category ID must be uppercase alphanumeric with underscores or hyphens only.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -91,7 +91,7 @@ class GCal_Categories {
         if ( self::category_exists( $id ) ) {
             return new WP_Error(
                 'already_exists',
-                __( 'A category with this ID already exists.', 'gcal-tag-filter' )
+                __( 'A category with this ID already exists.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -130,7 +130,7 @@ class GCal_Categories {
         if ( ! $found ) {
             return new WP_Error(
                 'not_found',
-                __( 'Category not found.', 'gcal-tag-filter' )
+                __( 'Category not found.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -159,7 +159,7 @@ class GCal_Categories {
         if ( ! $found ) {
             return new WP_Error(
                 'not_found',
-                __( 'Category not found.', 'gcal-tag-filter' )
+                __( 'Category not found.', 'google-calendar-tag-filter' )
             );
         }
 

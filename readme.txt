@@ -95,7 +95,7 @@ Before using the plugin, you need to set up OAuth credentials:
 3. Enable the Google Calendar API
 4. Create OAuth 2.0 credentials (Web application type)
 5. Add your redirect URI (found in plugin settings):
-   `https://yoursite.com/wp-admin/admin.php?page=gcal-tag-filter-settings&gcal_oauth_callback=1`
+   `https://yoursite.com/wp-admin/admin.php?page=google-calendar-tag-filter-settings&gcal_oauth_callback=1`
 6. Copy the Client ID and Client Secret
 
 = Plugin Configuration =
@@ -161,7 +161,7 @@ The plugin includes smart caching (default 1 minute, configurable up to 60 minut
 
 = Is it translation ready? =
 
-Yes! The plugin is fully internationalized with text domain `gcal-tag-filter`. POT files can be generated using WP-CLI.
+Yes! The plugin is fully internationalized with text domain `google-calendar-tag-filter`. POT files can be generated using WP-CLI.
 
 == Screenshots ==
 
@@ -213,7 +213,7 @@ The plugin provides several hooks for customization:
 
 ```
 google-calendar-tag-filter/
-├── gcal-tag-filter.php          # Main plugin file
+├── google-calendar-tag-filter.php          # Main plugin file
 ├── includes/                     # Core classes
 ├── admin/                        # Admin interface
 ├── public/                       # Frontend display

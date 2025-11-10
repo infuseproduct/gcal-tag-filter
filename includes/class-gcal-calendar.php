@@ -131,7 +131,7 @@ class GCal_Calendar {
             error_log( 'Client authentication failed' );
             return new WP_Error(
                 'auth_failed',
-                __( 'Not authenticated with Google Calendar. Please connect your account in the plugin settings.', 'gcal-tag-filter' )
+                __( 'Not authenticated with Google Calendar. Please connect your account in the plugin settings.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -142,7 +142,7 @@ class GCal_Calendar {
             error_log( 'No calendar selected' );
             return new WP_Error(
                 'no_calendar',
-                __( 'No calendar selected. Please select a calendar in the plugin settings.', 'gcal-tag-filter' )
+                __( 'No calendar selected. Please select a calendar in the plugin settings.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -155,7 +155,8 @@ class GCal_Calendar {
 
             // Output time range to browser console for debugging
             add_action( 'wp_footer', function() use ( $time_min, $time_max, $period, $year ) {
-                echo '<script>console.log("PHP API call - period=' . esc_js( $period ) . ', year=' . ( $year ? $year : 'NULL' ) . ', timeMin=' . esc_js( $time_min ) . ', timeMax=' . esc_js( $time_max ? $time_max : 'NONE' ) . '");</script>';
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Debug console log with escaped values
+                echo '<script>console.log("PHP API call - period=' . esc_js( $period ) . ', year=' . ( $year ? esc_js( $year ) : 'NULL' ) . ', timeMin=' . esc_js( $time_min ) . ', timeMax=' . esc_js( $time_max ? $time_max : 'NONE' ) . '");</script>';
             } );
 
             $params = array(
@@ -196,7 +197,7 @@ class GCal_Calendar {
                 'api_error',
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'Failed to retrieve events from Google Calendar: %s', 'gcal-tag-filter' ),
+                    __( 'Failed to retrieve events from Google Calendar: %s', 'google-calendar-tag-filter' ),
                     $e->getMessage()
                 )
             );
@@ -355,7 +356,7 @@ class GCal_Calendar {
 
             $processed[] = array(
                 'id'               => $event->getId(),
-                'title'            => $event->getSummary() ?? __( '(Untitled)', 'gcal-tag-filter' ),
+                'title'            => $event->getSummary() ?? __( '(Untitled)', 'google-calendar-tag-filter' ),
                 'description'      => $clean_description,
                 'location'         => $location,
                 'start'            => $start_time,
@@ -453,7 +454,7 @@ class GCal_Calendar {
         if ( ! $client ) {
             return new WP_Error(
                 'auth_failed',
-                __( 'Authentication failed. Please check your credentials.', 'gcal-tag-filter' )
+                __( 'Authentication failed. Please check your credentials.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -462,7 +463,7 @@ class GCal_Calendar {
         if ( ! $calendar_id ) {
             return new WP_Error(
                 'no_calendar',
-                __( 'No calendar selected.', 'gcal-tag-filter' )
+                __( 'No calendar selected.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -482,7 +483,7 @@ class GCal_Calendar {
                 'success'      => true,
                 'calendar'     => $calendar->getSummary(),
                 'event_count'  => count( $events->getItems() ),
-                'message'      => __( 'Connection successful!', 'gcal-tag-filter' ),
+                'message'      => __( 'Connection successful!', 'google-calendar-tag-filter' ),
             );
         } catch ( Exception $e ) {
             error_log( 'GCal Connection Test Error: ' . $e->getMessage() );
@@ -491,7 +492,7 @@ class GCal_Calendar {
                 'connection_failed',
                 sprintf(
                     /* translators: %s: error message */
-                    __( 'Connection failed: %s', 'gcal-tag-filter' ),
+                    __( 'Connection failed: %s', 'google-calendar-tag-filter' ),
                     $e->getMessage()
                 )
             );

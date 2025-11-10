@@ -665,7 +665,7 @@ A: Yes! Each category has a color setting in the admin panel.
 A: The plugin provides default responsive layouts. Advanced users can add custom CSS to their theme.
 
 **Q: Can I translate the plugin?**
-A: Yes! The plugin is translation-ready. Use the text domain `gcal-tag-filter`.
+A: Yes! The plugin is translation-ready. Use the text domain `google-calendar-tag-filter`.
 
 **Q: Can I change date/time formats?**
 A: The plugin formats dates in French (fr-FR) with 24-hour time format. Times are automatically adjusted to each visitor's timezone.

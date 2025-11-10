@@ -25,68 +25,68 @@ if ( ! empty( $categories ) ) {
 <div class="gcal-category-manager">
     <!-- Add New Category Form -->
     <div class="gcal-add-category-form">
-        <h3><?php esc_html_e( 'Add New Category', 'gcal-tag-filter' ); ?></h3>
+        <h3><?php esc_html_e( 'Add New Category', 'google-calendar-tag-filter' ); ?></h3>
 
         <form id="gcal-add-category-form">
             <table class="form-table">
                 <tr>
                     <th scope="row">
-                        <label for="category_id"><?php esc_html_e( 'Category ID', 'gcal-tag-filter' ); ?></label>
+                        <label for="category_id"><?php esc_html_e( 'Category ID', 'google-calendar-tag-filter' ); ?></label>
                     </th>
                     <td>
                         <input type="text" name="category_id" id="category_id" class="regular-text" required
                                pattern="[A-Z0-9_-]+" style="text-transform: uppercase;"
-                               placeholder="<?php esc_attr_e( 'COMMUNITY', 'gcal-tag-filter' ); ?>" />
+                               placeholder="<?php esc_attr_e( 'COMMUNITY', 'google-calendar-tag-filter' ); ?>" />
                         <p class="description">
-                            <?php esc_html_e( 'Uppercase alphanumeric with underscores or hyphens only. Used in event tags and shortcodes.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Uppercase alphanumeric with underscores or hyphens only. Used in event tags and shortcodes.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label for="category_display_name"><?php esc_html_e( 'Display Name', 'gcal-tag-filter' ); ?></label>
+                        <label for="category_display_name"><?php esc_html_e( 'Display Name', 'google-calendar-tag-filter' ); ?></label>
                     </th>
                     <td>
                         <input type="text" name="category_display_name" id="category_display_name" class="regular-text" required
-                               placeholder="<?php esc_attr_e( 'Community Events', 'gcal-tag-filter' ); ?>" />
+                               placeholder="<?php esc_attr_e( 'Community Events', 'google-calendar-tag-filter' ); ?>" />
                         <p class="description">
-                            <?php esc_html_e( 'User-friendly name shown to visitors.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'User-friendly name shown to visitors.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label for="category_color"><?php esc_html_e( 'Color', 'gcal-tag-filter' ); ?></label>
+                        <label for="category_color"><?php esc_html_e( 'Color', 'google-calendar-tag-filter' ); ?></label>
                     </th>
                     <td>
                         <input type="text" name="category_color" id="category_color" class="gcal-color-picker" value="#4285F4" />
                         <p class="description">
-                            <?php esc_html_e( 'Color used for calendar color-coding.', 'gcal-tag-filter' ); ?>
+                            <?php esc_html_e( 'Color used for calendar color-coding.', 'google-calendar-tag-filter' ); ?>
                         </p>
                     </td>
                 </tr>
             </table>
 
             <button type="submit" class="button button-primary">
-                <?php esc_html_e( 'Add Category', 'gcal-tag-filter' ); ?>
+                <?php esc_html_e( 'Add Category', 'google-calendar-tag-filter' ); ?>
             </button>
         </form>
     </div>
 
     <!-- Categories List -->
     <div class="gcal-categories-list">
-        <h3><?php esc_html_e( 'Existing Categories', 'gcal-tag-filter' ); ?></h3>
+        <h3><?php esc_html_e( 'Existing Categories', 'google-calendar-tag-filter' ); ?></h3>
 
         <?php if ( empty( $categories ) ) : ?>
-            <p class="description"><?php esc_html_e( 'No categories defined yet.', 'gcal-tag-filter' ); ?></p>
+            <p class="description"><?php esc_html_e( 'No categories defined yet.', 'google-calendar-tag-filter' ); ?></p>
         <?php else : ?>
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e( 'Category ID', 'gcal-tag-filter' ); ?></th>
-                        <th><?php esc_html_e( 'Display Name', 'gcal-tag-filter' ); ?></th>
-                        <th><?php esc_html_e( 'Color', 'gcal-tag-filter' ); ?></th>
-                        <th><?php esc_html_e( 'Actions', 'gcal-tag-filter' ); ?></th>
+                        <th><?php esc_html_e( 'Category ID', 'google-calendar-tag-filter' ); ?></th>
+                        <th><?php esc_html_e( 'Display Name', 'google-calendar-tag-filter' ); ?></th>
+                        <th><?php esc_html_e( 'Color', 'google-calendar-tag-filter' ); ?></th>
+                        <th><?php esc_html_e( 'Actions', 'google-calendar-tag-filter' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,11 +107,11 @@ if ( ! empty( $categories ) ) {
                                         data-id="<?php echo esc_attr( $category['id'] ); ?>"
                                         data-display-name="<?php echo esc_attr( $category['display_name'] ); ?>"
                                         data-color="<?php echo esc_attr( $category['color'] ); ?>">
-                                    <?php esc_html_e( 'Edit', 'gcal-tag-filter' ); ?>
+                                    <?php esc_html_e( 'Edit', 'google-calendar-tag-filter' ); ?>
                                 </button>
                                 <button type="button" class="button button-small gcal-button-danger gcal-delete-category"
                                         data-id="<?php echo esc_attr( $category['id'] ); ?>">
-                                    <?php esc_html_e( 'Delete', 'gcal-tag-filter' ); ?>
+                                    <?php esc_html_e( 'Delete', 'google-calendar-tag-filter' ); ?>
                                 </button>
                             </td>
                         </tr>
@@ -126,7 +126,7 @@ if ( ! empty( $categories ) ) {
 <div id="gcal-edit-category-modal" class="gcal-modal-backdrop" style="display: none;">
     <div class="gcal-modal-dialog">
         <div class="gcal-modal-header">
-            <h3><?php esc_html_e( 'Edit Category', 'gcal-tag-filter' ); ?></h3>
+            <h3><?php esc_html_e( 'Edit Category', 'google-calendar-tag-filter' ); ?></h3>
             <button type="button" class="gcal-modal-close">×</button>
         </div>
         <div class="gcal-modal-body">
@@ -136,7 +136,7 @@ if ( ! empty( $categories ) ) {
                 <table class="form-table">
                     <tr>
                         <th scope="row">
-                            <label for="edit_category_display_name"><?php esc_html_e( 'Display Name', 'gcal-tag-filter' ); ?></label>
+                            <label for="edit_category_display_name"><?php esc_html_e( 'Display Name', 'google-calendar-tag-filter' ); ?></label>
                         </th>
                         <td>
                             <input type="text" name="edit_category_display_name" id="edit_category_display_name" class="regular-text" required />
@@ -144,7 +144,7 @@ if ( ! empty( $categories ) ) {
                     </tr>
                     <tr>
                         <th scope="row">
-                            <label for="edit_category_color"><?php esc_html_e( 'Color', 'gcal-tag-filter' ); ?></label>
+                            <label for="edit_category_color"><?php esc_html_e( 'Color', 'google-calendar-tag-filter' ); ?></label>
                         </th>
                         <td>
                             <input type="text" name="edit_category_color" id="edit_category_color" class="gcal-color-picker" />
@@ -154,10 +154,10 @@ if ( ! empty( $categories ) ) {
 
                 <div class="gcal-modal-footer">
                     <button type="submit" class="button button-primary">
-                        <?php esc_html_e( 'Save Changes', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Save Changes', 'google-calendar-tag-filter' ); ?>
                     </button>
                     <button type="button" class="button gcal-modal-close">
-                        <?php esc_html_e( 'Cancel', 'gcal-tag-filter' ); ?>
+                        <?php esc_html_e( 'Cancel', 'google-calendar-tag-filter' ); ?>
                     </button>
                 </div>
             </form>

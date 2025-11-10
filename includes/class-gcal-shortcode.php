@@ -101,7 +101,7 @@ class GCal_Shortcode {
 
         if ( ! $is_auth ) {
             return $this->display->render_error(
-                __( 'Google Calendar not connected. Please contact the site administrator.', 'gcal-tag-filter' )
+                __( 'Google Calendar not connected. Please contact the site administrator.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -110,7 +110,7 @@ class GCal_Shortcode {
 
         if ( ! $calendar_id ) {
             return $this->display->render_error(
-                __( 'No calendar selected. Please contact the site administrator.', 'gcal-tag-filter' )
+                __( 'No calendar selected. Please contact the site administrator.', 'google-calendar-tag-filter' )
             );
         }
 
@@ -128,7 +128,8 @@ class GCal_Shortcode {
 
         // Output to browser console
         add_action( 'wp_footer', function() use ( $url_year, $url_month, $url_week, $period ) {
-            echo '<script>console.log("PHP Shortcode params: year=' . ( $url_year ? $url_year : 'NULL' ) . ', month=' . ( $url_month ? $url_month : 'NULL' ) . ', week=' . ( $url_week ? $url_week : 'NULL' ) . ', period=' . esc_js( $period ) . '");</script>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Debug console log with escaped values
+            echo '<script>console.log("PHP Shortcode params: year=' . ( $url_year ? esc_js( $url_year ) : 'NULL' ) . ', month=' . ( $url_month ? esc_js( $url_month ) : 'NULL' ) . ', week=' . ( $url_week ? esc_js( $url_week ) : 'NULL' ) . ', period=' . esc_js( $period ) . '");</script>';
         } );
 
         // Fetch events
