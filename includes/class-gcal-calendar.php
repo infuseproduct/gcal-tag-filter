@@ -108,7 +108,7 @@ class GCal_Calendar {
             }
         } else {
             // When no tags specified, hide untagged and unknown-tag events from non-admins
-            if ( ! current_user_can( 'manage_options' ) ) {
+            if ( ! GCal_Capabilities::can_view_untagged() ) {
                 $processed_events = array_filter(
                     $processed_events,
                     function ( $event ) {
@@ -450,8 +450,8 @@ class GCal_Calendar {
         // Normalize tags to uppercase for comparison
         $tags = array_map( 'strtoupper', $tags );
 
-        // Check if current user is admin
-        $is_admin = current_user_can( 'manage_options' );
+        // Check if current user can view untagged events
+        $is_admin = GCal_Capabilities::can_view_untagged();
 
         return array_filter(
             $events,

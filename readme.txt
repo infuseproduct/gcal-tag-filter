@@ -4,7 +4,7 @@ Tags: google calendar, events, calendar, oauth, tag filter
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.18
+Stable tag: 1.0.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,12 @@ Yes! The plugin is fully internationalized with text domain `gcal-tag-filter`. P
 7. Mobile responsive design
 
 == Changelog ==
+
+= 1.0.19 =
+* Added role-based access control with custom capabilities
+* Plugin access no longer restricted to administrators only
+* Four granular capabilities: view admin, manage settings, manage categories, view untagged events
+* Capabilities can be assigned to any role using WordPress role management plugins
 
 = 1.0.18 =
 * Fixed year view not displaying all events (added pagination support)

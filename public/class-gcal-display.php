@@ -69,7 +69,7 @@ class GCal_Display {
                 'GCal Display: Instance %s - Preparing %d events for JS (is_admin: %s)',
                 $instance_id,
                 count( $prepared_events ),
-                current_user_can( 'manage_options' ) ? 'yes' : 'no'
+                GCal_Capabilities::can_view_untagged() ? 'yes' : 'no'
             ) );
         }
 
@@ -509,7 +509,7 @@ class GCal_Display {
                 'GCal Display: Instance %s - Preparing %d events for JS (is_admin: %s)',
                 $instance_id,
                 count( $prepared_events ),
-                current_user_can( 'manage_options' ) ? 'yes' : 'no'
+                GCal_Capabilities::can_view_untagged() ? 'yes' : 'no'
             ) );
         }
 
@@ -910,8 +910,8 @@ class GCal_Display {
         $all_categories = array_unique( $all_categories );
         sort( $all_categories );
 
-        // Check if current user is admin
-        $is_admin = current_user_can( 'manage_options' );
+        // Check if current user can view untagged events
+        $is_admin = GCal_Capabilities::can_view_untagged();
 
         ob_start();
         ?>

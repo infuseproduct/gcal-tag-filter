@@ -67,7 +67,7 @@ class GCal_Admin {
         add_options_page(
             __( 'GCal Tag Filter', 'gcal-tag-filter' ),
             __( 'Calendar Filter', 'gcal-tag-filter' ),
-            'manage_options',
+            'gcal_view_admin',
             'gcal-tag-filter-settings',
             array( $this, 'render_settings_page' )
         );
@@ -190,7 +190,7 @@ class GCal_Admin {
             return;
         }
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_settings() ) {
             wp_die( esc_html__( 'You do not have permission to perform this action.', 'gcal-tag-filter' ) );
         }
 
@@ -222,7 +222,7 @@ class GCal_Admin {
      * Render settings page.
      */
     public function render_settings_page() {
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_view_admin() ) {
             return;
         }
 
@@ -560,7 +560,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_settings() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 
@@ -600,7 +600,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_settings() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 
@@ -623,7 +623,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_settings() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 
@@ -647,7 +647,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_settings() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 
@@ -673,7 +673,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_categories() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 
@@ -708,7 +708,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_categories() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 
@@ -743,7 +743,7 @@ class GCal_Admin {
 
         check_ajax_referer( 'gcal-admin-nonce', 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! GCal_Capabilities::can_manage_categories() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gcal-tag-filter' ) ) );
         }
 

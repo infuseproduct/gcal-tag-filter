@@ -3,7 +3,7 @@
  * Plugin Name: GCal Tag Filter
  * Plugin URI: https://github.com/infuseproduct/gcal-tag-filter
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
- * Version: 1.0.18
+ * Version: 1.0.19
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: infuseproduct
@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version.
  */
-define( 'GCAL_TAG_FILTER_VERSION', '1.0.18' );
+define( 'GCAL_TAG_FILTER_VERSION', '1.0.19' );
 
 /**
  * Plugin directory path.
@@ -42,6 +42,7 @@ require_once GCAL_TAG_FILTER_PATH . 'vendor/autoload.php';
 /**
  * Core plugin classes.
  */
+require_once GCAL_TAG_FILTER_PATH . 'includes/class-gcal-capabilities.php';
 require_once GCAL_TAG_FILTER_PATH . 'includes/class-gcal-oauth.php';
 require_once GCAL_TAG_FILTER_PATH . 'includes/class-gcal-calendar.php';
 require_once GCAL_TAG_FILTER_PATH . 'includes/class-gcal-parser.php';
@@ -68,6 +69,9 @@ function gcal_tag_filter_activate() {
     // Create default options
     add_option( 'gcal_tag_filter_cache_duration', 60 ); // 1 minute default
     add_option( 'gcal_tag_filter_categories', array() );
+
+    // Setup capabilities
+    GCal_Capabilities::setup_default_capabilities();
 
     // Flush rewrite rules
     flush_rewrite_rules();

@@ -12,6 +12,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }
 
+// Load capabilities class
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-gcal-capabilities.php';
+
 /**
  * Delete all plugin options.
  */
@@ -49,3 +52,6 @@ function gcal_tag_filter_delete_transients() {
 // Execute cleanup
 gcal_tag_filter_delete_options();
 gcal_tag_filter_delete_transients();
+
+// Remove all capabilities from all roles
+GCal_Capabilities::remove_all_capabilities();
