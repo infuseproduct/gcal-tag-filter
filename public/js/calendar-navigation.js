@@ -156,23 +156,30 @@
             // Update URL to reflect new date
             this.updateURL(period, newDate);
 
-            // Update title
-            this.updateTitle(wrapper, newDate);
+            // Check if sidebar exists (which will trigger a reload)
+            const hasSidebar = wrapper.closest('.gcal-wrapper-with-sidebar.has-sidebar');
 
-            // Show loading state
-            wrapper.classList.add('loading');
+            // Only update UI if we're NOT going to reload the page
+            if (!hasSidebar) {
+                // Update title
+                this.updateTitle(wrapper, newDate);
+
+                // Show loading state
+                wrapper.classList.add('loading');
+            }
 
             // Fetch events for the new period and re-render
             this.fetchAndRenderMonth(wrapper, newDate);
         },
 
         /**
-         * Update URL with current period and date
+         * Build URL with period and date parameters
          *
          * @param {string} period - Period type (week/month/year)
          * @param {Date} date - Current date
+         * @returns {URL} URL object with updated parameters
          */
-        updateURL: function(period, date) {
+        buildURL: function(period, date) {
             const url = new URL(window.location);
 
             // Always include the view period
@@ -217,6 +224,17 @@
                 url.searchParams.set('gcal_week', weekNumber);
             }
 
+            return url;
+        },
+
+        /**
+         * Update URL with current period and date (without reload)
+         *
+         * @param {string} period - Period type (week/month/year)
+         * @param {Date} date - Current date
+         */
+        updateURL: function(period, date) {
+            const url = this.buildURL(period, date);
             // Update URL without reload
             window.history.pushState({}, '', url);
         },
@@ -238,11 +256,11 @@
             // Get current date to preserve when switching views
             const currentDate = this.getCurrentDate(wrapper);
 
-            // Update URL with new view and preserve date
-            this.updateURL(newView, currentDate);
+            // Build the new URL with the view and date parameters
+            const url = this.buildURL(newView, currentDate);
 
-            // Reload with new view parameter
-            window.location.reload();
+            // Navigate to the new URL (this will reload with correct parameters)
+            window.location.href = url.toString();
         },
 
         /**
@@ -380,8 +398,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                wrapper.classList.remove('loading');
-
                 if (data.success) {
                     console.log(`Received ${data.data.count} events for ${year}-${month}:`, data.data.events);
 
@@ -398,8 +414,15 @@
                         console.log(`Re-applying category filter: ${activeCategory}`);
                         window.GCalCategoryFilter.filterEvents(activeCategory, wrapper.id);
                     }
+
+                    // Remove loading spinner AFTER rendering is complete
+                    // Use requestAnimationFrame to ensure DOM updates are done
+                    requestAnimationFrame(() => {
+                        wrapper.classList.remove('loading');
+                    });
                 } else {
                     console.error('Failed to fetch events:', data.data.message);
+                    wrapper.classList.remove('loading');
                 }
             })
             .catch(error => {

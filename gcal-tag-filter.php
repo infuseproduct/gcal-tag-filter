@@ -105,6 +105,43 @@ function gcal_tag_filter_query_vars( $vars ) {
 add_filter( 'query_vars', 'gcal_tag_filter_query_vars' );
 
 /**
+ * Preserve homepage when calendar query parameters are present.
+ *
+ * WordPress treats the homepage with query parameters as a blog archive page.
+ * This hook ensures that when our custom gcal_* parameters are present,
+ * the page remains the static homepage instead of switching to the blog.
+ */
+function gcal_tag_filter_preserve_homepage( $query ) {
+	// Only modify the main query on the frontend
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	// Check if any calendar query parameters are present
+	$has_gcal_params = isset( $_GET['gcal_view'] ) ||
+	                   isset( $_GET['gcal_year'] ) ||
+	                   isset( $_GET['gcal_month'] ) ||
+	                   isset( $_GET['gcal_week'] ) ||
+	                   isset( $_GET['gcal_display'] ) ||
+	                   isset( $_GET['gcal_category'] );
+
+	// If calendar parameters are present and we're on what WordPress thinks is the blog page
+	if ( $has_gcal_params && $query->is_home() && ! is_front_page() ) {
+		// Get the actual front page ID
+		$front_page_id = get_option( 'page_on_front' );
+
+		if ( $front_page_id ) {
+			// Force WordPress to treat this as the front page, not the blog
+			$query->set( 'page_id', $front_page_id );
+			$query->is_home = false;
+			$query->is_page = true;
+			$query->is_singular = true;
+		}
+	}
+}
+add_action( 'pre_get_posts', 'gcal_tag_filter_preserve_homepage' );
+
+/**
  * Initialize the plugin.
  */
 function gcal_tag_filter_init() {

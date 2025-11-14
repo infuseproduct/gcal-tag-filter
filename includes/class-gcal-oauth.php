@@ -29,6 +29,7 @@ class GCal_OAuth {
     const OPTION_ACCESS_TOKEN  = 'gcal_tag_filter_access_token';
     const OPTION_REFRESH_TOKEN = 'gcal_tag_filter_refresh_token';
     const OPTION_CALENDAR_ID   = 'gcal_tag_filter_calendar_id';
+    const OPTION_OAUTH_STATE   = 'gcal_tag_filter_oauth_state';
 
     /**
      * Constructor.
@@ -56,10 +57,9 @@ class GCal_OAuth {
             $this->client->addScope( self::OAUTH_SCOPE );
             $this->client->setAccessType( 'offline' );
             $this->client->setPrompt( 'consent' );
+            $this->log_debug( 'init_client: Client initialized successfully' );
         } catch ( Exception $e ) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'GCal OAuth Init Error: ' . $e->getMessage() );
-            }
+            $this->log_error( 'init_client: Failed to initialize - ' . $e->getMessage() );
             $this->client = null;
         }
     }
@@ -83,6 +83,13 @@ class GCal_OAuth {
             return '';
         }
 
+        // Generate and store state parameter for CSRF protection
+        $state = wp_generate_password( 32, false );
+        update_option( self::OPTION_OAUTH_STATE, $state );
+
+        // Set state parameter on the client
+        $this->client->setState( $state );
+
         return $this->client->createAuthUrl();
     }
 
@@ -90,35 +97,48 @@ class GCal_OAuth {
      * Handle OAuth callback.
      *
      * @param string $code Authorization code.
+     * @param string $state State parameter from callback.
      * @return bool Success status.
      */
-    public function handle_callback( $code ) {
+    public function handle_callback( $code, $state = '' ) {
         if ( ! $this->client ) {
+            $this->log_error( 'handle_callback: Client not initialized' );
             return false;
         }
+
+        // Verify state parameter for CSRF protection
+        $stored_state = get_option( self::OPTION_OAUTH_STATE );
+        if ( empty( $stored_state ) || $stored_state !== $state ) {
+            $this->log_error( 'handle_callback: Invalid state parameter (CSRF check failed)' );
+            return false;
+        }
+
+        // Clear the state now that we've verified it
+        delete_option( self::OPTION_OAUTH_STATE );
 
         try {
             $token = $this->client->fetchAccessTokenWithAuthCode( $code );
 
             if ( isset( $token['error'] ) ) {
+                $this->log_error( 'handle_callback: Token exchange error - ' . $token['error'] );
                 return false;
             }
 
             // Store encrypted access token
             $access_token = $this->encrypt_token( $token['access_token'] );
             update_option( self::OPTION_ACCESS_TOKEN, $access_token );
+            $this->log_debug( 'handle_callback: Access token stored' );
 
             // Store encrypted refresh token if present
             if ( isset( $token['refresh_token'] ) ) {
                 $refresh_token = $this->encrypt_token( $token['refresh_token'] );
                 update_option( self::OPTION_REFRESH_TOKEN, $refresh_token );
+                $this->log_debug( 'handle_callback: Refresh token stored' );
             }
 
             return true;
         } catch ( Exception $e ) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'GCal OAuth Error: ' . $e->getMessage() );
-            }
+            $this->log_error( 'handle_callback Exception: ' . $e->getMessage() );
             return false;
         }
     }
@@ -139,33 +159,52 @@ class GCal_OAuth {
      * @return Google_Client|null
      */
     public function get_authenticated_client() {
-        if ( ! $this->client || ! $this->is_authenticated() ) {
+        $this->log_debug( 'get_authenticated_client: Starting authentication check' );
+
+        if ( ! $this->client ) {
+            $this->log_error( 'get_authenticated_client: Client not initialized' );
+            return null;
+        }
+
+        if ( ! $this->is_authenticated() ) {
+            $this->log_error( 'get_authenticated_client: Not authenticated (is_authenticated returned false)' );
             return null;
         }
 
         try {
             // Get decrypted access token
-            $access_token = $this->decrypt_token( get_option( self::OPTION_ACCESS_TOKEN ) );
+            $encrypted_token = get_option( self::OPTION_ACCESS_TOKEN );
+            $this->log_debug( 'get_authenticated_client: Encrypted token exists: ' . ( $encrypted_token ? 'yes' : 'no' ) );
+
+            $access_token = $this->decrypt_token( $encrypted_token );
 
             if ( empty( $access_token ) ) {
+                $this->log_error( 'get_authenticated_client: Access token is empty after decryption' );
                 return null;
             }
+
+            $this->log_debug( 'get_authenticated_client: Access token decrypted successfully (length: ' . strlen( $access_token ) . ')' );
 
             $this->client->setAccessToken( array( 'access_token' => $access_token ) );
 
             // Check if token is expired
             if ( $this->client->isAccessTokenExpired() ) {
+                $this->log_debug( 'get_authenticated_client: Access token expired, attempting refresh' );
                 // Try to refresh
                 if ( ! $this->refresh_token() ) {
+                    $this->log_error( 'get_authenticated_client: Token refresh failed' );
                     return null;
                 }
+                $this->log_debug( 'get_authenticated_client: Token refreshed successfully' );
+            } else {
+                $this->log_debug( 'get_authenticated_client: Access token is valid' );
             }
 
+            $this->log_debug( 'get_authenticated_client: Returning authenticated client' );
             return $this->client;
         } catch ( Exception $e ) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'GCal OAuth Error: ' . $e->getMessage() );
-            }
+            $this->log_error( 'get_authenticated_client Exception: ' . $e->getMessage() );
+            $this->log_error( 'Stack trace: ' . $e->getTraceAsString() );
             return null;
         }
     }
@@ -176,27 +215,48 @@ class GCal_OAuth {
      * @return bool
      */
     private function refresh_token() {
-        $refresh_token = $this->decrypt_token( get_option( self::OPTION_REFRESH_TOKEN ) );
+        $this->log_debug( 'refresh_token: Starting token refresh' );
+
+        $encrypted_refresh_token = get_option( self::OPTION_REFRESH_TOKEN );
+        $this->log_debug( 'refresh_token: Encrypted refresh token exists: ' . ( $encrypted_refresh_token ? 'yes' : 'no' ) );
+
+        $refresh_token = $this->decrypt_token( $encrypted_refresh_token );
 
         if ( empty( $refresh_token ) ) {
+            $this->log_error( 'refresh_token: Refresh token is empty after decryption' );
             return false;
         }
 
+        $this->log_debug( 'refresh_token: Refresh token decrypted successfully (length: ' . strlen( $refresh_token ) . ')' );
+
         try {
+            $this->log_debug( 'refresh_token: Calling Google API to fetch new access token' );
             $this->client->fetchAccessTokenWithRefreshToken( $refresh_token );
             $new_token = $this->client->getAccessToken();
 
+            $this->log_debug( 'refresh_token: Response received from Google' );
+
+            if ( isset( $new_token['error'] ) ) {
+                $this->log_error( 'refresh_token: Google returned error: ' . $new_token['error'] );
+                if ( isset( $new_token['error_description'] ) ) {
+                    $this->log_error( 'refresh_token: Error description: ' . $new_token['error_description'] );
+                }
+                return false;
+            }
+
             if ( isset( $new_token['access_token'] ) ) {
+                $this->log_debug( 'refresh_token: New access token received (length: ' . strlen( $new_token['access_token'] ) . ')' );
                 $encrypted_token = $this->encrypt_token( $new_token['access_token'] );
                 update_option( self::OPTION_ACCESS_TOKEN, $encrypted_token );
+                $this->log_debug( 'refresh_token: New access token saved successfully' );
                 return true;
             }
 
+            $this->log_error( 'refresh_token: No access_token in response' );
             return false;
         } catch ( Exception $e ) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'GCal OAuth Refresh Error: ' . $e->getMessage() );
-            }
+            $this->log_error( 'refresh_token Exception: ' . $e->getMessage() );
+            $this->log_error( 'Stack trace: ' . $e->getTraceAsString() );
             return false;
         }
     }
@@ -219,6 +279,7 @@ class GCal_OAuth {
         delete_option( self::OPTION_ACCESS_TOKEN );
         delete_option( self::OPTION_REFRESH_TOKEN );
         delete_option( self::OPTION_CALENDAR_ID );
+        delete_option( self::OPTION_OAUTH_STATE );
     }
 
     /**
@@ -342,5 +403,26 @@ class GCal_OAuth {
         list( $encrypted_data, $iv ) = explode( '::', $decoded, 2 );
 
         return openssl_decrypt( $encrypted_data, $method, $key, 0, $iv );
+    }
+
+    /**
+     * Log debug message.
+     *
+     * @param string $message Debug message.
+     */
+    private function log_debug( $message ) {
+        // Always log OAuth debug messages to help troubleshoot authentication issues
+        // These go to the PHP error log, not displayed on the website
+        error_log( '[GCal OAuth DEBUG] ' . $message );
+    }
+
+    /**
+     * Log error message.
+     *
+     * @param string $message Error message.
+     */
+    private function log_error( $message ) {
+        // Always log OAuth errors - these are critical authentication issues
+        error_log( '[GCal OAuth ERROR] ' . $message );
     }
 }

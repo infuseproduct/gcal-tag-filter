@@ -152,7 +152,7 @@ class GCal_Admin {
      * Handle OAuth callback.
      */
     public function handle_oauth_callback() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, verified by user capability check
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, verified by state parameter and user capability check
         if ( ! isset( $_GET['gcal_oauth_callback'] ) || ! isset( $_GET['code'] ) ) {
             return;
         }
@@ -161,10 +161,13 @@ class GCal_Admin {
             wp_die( esc_html__( 'You do not have permission to perform this action.', 'gcal-tag-filter' ) );
         }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, verified by user capability check
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, verified by state parameter and user capability check
         $code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 
-        if ( $this->oauth->handle_callback( $code ) ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- OAuth callback from Google, state parameter is used for CSRF protection
+        $state = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
+
+        if ( $this->oauth->handle_callback( $code, $state ) ) {
             add_settings_error(
                 'gcal_tag_filter_messages',
                 'gcal_oauth_success',
@@ -245,6 +248,22 @@ class GCal_Admin {
                 </ul>
             </div>
             <?php endif; ?>
+
+            <div class="notice notice-info">
+                <p>
+                    <strong><?php esc_html_e( 'OAuth Logging:', 'gcal-tag-filter' ); ?></strong>
+                    <?php esc_html_e( 'All OAuth authentication activities are logged to your PHP error log for troubleshooting.', 'gcal-tag-filter' ); ?>
+                    <?php
+                    $error_log_path = ini_get( 'error_log' );
+                    if ( ! empty( $error_log_path ) ) {
+                        echo '<br><code>' . esc_html( $error_log_path ) . '</code>';
+                    } else {
+                        echo '<br>' . esc_html__( 'Check your server\'s PHP error log (location depends on your hosting configuration).', 'gcal-tag-filter' );
+                    }
+                    ?>
+                    <br><?php esc_html_e( 'Look for entries starting with "[GCal OAuth ERROR]" or "[GCal OAuth DEBUG]".', 'gcal-tag-filter' ); ?>
+                </p>
+            </div>
 
             <div class="gcal-admin-container">
                 <!-- OAuth Connection Section -->
