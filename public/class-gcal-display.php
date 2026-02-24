@@ -369,15 +369,33 @@ class GCal_Display {
      * @return string HTML output.
      */
     private function render_year_view( $events, $url_year = null ) {
-        // Group events by month
+        // Group events by month, spanning multi-day events across all their months
         $events_by_month = array();
         foreach ( $events as $event ) {
-            $start_date = new DateTime( $event['start'] );
-            $month_key = $start_date->format( 'Y-m' );
-            if ( ! isset( $events_by_month[ $month_key ] ) ) {
-                $events_by_month[ $month_key ] = array();
+            $start_month = new DateTime( $event['start'] );
+            $start_month->setDate( (int) $start_month->format( 'Y' ), (int) $start_month->format( 'n' ), 1 );
+            $start_month->setTime( 0, 0, 0 );
+
+            $end_day = new DateTime( $event['end'] );
+
+            // All-day events: Google's end date is exclusive, subtract 1 day
+            if ( ! empty( $event['is_all_day'] ) ) {
+                $end_day->modify( '-1 day' );
             }
-            $events_by_month[ $month_key ][] = $event;
+
+            $end_month = clone $end_day;
+            $end_month->setDate( (int) $end_month->format( 'Y' ), (int) $end_month->format( 'n' ), 1 );
+            $end_month->setTime( 0, 0, 0 );
+
+            $current = clone $start_month;
+            while ( $current <= $end_month ) {
+                $month_key = $current->format( 'Y-m' );
+                if ( ! isset( $events_by_month[ $month_key ] ) ) {
+                    $events_by_month[ $month_key ] = array();
+                }
+                $events_by_month[ $month_key ][] = $event;
+                $current->modify( '+1 month' );
+            }
         }
 
         // Use URL year if provided, otherwise current year
@@ -788,14 +806,28 @@ class GCal_Display {
         $grouped = array();
 
         foreach ( $events as $event ) {
-            $start_date = new DateTime( $event['start'] );
-            $date_key = $start_date->format( 'Y-m-d' );
+            $start_day = new DateTime( $event['start'] );
+            $start_day->setTime( 0, 0, 0 );
 
-            if ( ! isset( $grouped[ $date_key ] ) ) {
-                $grouped[ $date_key ] = array();
+            $end_day = new DateTime( $event['end'] );
+            $end_day->setTime( 0, 0, 0 );
+
+            // All-day events: Google's end date is exclusive, subtract 1 day
+            if ( ! empty( $event['is_all_day'] ) ) {
+                $end_day->modify( '-1 day' );
             }
 
-            $grouped[ $date_key ][] = $event;
+            $current = clone $start_day;
+            while ( $current <= $end_day ) {
+                $date_key = $current->format( 'Y-m-d' );
+
+                if ( ! isset( $grouped[ $date_key ] ) ) {
+                    $grouped[ $date_key ] = array();
+                }
+
+                $grouped[ $date_key ][] = $event;
+                $current->modify( '+1 day' );
+            }
         }
 
         return $grouped;

@@ -516,16 +516,8 @@
 
             const daysInMonth = lastDay.getDate();
 
-            // Group events by date
-            const eventsByDate = {};
-            events.forEach(event => {
-                const eventDate = new Date(event.start);
-                const dateKey = `${eventDate.getFullYear()}-${String(eventDate.getMonth() + 1).padStart(2, '0')}-${String(eventDate.getDate()).padStart(2, '0')}`;
-                if (!eventsByDate[dateKey]) {
-                    eventsByDate[dateKey] = [];
-                }
-                eventsByDate[dateKey].push(event);
-            });
+            // Group events by date, spanning multi-day events across all their dates
+            const eventsByDate = this.groupEventsByDate(events);
 
             console.log('Events grouped by date:', eventsByDate);
 
@@ -577,16 +569,8 @@
 
             const frenchDays = gcalData.i18n.weekdaysShort;
 
-            // Group events by date
-            const eventsByDate = {};
-            events.forEach(event => {
-                const eventDate = new Date(event.start);
-                const dateKey = `${eventDate.getFullYear()}-${String(eventDate.getMonth() + 1).padStart(2, '0')}-${String(eventDate.getDate()).padStart(2, '0')}`;
-                if (!eventsByDate[dateKey]) {
-                    eventsByDate[dateKey] = [];
-                }
-                eventsByDate[dateKey].push(event);
-            });
+            // Group events by date, spanning multi-day events across all their dates
+            const eventsByDate = this.groupEventsByDate(events);
 
             let html = '<div class="gcal-week-view">';
 
@@ -619,22 +603,75 @@
         },
 
         /**
+         * Group events by date, spanning multi-day events across all their dates.
+         */
+        groupEventsByDate: function(events) {
+            const eventsByDate = {};
+            events.forEach(event => {
+                const startDate = new Date(event.start);
+                const endDate = new Date(event.end);
+
+                const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                let endDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+                // All-day events: Google's end date is exclusive, subtract 1 day
+                if (event.isAllDay) {
+                    endDay.setDate(endDay.getDate() - 1);
+                }
+
+                const current = new Date(startDay);
+                while (current <= endDay) {
+                    const dateKey = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
+                    if (!eventsByDate[dateKey]) {
+                        eventsByDate[dateKey] = [];
+                    }
+                    eventsByDate[dateKey].push(event);
+                    current.setDate(current.getDate() + 1);
+                }
+            });
+            return eventsByDate;
+        },
+
+        /**
+         * Group events by month, spanning multi-day events across all their months.
+         */
+        groupEventsByMonth: function(events) {
+            const eventsByMonth = {};
+            events.forEach(event => {
+                const startDate = new Date(event.start);
+                const endDate = new Date(event.end);
+
+                let endDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+                // All-day events: Google's end date is exclusive, subtract 1 day
+                if (event.isAllDay) {
+                    endDay.setDate(endDay.getDate() - 1);
+                }
+
+                const current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+                const endMonth = new Date(endDay.getFullYear(), endDay.getMonth(), 1);
+
+                while (current <= endMonth) {
+                    const monthKey = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
+                    if (!eventsByMonth[monthKey]) {
+                        eventsByMonth[monthKey] = [];
+                    }
+                    eventsByMonth[monthKey].push(event);
+                    current.setMonth(current.getMonth() + 1);
+                }
+            });
+            return eventsByMonth;
+        },
+
+        /**
          * Render year view grid
          */
         renderYearGrid: function(container, date, events) {
             const year = date.getFullYear();
             const frenchMonths = gcalData.i18n.months;
 
-            // Group events by month
-            const eventsByMonth = {};
-            events.forEach(event => {
-                const eventDate = new Date(event.start);
-                const monthKey = `${eventDate.getFullYear()}-${String(eventDate.getMonth() + 1).padStart(2, '0')}`;
-                if (!eventsByMonth[monthKey]) {
-                    eventsByMonth[monthKey] = [];
-                }
-                eventsByMonth[monthKey].push(event);
-            });
+            // Group events by month, spanning multi-day events across all their months
+            const eventsByMonth = this.groupEventsByMonth(events);
 
             let html = '<div class="gcal-year-view">';
 
