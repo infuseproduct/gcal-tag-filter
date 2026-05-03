@@ -4,7 +4,7 @@ Tags: google calendar, events, calendar, oauth, tag filter
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.26
+Stable tag: 1.0.27
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,11 @@ Yes! The plugin is fully internationalized with text domain `gcal-tag-filter`. P
 7. Mobile responsive design
 
 == Changelog ==
+
+= 1.0.27 =
+* Fixed fatal error caused by bundled Monolog 3.x conflicting with older PSR-3 Log interfaces shipped by other plugins (Declaration of Monolog\Logger::emergency must be compatible with Psr\Log\LoggerInterface::emergency)
+* Pinned Monolog to 2.x, whose untyped log method signatures coexist safely with PSR-3 v1, v2, and v3
+* Updated bundled dependencies to latest patch versions (google/apiclient v2.19.2, google/auth v1.50.1, phpseclib 3.0.52, firebase/php-jwt v7.0.5)
 
 = 1.0.26 =
 * Fixed multi-day events not appearing on all days/months they span (initial page load, PHP rendering)
