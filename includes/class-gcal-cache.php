@@ -71,6 +71,17 @@ class GCal_Cache {
     }
 
     /**
+     * Build an order-independent cache key part from selected calendar IDs.
+     *
+     * @param array $ids Calendar IDs.
+     * @return string Sorted, comma-joined IDs.
+     */
+    public static function build_calendar_key_part( array $ids ) {
+        sort( $ids );
+        return implode( ',', $ids );
+    }
+
+    /**
      * Generate cache key based on parameters.
      *
      * @param string $period Period: 'week', 'month', or 'year'.
@@ -81,8 +92,8 @@ class GCal_Cache {
      * @return string Cache key.
      */
     public function generate_key( $period, $tags = array(), $year = null, $month = null, $week = null ) {
-        $oauth       = new GCal_OAuth();
-        $calendar_id = $oauth->get_selected_calendar_id();
+        $oauth        = new GCal_OAuth();
+        $calendar_key = self::build_calendar_key_part( $oauth->get_selected_calendar_ids() );
 
         // Sort tags for consistent cache keys
         sort( $tags );
@@ -118,7 +129,7 @@ class GCal_Cache {
 
         // Create a unique key
         $key_parts = array(
-            $calendar_id,
+            $calendar_key,
             $period,
             $date_key,
             implode( '_', $tags ),
