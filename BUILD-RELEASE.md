@@ -25,7 +25,22 @@ Before creating the distribution zip, ensure:
 
 ## Solution
 
-### Step 1: Remove Problematic Files
+### Step 1: Strip development dependencies
+
+The test suite (PHPUnit, Brain Monkey, Mockery, etc.) is declared under
+`require-dev` and installed into `vendor/` during development. It must not
+ship in the distribution. Regenerate a production-only `vendor/` first:
+
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+This removes the dev packages and rewrites the Composer autoloader without
+them. To restore the dev tools afterward for local testing, run
+`composer install`. The zip command in Step 3 also excludes `tests/`,
+`phpunit.xml.dist`, and `.phpunit.result.cache`, which are development-only.
+
+### Step 2: Remove Problematic Files
 
 Before creating the zip, remove the shell script from vendor:
 
@@ -33,7 +48,7 @@ Before creating the zip, remove the shell script from vendor:
 rm vendor/paragonie/random_compat/build-phar.sh
 ```
 
-### Step 2: Create Distribution Zip
+### Step 3: Create Distribution Zip
 
 From the parent directory of the plugin folder:
 
@@ -47,13 +62,18 @@ zip -r gcal-tag-filter-v{VERSION}.zip gcal-tag-filter \
   -x "gcal-tag-filter/admin/.DS_Store" \
   -x "gcal-tag-filter/public/.DS_Store" \
   -x "gcal-tag-filter/.claude/*" \
+  -x "gcal-tag-filter/.superpowers/*" \
+  -x "gcal-tag-filter/docs/*" \
+  -x "gcal-tag-filter/tests/*" \
+  -x "gcal-tag-filter/phpunit.xml.dist" \
+  -x "gcal-tag-filter/.phpunit.result.cache" \
   -x "gcal-tag-filter/node_modules/*" \
   -x "gcal-tag-filter/*.zip"
 ```
 
 Replace `{VERSION}` with the actual version number (e.g., `1.0.24`).
 
-### Step 3: Verify the Zip
+### Step 4: Verify the Zip
 
 Check that no shell scripts are included:
 
@@ -63,7 +83,7 @@ unzip -l gcal-tag-filter-v{VERSION}.zip | grep "\.sh$"
 
 This should return no results.
 
-### Step 4: Test Upload
+### Step 5: Test Upload
 
 Upload to WordPress.org. If you get an error about unexpected files, check the error message for the specific file path and add it to the exclusion list.
 
@@ -73,6 +93,7 @@ For convenience, here's the complete command:
 
 ```bash
 cd /Users/samb/GitHub/gcal-tag-filter && \
+composer install --no-dev --optimize-autoloader && \
 rm -f vendor/paragonie/random_compat/build-phar.sh && \
 cd .. && \
 VERSION="1.0.24" && \
@@ -83,6 +104,11 @@ zip -r gcal-tag-filter-v${VERSION}.zip gcal-tag-filter \
   -x "gcal-tag-filter/admin/.DS_Store" \
   -x "gcal-tag-filter/public/.DS_Store" \
   -x "gcal-tag-filter/.claude/*" \
+  -x "gcal-tag-filter/.superpowers/*" \
+  -x "gcal-tag-filter/docs/*" \
+  -x "gcal-tag-filter/tests/*" \
+  -x "gcal-tag-filter/phpunit.xml.dist" \
+  -x "gcal-tag-filter/.phpunit.result.cache" \
   -x "gcal-tag-filter/node_modules/*" \
   -x "gcal-tag-filter/*.zip" && \
 echo "✓ Created gcal-tag-filter-v${VERSION}.zip"
