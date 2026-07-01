@@ -338,7 +338,8 @@ class GCal_OAuth {
 
     /**
      * Resolve the configured calendar IDs, migrating from the legacy single
-     * option when the array option is empty. Pure — no WordPress calls.
+     * option only when the array option was never saved. Pure — no
+     * WordPress calls.
      *
      * @param mixed $ids       Value of the array option.
      * @param mixed $legacy_id Value of the legacy single option.
@@ -346,7 +347,8 @@ class GCal_OAuth {
      */
     public static function resolve_calendar_ids( $ids, $legacy_id ) {
         if ( is_array( $ids ) ) {
-            $ids = array_values(
+            // The array option has been stored (possibly empty) and is authoritative.
+            return array_values(
                 array_filter(
                     array_map( 'trim', array_map( 'strval', $ids ) ),
                     function ( $id ) {
@@ -354,9 +356,6 @@ class GCal_OAuth {
                     }
                 )
             );
-            if ( ! empty( $ids ) ) {
-                return $ids;
-            }
         }
 
         if ( ! empty( $legacy_id ) && is_string( $legacy_id ) ) {
@@ -395,7 +394,7 @@ class GCal_OAuth {
      */
     public function get_selected_calendar_ids() {
         return self::resolve_calendar_ids(
-            get_option( self::OPTION_CALENDAR_IDS, array() ),
+            get_option( self::OPTION_CALENDAR_IDS, false ),
             get_option( self::OPTION_CALENDAR_ID, false )
         );
     }

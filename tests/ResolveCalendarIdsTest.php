@@ -16,13 +16,20 @@ class ResolveCalendarIdsTest extends TestCase {
     }
 
     public function test_returns_empty_array_when_nothing_configured() {
-        $this->assertSame( array(), GCal_OAuth::resolve_calendar_ids( array(), false ) );
+        $this->assertSame( array(), GCal_OAuth::resolve_calendar_ids( false, false ) );
     }
 
     public function test_falls_back_to_legacy_single_id() {
         $this->assertSame(
             array( 'legacy@group.calendar.google.com' ),
-            GCal_OAuth::resolve_calendar_ids( array(), 'legacy@group.calendar.google.com' )
+            GCal_OAuth::resolve_calendar_ids( false, 'legacy@group.calendar.google.com' )
+        );
+    }
+
+    public function test_stored_empty_array_does_not_fall_back_to_legacy() {
+        $this->assertSame(
+            array(),
+            GCal_OAuth::resolve_calendar_ids( array(), 'legacy@x.com' )
         );
     }
 
