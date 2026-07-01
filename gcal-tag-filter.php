@@ -5,7 +5,7 @@
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
  * Version: 1.0.27
  * Requires at least: 5.8
- * Requires PHP: 7.4
+ * Requires PHP: 8.1
  * Author: infuseproduct
  * Author URI: https://infuse.hk
  * License: GPL v2 or later
