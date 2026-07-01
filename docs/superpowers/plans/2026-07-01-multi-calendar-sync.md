@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- PHP floor: `>=7.4` (no PHP 8-only syntax such as named args, enums, `match`, constructor promotion).
+- PHP floor: `>=8.1` (corrected from the stale 7.4 claim — production `google/apiclient` already requires 8.1+; the plugin's version metadata was updated to match during Task 1). Modern PHP 8.1 syntax is permitted but not required; keep changes consistent with the surrounding code style.
 - Text domain for all user-facing strings: `gcal-tag-filter`.
 - New array option name (verbatim): `gcal_tag_filter_calendar_ids`.
 - Legacy single option name (verbatim, left intact): `gcal_tag_filter_calendar_id`.
