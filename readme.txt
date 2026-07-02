@@ -4,7 +4,7 @@ Tags: google calendar, events, calendar, oauth, tag filter
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.0.27
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,15 @@ Yes! The plugin is fully internationalized with text domain `gcal-tag-filter`. P
 7. Mobile responsive design
 
 == Changelog ==
+
+= 1.1.0 =
+* Added support for displaying and merging events from two or more Google Calendars (previously limited to a single calendar)
+* New checkbox-based calendar selector in settings, replacing the single-select dropdown
+* Existing single-calendar sites migrate automatically with no admin action required
+* Cache key now accounts for all selected calendars, so changing the selection refreshes cached output
+* Resilient multi-calendar fetch: if one calendar fails, the others still display
+* Corrected the declared PHP requirement to 8.1, matching the bundled google/apiclient dependency
+* Added a PHPUnit test suite (development only; excluded from the distributed plugin)
 
 = 1.0.27 =
 * Fixed fatal error caused by bundled Monolog 3.x conflicting with older PSR-3 Log interfaces shipped by other plugins (Declaration of Monolog\Logger::emergency must be compatible with Psr\Log\LoggerInterface::emergency)
