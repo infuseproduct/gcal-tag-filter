@@ -16,6 +16,32 @@ wp-content/cache/
 node_modules/
 package-lock.json
 
+# Testing
+# Dev dependencies (phpunit, brain/monkey, mockery, ...) are installed into
+# vendor/ locally for running the test suite but must NOT be committed or
+# shipped. Run `composer install --no-dev` before building a release zip to
+# strip them (see BUILD-RELEASE.md). The paths below keep a local
+# `composer install` (with dev deps) from cluttering git status; production
+# packages under vendor/ remain tracked for distribution.
+.phpunit.result.cache
+.phpunit.cache/
+# Dev-only vendor packages (installed by `composer install`, removed by --no-dev)
+vendor/bin/
+vendor/phpunit/
+vendor/brain/
+vendor/mockery/
+vendor/hamcrest/
+vendor/antecedent/
+vendor/doctrine/
+vendor/myclabs/
+vendor/nikic/
+vendor/phar-io/
+vendor/sebastian/
+vendor/theseer/
+vendor/phpstan/
+vendor/phpspec/
+vendor/sebastianbergmann/
+
 # IDE
 .vscode/
 .idea/

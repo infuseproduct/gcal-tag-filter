@@ -85,10 +85,11 @@ class GCal_Admin {
     public function register_settings() {
         register_setting(
             'gcal_tag_filter_options',
-            GCal_OAuth::OPTION_CALENDAR_ID,
+            GCal_OAuth::OPTION_CALENDAR_IDS,
             array(
-                'type' => 'string',
-                'sanitize_callback' => 'sanitize_text_field',
+                'type'              => 'array',
+                'sanitize_callback' => array( 'GCal_OAuth', 'sanitize_calendar_ids' ),
+                'default'           => array(),
             )
         );
         register_setting(
@@ -201,6 +202,7 @@ class GCal_Admin {
 
         $is_authenticated = $this->oauth->is_authenticated();
         $selected_calendar = $this->oauth->get_selected_calendar_id();
+        $selected_calendars = $this->oauth->get_selected_calendar_ids();
         $cache_stats = $this->cache->get_cache_stats();
         $categories = GCal_Categories::get_categories();
 
@@ -276,12 +278,10 @@ class GCal_Admin {
                             <?php esc_html_e( 'Connected', 'gcal-tag-filter' ); ?>
                         </div>
 
-                        <?php if ( $selected_calendar ) : ?>
+                        <?php if ( ! empty( $selected_calendars ) ) : ?>
                             <p>
-                                <?php
-                                /* translators: %s: Calendar name */
-                                printf( esc_html__( 'Selected Calendar: <strong>%s</strong>', 'gcal-tag-filter' ), esc_html( $selected_calendar ) );
-                                ?>
+                                <strong><?php esc_html_e( 'Selected Calendars:', 'gcal-tag-filter' ); ?></strong>
+                                <?php echo esc_html( implode( ', ', $selected_calendars ) ); ?>
                             </p>
                         <?php endif; ?>
 
@@ -307,21 +307,31 @@ class GCal_Admin {
                                 <table class="form-table">
                                     <tr>
                                         <th scope="row">
-                                            <label for="calendar_id"><?php esc_html_e( 'Select Calendar', 'gcal-tag-filter' ); ?></label>
+                                            <?php esc_html_e( 'Select Calendars', 'gcal-tag-filter' ); ?>
                                         </th>
                                         <td>
-                                            <select name="<?php echo esc_attr( GCal_OAuth::OPTION_CALENDAR_ID ); ?>" id="calendar_id" class="regular-text">
-                                                <option value=""><?php esc_html_e( '-- Select a calendar --', 'gcal-tag-filter' ); ?></option>
+                                            <fieldset>
+                                                <legend class="screen-reader-text">
+                                                    <?php esc_html_e( 'Select Calendars', 'gcal-tag-filter' ); ?>
+                                                </legend>
+                                                <?php
+                                                // Ensures the option is submitted even when nothing is checked,
+                                                // allowing the selection to be cleared to empty.
+                                                ?>
+                                                <input type="hidden" name="<?php echo esc_attr( GCal_OAuth::OPTION_CALENDAR_IDS ); ?>[]" value="">
                                                 <?php foreach ( $calendars as $calendar ) : ?>
-                                                    <option value="<?php echo esc_attr( $calendar['id'] ); ?>"
-                                                        <?php selected( $selected_calendar, $calendar['id'] ); ?>>
+                                                    <label style="display:block; margin-bottom:6px;">
+                                                        <input type="checkbox"
+                                                            name="<?php echo esc_attr( GCal_OAuth::OPTION_CALENDAR_IDS ); ?>[]"
+                                                            value="<?php echo esc_attr( $calendar['id'] ); ?>"
+                                                            <?php checked( in_array( $calendar['id'], $selected_calendars, true ) ); ?>>
                                                         <?php echo esc_html( $calendar['summary'] ); ?>
                                                         <?php echo $calendar['primary'] ? '(' . esc_html__( 'Primary', 'gcal-tag-filter' ) . ')' : ''; ?>
-                                                    </option>
+                                                    </label>
                                                 <?php endforeach; ?>
-                                            </select>
+                                            </fieldset>
                                             <p class="description">
-                                                <?php esc_html_e( 'Choose which calendar to display events from.', 'gcal-tag-filter' ); ?>
+                                                <?php esc_html_e( 'Choose one or more calendars to display events from.', 'gcal-tag-filter' ); ?>
                                             </p>
                                         </td>
                                     </tr>

@@ -129,6 +129,90 @@ class GCal_Calendar {
     }
 
     /**
+     * Extract a sortable start value from an event item.
+     *
+     * @param object $item Google_Service_Calendar_Event (or compatible).
+     * @return string Sortable start value ('' if unknown).
+     */
+    private static function get_item_start_value( $item ) {
+        $start = $item->getStart();
+        if ( ! empty( $start->dateTime ) ) {
+            return $start->dateTime;
+        }
+        if ( ! empty( $start->date ) ) {
+            return $start->date;
+        }
+        return '';
+    }
+
+    /**
+     * Sort merged event items by start time ascending. Pure.
+     *
+     * @param array $items Event items.
+     * @return array Sorted items.
+     */
+    public static function sort_items_by_start( array $items ) {
+        usort(
+            $items,
+            function ( $a, $b ) {
+                return strcmp( self::get_item_start_value( $a ), self::get_item_start_value( $b ) );
+            }
+        );
+        return $items;
+    }
+
+    /**
+     * Fetch and merge event items from every given calendar.
+     *
+     * Each calendar is paginated independently. Items are merged (no
+     * de-duplication) and sorted by start time. If one calendar fails, the
+     * error is logged and the others still return. Throws only when every
+     * calendar fails.
+     *
+     * @param Google_Service_Calendar $service      Authenticated service.
+     * @param array                   $calendar_ids Calendar IDs to fetch.
+     * @param array                   $params       listEvents params (without pageToken).
+     * @return array Merged, sorted event items.
+     * @throws Exception When every calendar fetch fails.
+     */
+    public static function fetch_raw_items_from_calendars( $service, array $calendar_ids, array $params ) {
+        $all_items = array();
+        $errors    = array();
+        $succeeded = 0;
+
+        foreach ( $calendar_ids as $calendar_id ) {
+            try {
+                $page_token = null;
+                $page_count = 0;
+
+                do {
+                    if ( $page_token ) {
+                        $params['pageToken'] = $page_token;
+                    } else {
+                        unset( $params['pageToken'] );
+                    }
+
+                    $events    = $service->events->listEvents( $calendar_id, $params );
+                    $all_items = array_merge( $all_items, $events->getItems() );
+                    $page_token = $events->getNextPageToken();
+                    $page_count++;
+                } while ( $page_token && $page_count < 10 );
+
+                $succeeded++;
+            } catch ( Exception $e ) {
+                $errors[] = $e->getMessage();
+                error_log( 'GCal API Error for calendar ' . $calendar_id . ': ' . $e->getMessage() );
+            }
+        }
+
+        if ( 0 === $succeeded && ! empty( $errors ) ) {
+            throw new Exception( implode( '; ', $errors ) );
+        }
+
+        return self::sort_items_by_start( $all_items );
+    }
+
+    /**
      * Fetch events from Google Calendar API.
      *
      * @param string $period Period: 'week', 'month', 'year', or 'future'.
@@ -154,12 +238,12 @@ class GCal_Calendar {
             );
         }
 
-        $calendar_id = $this->oauth->get_selected_calendar_id();
+        $calendar_ids = $this->oauth->get_selected_calendar_ids();
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( 'Calendar ID: ' . ( $calendar_id ? $calendar_id : 'NONE' ) );
+            error_log( 'Calendar IDs: ' . ( ! empty( $calendar_ids ) ? implode( ', ', $calendar_ids ) : 'NONE' ) );
         }
 
-        if ( ! $calendar_id ) {
+        if ( empty( $calendar_ids ) ) {
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
                 error_log( 'No calendar selected' );
             }
@@ -199,33 +283,11 @@ class GCal_Calendar {
                 error_log( 'Calling Google Calendar API...' );
             }
 
-            // Fetch all pages of events
-            $all_items = array();
-            $page_token = null;
-            $page_count = 0;
-
-            do {
-                if ( $page_token ) {
-                    $params['pageToken'] = $page_token;
-                }
-
-                $events = $service->events->listEvents( $calendar_id, $params );
-                $items = $events->getItems();
-                $page_count++;
-
-                if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                    error_log( 'API page ' . $page_count . ' returned ' . count( $items ) . ' events' );
-                }
-
-                $all_items = array_merge( $all_items, $items );
-                $page_token = $events->getNextPageToken();
-
-            } while ( $page_token && $page_count < 10 ); // Limit to 10 pages (2500 events max) for safety
-
-            $items = $all_items;
+            // Fetch and merge events across all selected calendars.
+            $items = self::fetch_raw_items_from_calendars( $service, $calendar_ids, $params );
 
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'Total events fetched: ' . count( $items ) . ' across ' . $page_count . ' page(s)' );
+                error_log( 'Total events fetched: ' . count( $items ) . ' across ' . count( $calendar_ids ) . ' calendar(s)' );
             }
 
             // Debug: Log first 3 event dates to console

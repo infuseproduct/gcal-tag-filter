@@ -25,6 +25,7 @@ function gcal_tag_filter_delete_options() {
         'gcal_tag_filter_access_token',
         'gcal_tag_filter_refresh_token',
         'gcal_tag_filter_calendar_id',
+        'gcal_tag_filter_calendar_ids',
         'gcal_tag_filter_cache_duration',
         'gcal_tag_filter_categories',
     );

@@ -29,6 +29,7 @@ class GCal_OAuth {
     const OPTION_ACCESS_TOKEN  = 'gcal_tag_filter_access_token';
     const OPTION_REFRESH_TOKEN = 'gcal_tag_filter_refresh_token';
     const OPTION_CALENDAR_ID   = 'gcal_tag_filter_calendar_id';
+    const OPTION_CALENDAR_IDS  = 'gcal_tag_filter_calendar_ids';
     const OPTION_OAUTH_STATE   = 'gcal_tag_filter_oauth_state';
 
     /**
@@ -336,16 +337,89 @@ class GCal_OAuth {
     }
 
     /**
-     * Get selected calendar ID.
+     * Resolve the configured calendar IDs, migrating from the legacy single
+     * option only when the array option was never saved. Pure — no
+     * WordPress calls.
+     *
+     * @param mixed $ids       Value of the array option.
+     * @param mixed $legacy_id Value of the legacy single option.
+     * @return array List of calendar ID strings (may be empty).
+     */
+    public static function resolve_calendar_ids( $ids, $legacy_id ) {
+        if ( is_array( $ids ) ) {
+            // The array option has been stored (possibly empty) and is authoritative.
+            return array_values(
+                array_filter(
+                    array_map( 'trim', array_map( 'strval', $ids ) ),
+                    function ( $id ) {
+                        return $id !== '';
+                    }
+                )
+            );
+        }
+
+        if ( ! empty( $legacy_id ) && is_string( $legacy_id ) ) {
+            return array( $legacy_id );
+        }
+
+        return array();
+    }
+
+    /**
+     * Sanitize a raw array of calendar IDs for storage.
+     *
+     * @param mixed $raw Raw submitted value.
+     * @return array Clean, de-duplicated list of calendar ID strings.
+     */
+    public static function sanitize_calendar_ids( $raw ) {
+        if ( ! is_array( $raw ) ) {
+            return array();
+        }
+
+        $clean = array();
+        foreach ( $raw as $id ) {
+            $id = sanitize_text_field( $id );
+            if ( $id !== '' ) {
+                $clean[] = $id;
+            }
+        }
+
+        return array_values( array_unique( $clean ) );
+    }
+
+    /**
+     * Get the selected calendar IDs (array), applying legacy migration.
+     *
+     * @return array List of calendar ID strings (may be empty).
+     */
+    public function get_selected_calendar_ids() {
+        return self::resolve_calendar_ids(
+            get_option( self::OPTION_CALENDAR_IDS, false ),
+            get_option( self::OPTION_CALENDAR_ID, false )
+        );
+    }
+
+    /**
+     * Persist the selected calendar IDs.
+     *
+     * @param array $ids Calendar IDs.
+     */
+    public function set_calendar_ids( array $ids ) {
+        update_option( self::OPTION_CALENDAR_IDS, self::sanitize_calendar_ids( $ids ) );
+    }
+
+    /**
+     * Get the first selected calendar ID (backward-compatible single value).
      *
      * @return string|false
      */
     public function get_selected_calendar_id() {
-        return get_option( self::OPTION_CALENDAR_ID, false );
+        $ids = $this->get_selected_calendar_ids();
+        return ! empty( $ids ) ? $ids[0] : false;
     }
 
     /**
-     * Set selected calendar ID.
+     * Set a single selected calendar ID (backward-compatible).
      *
      * @param string $calendar_id Calendar ID.
      */

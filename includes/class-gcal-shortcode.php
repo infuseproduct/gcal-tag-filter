@@ -109,9 +109,9 @@ class GCal_Shortcode {
         }
 
         // Check if calendar is selected
-        $calendar_id = $oauth->get_selected_calendar_id();
+        $calendar_ids = $oauth->get_selected_calendar_ids();
 
-        if ( ! $calendar_id ) {
+        if ( empty( $calendar_ids ) ) {
             return $this->display->render_error(
                 __( 'No calendar selected. Please contact the site administrator.', 'gcal-tag-filter' )
             );

@@ -3,9 +3,9 @@
  * Plugin Name: GCal Tag Filter
  * Plugin URI: https://github.com/infuseproduct/gcal-tag-filter
  * Description: Embeds Google Calendar events with tag-based filtering capabilities using OAuth 2.0 authentication
- * Version: 1.0.27
+ * Version: 1.1.0
  * Requires at least: 5.8
- * Requires PHP: 7.4
+ * Requires PHP: 8.1
  * Author: infuseproduct
  * Author URI: https://infuse.hk
  * License: GPL v2 or later
@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version.
  */
-define( 'GCAL_TAG_FILTER_VERSION', '1.0.27' );
+define( 'GCAL_TAG_FILTER_VERSION', '1.1.0' );
 
 /**
  * Plugin directory path.
@@ -353,14 +353,13 @@ function gcal_ajax_fetch_events() {
     }
 
     // Fetch events from API
-    $calendar = new GCal_Calendar();
-    $oauth    = new GCal_OAuth();
+    $oauth = new GCal_OAuth();
 
     try {
-        $client      = $oauth->get_authenticated_client();
-        $calendar_id = $oauth->get_selected_calendar_id();
+        $client       = $oauth->get_authenticated_client();
+        $calendar_ids = $oauth->get_selected_calendar_ids();
 
-        if ( ! $client || ! $calendar_id ) {
+        if ( ! $client || empty( $calendar_ids ) ) {
             wp_send_json_error( array( 'message' => 'Not authenticated' ) );
             return;
         }
@@ -374,8 +373,7 @@ function gcal_ajax_fetch_events() {
             'orderBy'      => 'startTime',
         );
 
-        $events = $service->events->listEvents( $calendar_id, $params );
-        $items  = $events->getItems();
+        $items = GCal_Calendar::fetch_raw_items_from_calendars( $service, $calendar_ids, $params );
 
         // Process events (same logic as GCal_Calendar::process_events)
         $parser    = new GCal_Parser();
